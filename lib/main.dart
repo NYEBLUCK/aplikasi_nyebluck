@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'controllers/auth_controller.dart';
 import 'controllers/topping_controller.dart';
-import 'package:aplikasi_nyebluck/pages/login_page.dart';
+import 'package:aplikasi_nyebluck/pages/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,10 +29,11 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       theme: ThemeData(
+      fontFamily: GoogleFonts.poppins().fontFamily,
       textTheme: GoogleFonts.poppinsTextTheme(),),
       title: 'NYEBLUCK',
       debugShowCheckedModeBanner: false,
-      home: const LoginPage(),
+      home: const SplashScreen(),
     );
   }
 }

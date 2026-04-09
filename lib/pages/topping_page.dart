@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import '../controllers/topping_controller.dart';
 import '../pages/login_page.dart';
 import 'edit_topping_page.dart';
 import 'add_topping_page.dart';
-import 'staff_page.dart'; // Pastikan import StaffPage
+import 'staff_page.dart';
 
 class ToppingPage extends StatelessWidget {
   ToppingPage({super.key});
@@ -17,230 +18,245 @@ class ToppingPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F6F3),
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           "NYEBLUCK",
-          style: TextStyle(color: Color(0xFFC62828), fontWeight: FontWeight.w800),
+          style: GoogleFonts.poppins(
+              color: Color(0xFFC62828),
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        centerTitle: false,
         actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 15),
-            child: PopupMenuButton<String>(
-              onSelected: (value) {
-                if (value == 'logout') {
-                  _showLogoutDialog(context);
-                }
-              },
-              child: const CircleAvatar(
-                backgroundColor: Color(0xFFEBEBEB),
-                child: Icon(Icons.person, color: Color(0xFF4A2C2C)),
+        IconButton(
+          onPressed: () => _showLogoutDialog(context),
+          icon: Container(
+            padding: const EdgeInsets.all(6), // Memberi ruang agar terlihat seperti lingkaran
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(
+                color: const Color(0xFFC62828), // Outline merah
+                width: 1.5,
               ),
-              itemBuilder: (BuildContext context) => [
-                const PopupMenuItem<String>(
-                  value: 'logout',
-                  child: Row(
-                    children: [
-                      Icon(Icons.logout, color: Colors.red, size: 20),
-                      SizedBox(width: 10),
-                      Text("Log Out"),
-                    ],
-                  ),
-                ),
-              ],
             ),
-          )
-        ],
+            child: const Icon(
+              Icons.logout_rounded, // Icon Log Out
+              color: Color(0xFFC62828),
+              size: 18,
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+      ],
       ),
-      
-      // MENGGUNAKAN OBX DAN INDEXEDSTACK DI BODY
       body: Obx(() => IndexedStack(
             index: toppingC.currentIndex.value,
             children: [
-              _buildToppingBody(context), // Tab 0: Topping
-              const Center(child: Text("Halaman Reports")), // Tab 1: Reports
-              StaffPage(), // Tab 2: Staff
+              _buildToppingBody(context),
+              const Center(child: Text("Halaman Reports")),
+              StaffPage(),
             ],
           )),
-
       bottomNavigationBar: Obx(() => BottomNavigationBar(
             selectedItemColor: const Color(0xFFC62828),
             unselectedItemColor: Colors.grey,
             currentIndex: toppingC.currentIndex.value,
-            onTap: (index) {
-              toppingC.currentIndex.value = index; // Pindah tab
-            },
+            onTap: (index) => toppingC.currentIndex.value = index,
             type: BottomNavigationBarType.fixed,
+            selectedLabelStyle:
+                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 11),
+            unselectedLabelStyle: GoogleFonts.poppins(fontSize: 10),
             items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.inventory_2), label: "TOPPING"),
-              BottomNavigationBarItem(icon: Icon(Icons.bar_chart_rounded), label: "REPORTS"),
-              BottomNavigationBarItem(icon: Icon(Icons.people_alt_rounded), label: "STAFF"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.inventory_2), label: "TOPPING"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.bar_chart_rounded), label: "LAPORAN"),
+              BottomNavigationBarItem(icon: Icon(Icons.group), label: "STAFF"),
             ],
           )),
     );
   }
 
-  // PINDAHKAN LOGIKA BODY TOPPING KE SINI
   Widget _buildToppingBody(BuildContext context) {
     return Column(
       children: [
-        // 1. Tombol Tambah Topping
-
-        // 2. Search Bar
-        Padding(
-          padding: const EdgeInsets.all(15),
-          child: TextField(
-            controller: searchC,
-            onChanged: (v) => toppingC.filterData(v, toppingC.selectedCategory.value),
-            decoration: InputDecoration(
-              hintText: "Cari topping",
-              prefixIcon: const Icon(Icons.search, color: Colors.grey),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(vertical: 15),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+        // --- HEADER SECTION (Search & Chips) ---
+        // Menggunakan shrinkWrap agar tidak memakan tempat berlebih di layar kecil
+        Container(
+          color: Colors.white,
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(15, 10, 15, 5),
+                child: TextField(
+                  controller: searchC,
+                  onChanged: (v) =>
+                      toppingC.filterData(v, toppingC.selectedCategory.value),
+                  decoration: InputDecoration(
+                    hintText: "Cari topping...",
+                    prefixIcon: const Icon(Icons.search, size: 20),
+                    isDense: true, // Membuat tinggi textfield lebih ringkas
+                    filled: true,
+                    fillColor: const Color(0xFFEBEBEB),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
               ),
-            ),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
+                child: Obx(() => Row(
+                      children: ["Semua", "Kering", "Frozen", "Minuman"].map((kat) {
+                        bool isSelected = toppingC.selectedCategory.value == kat;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            label: Text(kat, style: GoogleFonts.poppins(fontSize: 12)),
+                            selected: isSelected,
+                            onSelected: (_) =>
+                                toppingC.filterData(searchC.text, kat),
+                            selectedColor: const Color(0xFFC62828),
+                            backgroundColor: const Color(0xFFEBEBEB),
+                            labelStyle: GoogleFonts.poppins(
+                              color: isSelected ? Colors.white : Colors.black87,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10)),
+                            side: BorderSide.none,
+                            showCheckmark: false,
+                            visualDensity: VisualDensity.compact, // Mengurangi padding internal chip
+                          ),
+                        );
+                      }).toList(),
+                    )),
+              ),
+            ],
           ),
         ),
-         // 3. Kategori Chips
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-          child: Obx(() => Row(
-                children: ["Semua", "Kering", "Frozen", "Minuman"].map((kat) {
-                  bool isSelected = toppingC.selectedCategory.value == kat;
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(kat),
-                      selected: isSelected,
-                      onSelected: (_) => toppingC.filterData(searchC.text, kat),
-                      selectedColor: const Color(0xFFC62828),
-                      checkmarkColor: Colors.white,
-                      labelStyle: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black87,
-                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      ),
-                      backgroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
-                  );
-                }).toList(),
-              )),
-        ),
+
+        // --- TOMBOL TAMBAH ---
         Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.all(12),
           child: ElevatedButton.icon(
             onPressed: () => Get.to(() => const AddToppingPage()),
-            icon: const Icon(Icons.add, color: Colors.white),
-            label: const Text(
-              "Tambah Topping",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            ),
+            icon: const Icon(Icons.add_circle, color: Colors.white, size: 20),
+            label: Text("Tambah Topping",
+                style: GoogleFonts.poppins(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold)),
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFFC62828),
-              minimumSize: const Size(double.infinity, 50),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              minimumSize: const Size(double.infinity, 45),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
             ),
           ),
         ),
 
-        // 4. List Topping
+        // --- LIST TOPPING ---
         Expanded(
           child: Obx(() {
             if (toppingC.isLoading.value) {
-              return const Center(child: CircularProgressIndicator(color: Color(0xFFC62828)));
+              return const Center(
+                  child: CircularProgressIndicator(color: Color(0xFFC62828)));
             }
-
             if (toppingC.filteredTopping.isEmpty) {
               return const Center(child: Text("Topping tidak ditemukan"));
             }
 
             return ListView.builder(
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               itemCount: toppingC.filteredTopping.length,
               itemBuilder: (context, index) {
                 final item = toppingC.filteredTopping[index];
                 bool isHabis = (item.stok == 0);
 
                 return Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
-                  padding: const EdgeInsets.all(12),
+                  margin: const EdgeInsets.only(bottom: 10),
+                  padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.03),
-                        blurRadius: 10,
-                        offset: const Offset(0, 5),
-                      )
-                    ],
+                    border: isHabis
+                        ? Border.all(color: Colors.orange.shade300, width: 1.5)
+                        : null,
                   ),
-                  child: Column(
+                  child: Row(
                     children: [
-                      Row(
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
-                            child: item.imageUrl != null
-                                ? Image.network(
-                                    item.imageUrl!,
-                                    width: 85, height: 85, fit: BoxFit.cover,
-                                    errorBuilder: (c, e, s) => Container(width: 85, height: 85, color: Colors.grey[100], child: const Icon(Icons.image_not_supported)),
-                                  )
-                                : Container(width: 85, height: 85, color: Colors.grey[100], child: const Icon(Icons.image)),
-                          ),
-                          const SizedBox(width: 15),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                      // Gambar Adaptif
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(10),
+                        child: item.imageUrl != null
+                            ? Image.network(item.imageUrl!,
+                                width: 60, height: 60, fit: BoxFit.cover)
+                            : Container(
+                                width: 60,
+                                height: 60,
+                                color: Colors.grey[200],
+                                child: const Icon(Icons.image, size: 30)),
+                      ),
+                      const SizedBox(width: 12),
+                      
+                      // Konten Teks yang fleksibel (Mencegah Overflow)
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              item.namaTopping,
+                              style: GoogleFonts.poppins(
+                                  fontSize: 14, fontWeight: FontWeight.bold),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 2),
+                            // Membungkus Row harga/stok dengan Wrap agar aman jika teks panjang
+                            Wrap(
+                              crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
-                                Text(item.kategori.toUpperCase(), style: const TextStyle(fontSize: 10, color: Colors.blue, fontWeight: FontWeight.bold)),
-                                Text(item.namaTopping, style: const TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text("HARGA JUAL", style: TextStyle(fontSize: 10, color: Colors.grey)),
-                                          Text("Rp ${item.harga}", style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFFC62828))),
-                                        ],
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          const Text("STOK TERSEDIA", style: TextStyle(fontSize: 10, color: Colors.grey)),
-                                          Text(isHabis ? "Habis" : "${item.stok} pcs", style: TextStyle(fontWeight: FontWeight.bold, color: isHabis ? Colors.red : Colors.black87)),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
+                                Text(
+                                  "Rp ${item.harga}",
+                                  style: TextStyle(
+                                      color: Color(0xFFC62828),
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 12),
+                                ),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 4),
+                                  child: Icon(Icons.circle,
+                                      size: 3, color: Colors.grey),
+                                ),
+                                Text(
+                                  "Stok: ${isHabis ? 'Habis' : item.stok}",
+                                  style: TextStyle(
+                                      color: isHabis
+                                          ? Colors.red
+                                          : Colors.grey[600],
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 12),
                                 ),
                               ],
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      const Divider(height: 20),
+
+                      // Tombol Aksi
                       Row(
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          IconButton(
-                            onPressed: () => Get.to(() => const EditToppingPage(), arguments: item),
-                            icon: const Icon(Icons.edit_note, color: Colors.grey),
-                          ),
-                          IconButton(
-                            onPressed: () => _konfirmasiHapus(context, item.id!, item.namaTopping, item.imageUrl),
-                            icon: const Icon(Icons.delete_outline, color: Colors.grey),
-                          ),
+                          _buildActionButton(Icons.edit, 
+                              () => Get.to(() => const EditToppingPage(), arguments: item)),
+                          const SizedBox(width: 6),
+                          _buildActionButton(Icons.delete, 
+                              () => _konfirmasiHapus(context, item.id!, item.namaTopping, item.imageUrl), 
+                              isDelete: true),
                         ],
                       )
                     ],
@@ -254,12 +270,30 @@ class ToppingPage extends StatelessWidget {
     );
   }
 
-  void _konfirmasiHapus(BuildContext context, String id, String nama, String? url) {
+  Widget _buildActionButton(IconData icon, VoidCallback onTap,
+      {bool isDelete = false}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(20),
+      child: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: const BoxDecoration(
+          color: Color(0xFFF1F1F1),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 18, color: Colors.black87),
+      ),
+    );
+  }
+
+  void _konfirmasiHapus(
+      BuildContext context, String id, String nama, String? url) {
     Get.defaultDialog(
-      title: "Hapus Topping",
-      middleText: "Yakin ingin menghapus $nama?",
-      textConfirm: "Ya, Hapus",
-      textCancel: "Batal",
+      title: "Hapus",
+      titleStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
+      middleText: "Hapus $nama?",
+      textConfirm: "Ya",
+      textCancel: "Tidak",
       confirmTextColor: Colors.white,
       buttonColor: const Color(0xFFC62828),
       onConfirm: () {
@@ -271,13 +305,13 @@ class ToppingPage extends StatelessWidget {
 
   void _showLogoutDialog(BuildContext context) {
     Get.defaultDialog(
-      title: "Konfirmasi Keluar",
-      middleText: "Apakah Anda yakin ingin keluar?",
+      title: "Keluar",
+      middleText: "Yakin ingin keluar?",
       textCancel: "Batal",
-      textConfirm: "Ya, Keluar",
+      textConfirm: "Ya",
       confirmTextColor: Colors.white,
       buttonColor: const Color(0xFFC62828),
-      onConfirm: () => Get.offAll(LoginPage()),
+      onConfirm: () => Get.offAll(const LoginPage()),
     );
   }
 }

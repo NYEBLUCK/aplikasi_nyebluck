@@ -57,7 +57,7 @@ class AuthController extends GetxController {
       Get.snackbar(
         "Login Gagal", 
         "Silahkan periksa kembali email dan password anda",
-        backgroundColor: const Color(0xFFC62828),
+        backgroundColor: const Color.fromARGB(255, 139, 0, 0),
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
         margin: const EdgeInsets.all(15),

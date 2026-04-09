@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'topping_controller.dart';
+import '../pages/kasir_page.dart';
 
 class KasirController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -76,7 +77,7 @@ class KasirController extends GetxController {
         'cashier_id': userId,
         'nama_pembeli': namaPembeli.value.isEmpty ? "Pelanggan" : namaPembeli.value,
         'level_pedas': levelPedas.value,
-        'metode': metodePembayaran.value, // Pastikan lowercase (tunai/qris)
+        'metode': metodePembayaran.value, 
         'total_harga': totalBayar,
         'created_at': DateTime.now().toIso8601String(),
       });
@@ -92,20 +93,26 @@ class KasirController extends GetxController {
             .match({'id': id});
       }
 
-      // 4. Reset State Transaksi
+      // --- LOGIKA SETELAH BERHASIL ---
+
+      // 4. Reset State Transaksi (PENTING: agar keranjang kosong kembali)
       cart.clear();
       namaPembeli.value = "";
       levelPedas.value = 0;
       metodePembayaran.value = "tunai";
       
-      // Tutup Bottom Sheet Checkout
-      if (Get.isBottomSheetOpen ?? false) Get.back();
+      // 5. Kembali ke Kasir Page
+      // offAll akan menghapus semua halaman sebelumnya dari memory, 
+      // sehingga user tidak bisa menekan tombol 'back' untuk kembali ke halaman pembayaran.
+      // Jika kamu tidak menggunakan named routes, gunakan: Get.offAll(() => KasirPage());
+      Get.offAll(() => KasirPage());
 
-      // Refresh data history agar langsung muncul di tab riwayat
+      // 6. Refresh data history untuk tab riwayat
       fetchHistoryToday();
 
+      // 7. Tampilkan feedback sukses
       Get.snackbar("Sukses", "Transaksi Berhasil Disimpan!", 
-          backgroundColor: Colors.green, colorText: Colors.white);
+          backgroundColor: Colors.green, colorText: Colors.white, snackPosition: SnackPosition.TOP);
           
     } catch (e) {
       debugPrint("Error Proses Bayar: $e");

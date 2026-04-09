@@ -7,7 +7,6 @@ class ToppingController extends GetxController {
   final supabase = Supabase.instance.client;
 
   var currentIndex = 0.obs;
-
   var allTopping = <ToppingModel>[].obs;
   var filteredTopping = <ToppingModel>[].obs;
   var selectedCategory = "Semua".obs;
@@ -38,6 +37,7 @@ class ToppingController extends GetxController {
     }
   }
 
+  // --- LOGIKA FILTER & SEARCH ---
   void filterData(String query, String kategori) {
     selectedCategory.value = kategori;
     var hasil = allTopping.where((item) {
@@ -52,13 +52,26 @@ class ToppingController extends GetxController {
     filteredTopping.value = hasil;
   }
 
+  // --- LOGIKA VALIDASI DUPLIKAT ---
+  // Gunakan excludeId saat Update agar tidak bentrok dengan nama dirinya sendiri
+  bool isNamaDuplikat(String nama, {String? excludeId}) {
+    return allTopping.any((t) =>
+        t.namaTopping.toLowerCase() == nama.toLowerCase() && t.id != excludeId);
+  }
+
   // --- LOGIKA SIMPAN (INSERT) ---
-  Future<void> simpanTopping(
+  Future<bool> simpanTopping(
       String nama, String kategori, int harga, int stok, XFile? foto) async {
     try {
       isLoading(true);
-      String? imageUrl;
 
+      // Cek duplikat lagi untuk keamanan lapis kedua
+      if (isNamaDuplikat(nama)) {
+        Get.snackbar("Gagal", "Nama topping '$nama' sudah ada!");
+        return false;
+      }
+
+      String? imageUrl;
       if (foto != null) {
         final fileName = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         final bytes = await foto.readAsBytes();
@@ -80,47 +93,51 @@ class ToppingController extends GetxController {
       ambilDataTopping();
       Get.back();
       Get.snackbar("Berhasil", "Topping $nama ditambahkan!");
+      return true;
     } catch (e) {
       Get.snackbar("Error", "Gagal Simpan: $e");
+      return false;
     } finally {
       isLoading(false);
     }
   }
 
   // --- LOGIKA PERBARUI (UPDATE) ---
-  Future<void> updateTopping(String id, String nama, String kategori, int harga,
+  Future<bool> updateTopping(String id, String nama, String kategori, int harga,
       int stok, String? urlLama, XFile? fotoBaru) async {
     try {
       isLoading.value = true;
+
+      if (isNamaDuplikat(nama, excludeId: id)) {
+        Get.snackbar("Gagal", "Nama topping '$nama' sudah digunakan!");
+        return false;
+      }
+
       String? finalImageUrl = urlLama;
 
-      // Cek apakah ada foto baru yang dipilih
       if (fotoBaru != null) {
-        // 1. Hapus foto lama dari Storage (jika ada dan valid)
+        // Hapus foto lama dari Storage jika ada
         if (urlLama != null && urlLama.contains('topping-images')) {
           try {
-            final String fileName = urlLama.split('/').last;
-            // Gunakan catchError agar proses tidak berhenti jika file tidak ditemukan di server
-            await supabase.storage.from('topping-images').remove([fileName]);
+            final String oldFileName = urlLama.split('/').last;
+            await supabase.storage.from('topping-images').remove([oldFileName]);
           } catch (e) {
-            print("Gagal hapus file lama (mungkin sudah terhapus): $e");
+            print("Info: File lama tidak ditemukan di storage.");
           }
         }
 
-        // 2. Upload foto baru
+        // Upload foto baru
         final bytes = await fotoBaru.readAsBytes();
         final String newFileName = "${DateTime.now().millisecondsSinceEpoch}.jpg";
         await supabase.storage
             .from('topping-images')
             .uploadBinary(newFileName, bytes);
         
-        // 3. Ambil URL baru
         finalImageUrl = supabase.storage
             .from('topping-images')
             .getPublicUrl(newFileName);
       }
 
-      // --- PROSES UPDATE DATABASE ---
       await supabase.from('toppings').update({
         'nama_topping': nama,
         'kategori': kategori,
@@ -132,9 +149,10 @@ class ToppingController extends GetxController {
       ambilDataTopping();
       Get.back();
       Get.snackbar("Berhasil", "Data $nama berhasil diperbarui!");
+      return true;
     } catch (e) {
       Get.snackbar("Error", "Gagal Update: $e");
-      print("Update Error: $e");
+      return false;
     } finally {
       isLoading.value = false;
     }
@@ -145,10 +163,10 @@ class ToppingController extends GetxController {
     try {
       isLoading(true);
       
-      // Hapus data dari tabel
+      // 1. Hapus data dari tabel database
       await supabase.from('toppings').delete().eq('id', id);
 
-      // Hapus foto dari Storage jika ada
+      // 2. Hapus foto dari Storage jika ada
       if (imageUrl != null && imageUrl.contains('topping-images')) {
         try {
           final fileName = imageUrl.split('/').last;

@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import '../controllers/topping_controller.dart';
 
@@ -13,23 +14,17 @@ class EditToppingPage extends StatefulWidget {
 }
 
 class _EditToppingPageState extends State<EditToppingPage> {
-  // Inisialisasi Controller
   final toppingC = Get.find<ToppingController>();
-
-  // Mengambil data yang dikirim via Get.arguments
   final dynamic toppingData = Get.arguments;
 
-  // Controller untuk Input Text
   late TextEditingController namaC;
   late TextEditingController hargaC;
   late TextEditingController stokC;
 
-  // State untuk Validasi Error
   String? errorNama;
   String? errorHarga;
   String? errorStok;
 
-  // State untuk Kategori dan Foto
   late String kategoriTerpilih;
   XFile? fotoBaru;
   Uint8List? webImage;
@@ -37,14 +32,12 @@ class _EditToppingPageState extends State<EditToppingPage> {
   @override
   void initState() {
     super.initState();
-    // Isi otomatis field dengan data lama
     namaC = TextEditingController(text: toppingData.namaTopping);
     hargaC = TextEditingController(text: toppingData.harga.toString());
     stokC = TextEditingController(text: toppingData.stok.toString());
     kategoriTerpilih = toppingData.kategori;
   }
 
-  // Fungsi ambil gambar
   Future<void> pickImage() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(
@@ -70,270 +63,275 @@ class _EditToppingPageState extends State<EditToppingPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF9F6F3),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: const Icon(Icons.arrow_back, color: Color(0xFFC62828)),
           onPressed: () => Get.back(),
         ),
-        title: const Text(
+        title: Text(
           "Edit Topping",
-          style: TextStyle(color: Color(0xFFC62828), fontWeight: FontWeight.bold),
+          style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.w900, fontSize: 18),
         ),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // --- AREA PREVIEW FOTO ---
-            Center(
-              child: GestureDetector(
-                onTap: pickImage,
-                child: Stack(
-                  children: [
-                    Container(
-                      width: 150,
-                      height: 150,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[200],
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey.shade300),
-                        image: _buildImageDecoration(),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: const BoxDecoration(
-                          color: Color(0xFFC62828),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.edit, color: Colors.white, size: 20),
-                      ),
-                    )
-                  ],
-                ),
-              ),
-            ),
-
-            const SizedBox(height: 30),
-
-            // --- INFORMASI TOPPING ---
-            Row(
-              children: [
-                Container(width: 4, height: 20, color: const Color(0xFFC62828)),
-                const SizedBox(width: 8),
-                const Text("Informasi Topping", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-            const Text("Nama Topping", style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: namaC,
-              onChanged: (val) => setState(() => errorNama = null),
-              decoration: InputDecoration(
-                errorText: errorNama,
-                filled: true,
-                fillColor: const Color(0xFFEBEBEB),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-            const Text("Kategori", style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 10,
-              children: ["Kering", "Frozen", "Minuman"].map((kat) {
-                bool isSelected = kategoriTerpilih == kat;
-                return ChoiceChip(
-                  label: Text(kat),
-                  selected: isSelected,
-                  onSelected: (val) {
-                    if (val) setState(() => kategoriTerpilih = kat);
-                  },
-                  selectedColor: const Color(0xFFC62828),
-                  labelStyle: TextStyle(color: isSelected ? Colors.white : Colors.black),
-                );
-              }).toList(),
-            ),
-
-            const SizedBox(height: 20),
-            const Text("Harga Jual", style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: hargaC,
-              onChanged: (val) => setState(() => errorHarga = null),
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                prefixText: "Rp ",
-                errorText: errorHarga,
-                filled: true,
-                fillColor: const Color(0xFFEBEBEB),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-
-            const SizedBox(height: 20),
-            const Text("Stok", style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 8),
-            TextField(
-              controller: stokC,
-              onChanged: (val) => setState(() => errorStok = null),
-              keyboardType: TextInputType.number,
-              decoration: InputDecoration(
-                suffixText: "Pcs",
-                errorText: errorStok,
-                filled: true,
-                fillColor: const Color(0xFFEBEBEB),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-              ),
-            ),
-
-            const SizedBox(height: 40),
-
-            // --- TOMBOL AKSI (SIMPAN & BATAL) ---
-            Row(
-              children: [
-                // Tombol Simpan Perubahan
-                Expanded(
-                  flex: 2,
-                  child: Obx(() => SizedBox(
-                        height: 55,
-                        child: ElevatedButton(
-                          onPressed: toppingC.isLoading.value
-                              ? null
-                              : () {
-                                  setState(() {
-                                    errorNama = null;
-                                    errorHarga = null;
-                                    errorStok = null;
-                                  });
-
-                                  bool isInvalid = false;
-
-                                  if (namaC.text.trim().isEmpty) {
-                                    setState(() => errorNama = "Wajib diisi");
-                                    isInvalid = true;
-                                  }
-
-                                  final hargaVal = int.tryParse(hargaC.text);
-                                  if (hargaVal == null || hargaVal < 500) {
-                                    setState(() => errorHarga = "Min Rp 500");
-                                    isInvalid = true;
-                                  }
-
-                                  final stokVal = int.tryParse(stokC.text);
-                                  if (stokVal == null) {
-                                    setState(() => errorStok = "Wajib angka");
-                                    isInvalid = true;
-                                  }
-
-                                  if (isInvalid) return;
-
-                                  // Eksekusi Update ke Controller
-                                  toppingC.updateTopping(
-                                    toppingData.id,
-                                    namaC.text.trim(),
-                                    kategoriTerpilih,
-                                    hargaVal!,
-                                    stokVal!,
-                                    toppingData.imageUrl,
-                                    fotoBaru,
-                                  );
-                                },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFFC62828),
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                            elevation: 2,
+      body: Column(
+        children: [
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // --- AREA PREVIEW FOTO ---
+                  Center(
+                    child: GestureDetector(
+                      onTap: pickImage,
+                      child: Stack(
+                        children: [
+                          Container(
+                            width: 140,
+                            height: 140,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEBEBEB),
+                              borderRadius: BorderRadius.circular(20),
+                              image: _buildImageDecoration(),
+                            ),
+                            child: _buildPlaceholder(),
                           ),
-                          child: toppingC.isLoading.value
-                              ? const SizedBox(
-                                  height: 20,
-                                  width: 20,
-                                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2),
-                                )
-                              : Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    Icon(Icons.save, color: Colors.white, size: 20),
-                                    SizedBox(width: 8),
-                                    Expanded(
-                                      child: Text(
-                                        "Simpan Perubahan",
-                                        style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                        ),
-                      )),
-                ),
-                
-                const SizedBox(width: 10),
-
-                // Tombol Batal
-                Expanded(
-                  flex: 1,
-                  child: SizedBox(
-                    height: 55,
-                    child: OutlinedButton(
-                      onPressed: () => Get.back(),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Color(0xFF8D6E63), width: 1.5),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: const [
-                          Icon(Icons.close, color: Color(0xFF8D6E63), size: 20),
-                          SizedBox(width: 4),
-                          Text(
-                            "Batal",
-                            style: TextStyle(color: Color(0xFF8D6E63), fontWeight: FontWeight.bold),
-                          ),
+                          Positioned(
+                            bottom: 5,
+                            right: 5,
+                            child: Container(
+                              padding: const EdgeInsets.all(6),
+                              decoration: const BoxDecoration(color: Color(0xFFC62828), shape: BoxShape.circle),
+                              child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                            ),
+                          )
                         ],
                       ),
                     ),
                   ),
+                  const SizedBox(height: 35),
+
+                  // --- SECTION TITLE ---
+                  Row(
+                    children: [
+                      Container(width: 5, height: 25, decoration: BoxDecoration(color: const Color(0xFFC62828), borderRadius: BorderRadius.circular(10))),
+                      const SizedBox(width: 10),
+                      Text("Informasi Topping", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w900)),
+                    ],
+                  ),
+
+                  const SizedBox(height: 25),
+                  _buildLabel("Nama Topping"),
+                  _buildTextField(namaC, "Nama Topping", errorNama, (v) => setState(() => errorNama = null)),
+
+                  const SizedBox(height: 20),
+                  _buildLabel("Kategori"),
+                  const SizedBox(height: 10),
+                  SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: ["Kering", "Frozen", "Minuman"].map((kat) {
+                        bool isSelected = kategoriTerpilih == kat;
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 10),
+                          child: ChoiceChip(
+                            label: Text(kat),
+                            selected: isSelected,
+                            onSelected: (val) {
+                              if (val) setState(() => kategoriTerpilih = kat);
+                            },
+                            selectedColor: const Color(0xFFC62828),
+                            backgroundColor: const Color(0xFFEBEBEB),
+                            labelStyle: GoogleFonts.poppins(color: isSelected ? Colors.white : Colors.black87, fontWeight: FontWeight.bold),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                            side: BorderSide.none,
+                            showCheckmark: false,
+                          ),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  _buildLabel("Harga Jual"),
+                  _buildTextField(hargaC, "0", errorHarga, (v) => setState(() => errorHarga = null), prefix: "Rp"),
+
+                  const SizedBox(height: 20),
+                  _buildLabel("Stok"),
+                  _buildTextField(stokC, "0", errorStok, (v) => setState(() => errorStok = null), suffix: "Pcs"),
+                  
+                  const SizedBox(height: 30),
+                ],
+              ),
+            ),
+          ),
+          
+          // --- FIXED BOTTOM BUTTONS (BATAL & SIMPAN) ---
+          Container(
+            padding: const EdgeInsets.fromLTRB(25, 15, 25, 30),
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, -2))],
+            ),
+            child: Row(
+              children: [
+                // Tombol Batal
+                Expanded(
+                  flex: 1,
+                  child: OutlinedButton.icon(
+                    onPressed: () => Get.back(),
+                    icon: const Icon(Icons.close, color: Color(0xFF8D6E63), size: 18),
+                    label: Text("Batal", style: GoogleFonts.poppins(color: Color(0xFF8D6E63), fontWeight: FontWeight.bold)),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: Color(0xFFEBEBEB), width: 2),
+                      backgroundColor: const Color(0xFFEBEBEB),
+                      minimumSize: const Size(0, 55),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 15),
+                // Tombol Simpan
+                Expanded(
+                  flex: 2,
+                  child: Obx(() => ElevatedButton.icon(
+                    onPressed: toppingC.isLoading.value ? null : _validateAndUpdate,
+                    icon: toppingC.isLoading.value ? const SizedBox.shrink() : const Icon(Icons.save_rounded, color: Colors.white),
+                    label: toppingC.isLoading.value 
+                        ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : Text("Simpan", style: GoogleFonts.poppins(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFC62828),
+                      minimumSize: const Size(0, 55),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                      elevation: 5,
+                      shadowColor: const Color(0xFFC62828).withOpacity(0.4),
+                    ),
+                  )),
                 ),
               ],
             ),
-            const SizedBox(height: 30),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  // Logika untuk menampilkan gambar (Prioritas: Foto Baru > Foto Lama > Kosong)
-  DecorationImage? _buildImageDecoration() {
-  if (kIsWeb && webImage != null) {
-    return DecorationImage(image: MemoryImage(webImage!), fit: BoxFit.cover);
-  } else if (!kIsWeb && fotoBaru != null) {
-    return DecorationImage(image: FileImage(File(fotoBaru!.path)), fit: BoxFit.cover);
-  } 
-  // GANTI .fotoUrl menjadi .imageUrl di bawah ini
-  else if (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty) {
-    return DecorationImage(image: NetworkImage(toppingData.imageUrl), fit: BoxFit.cover);
-  }
-  return null;
-}
+  // --- REUSABLE WIDGETS ---
 
-  @override
-  void dispose() {
-    namaC.dispose();
-    hargaC.dispose();
-    stokC.dispose();
-    super.dispose();
+  Widget _buildLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, left: 2),
+      child: Text(text, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14)),
+    );
   }
+
+  Widget _buildTextField(TextEditingController controller, String hint, String? error, Function(String)? onChanged, {String? prefix, String? suffix}) {
+    return TextField(
+      controller: controller,
+      onChanged: onChanged,
+      keyboardType: prefix != null || suffix != null ? TextInputType.number : TextInputType.text,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+      decoration: InputDecoration(
+        hintText: hint,
+        errorText: error,
+        prefixIcon: prefix != null 
+            ? Padding(
+                padding: const EdgeInsets.only(left: 12, right: 12), 
+                child: Text(prefix, style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.bold, fontSize: 16)),
+              ) 
+            : (suffix != null ? const SizedBox(width: 12) : null),
+        prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        suffixIcon: suffix != null
+            ? Padding(
+                padding: const EdgeInsets.only(right: 15, left: 8),
+                child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+                  Text(suffix, style: GoogleFonts.poppins(color: Colors.black54, fontWeight: FontWeight.bold, fontSize: 14)),
+                ]),
+              )
+            : null,
+        suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
+        filled: true,
+        fillColor: const Color(0xFFEBEBEB),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
+        contentPadding: EdgeInsets.symmetric(vertical: 18, horizontal: (prefix == null && suffix == null) ? 20 : 0),
+      ),
+    );
+  }
+
+  Widget? _buildPlaceholder() {
+    if (webImage == null && fotoBaru == null && (toppingData.imageUrl == null || toppingData.imageUrl.isEmpty)) {
+      return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey[600]),
+          const Text("AMBIL FOTO", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+        ],
+      );
+    }
+    return null;
+  }
+
+  DecorationImage? _buildImageDecoration() {
+    if (kIsWeb && webImage != null) {
+      return DecorationImage(image: MemoryImage(webImage!), fit: BoxFit.cover);
+    } else if (!kIsWeb && fotoBaru != null) {
+      return DecorationImage(image: FileImage(File(fotoBaru!.path)), fit: BoxFit.cover);
+    } else if (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty) {
+      return DecorationImage(image: NetworkImage(toppingData.imageUrl), fit: BoxFit.cover);
+    }
+    return null;
+  }
+
+  void _validateAndUpdate() async { // Tambahkan async
+  setState(() {
+    errorNama = null;
+    errorHarga = null;
+    errorStok = null;
+  });
+
+  bool isInvalid = false;
+  String namaInput = namaC.text.trim();
+
+  // 1. Validasi Kosong
+  if (namaInput.isEmpty) {
+    setState(() => errorNama = "Nama topping tidak boleh kosong");
+    isInvalid = true;
+  } 
+  // 2. Validasi Duplikat (Kecuali nama milik ID ini sendiri)
+  else if (toppingC.isNamaDuplikat(namaInput, excludeId: toppingData.id)) {
+    setState(() => errorNama = "Nama topping sudah ada, gunakan nama lain");
+    isInvalid = true;
+  }
+
+  final hargaVal = int.tryParse(hargaC.text);
+  if (hargaVal == null || hargaVal < 500) {
+    setState(() => errorHarga = "Min Rp 500");
+    isInvalid = true;
+  }
+
+  final stokVal = int.tryParse(stokC.text);
+  if (stokVal == null) {
+    setState(() => errorStok = "Wajib angka");
+    isInvalid = true;
+  }
+
+  if (isInvalid) return;
+
+  // Jalankan update
+  await toppingC.updateTopping(
+    toppingData.id,
+    namaInput,
+    kategoriTerpilih,
+    hargaVal!,
+    stokVal!,
+    toppingData.imageUrl,
+    fotoBaru,
+  );
+}
 }

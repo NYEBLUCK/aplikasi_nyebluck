@@ -129,4 +129,22 @@ class StaffController extends GetxController {
       Get.snackbar("Error", "Gagal mengubah status: $e");
     }
   }
+
+  Future<bool> cekEmailTersedia(String email) async {
+    try {
+      // Kita cek ke tabel profiles apakah email sudah terdaftar
+      final data = await supabase
+          .from('profiles')
+          .select('email')
+          .eq('email', email)
+          .maybeSingle();
+      
+      // Jika data null, berarti email BELUM ADA (Tersedia = true)
+      return data == null; 
+    } catch (e) {
+      print("Cek Email Error: $e");
+      // Jika error (misal koneksi), kita kembalikan false demi keamanan
+      return false; 
+    }
+  }
 }
