@@ -6,6 +6,7 @@ import '../pages/login_page.dart';
 import 'edit_topping_page.dart';
 import 'add_topping_page.dart';
 import 'staff_page.dart';
+import 'report_page.dart';
 
 class ToppingPage extends StatelessWidget {
   ToppingPage({super.key});
@@ -21,39 +22,39 @@ class ToppingPage extends StatelessWidget {
         title: Text(
           "NYEBLUCK",
           style: GoogleFonts.poppins(
-              color: Color(0xFFC62828),
+              color: Colors.white,
               fontWeight: FontWeight.w900,
               letterSpacing: 1),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFC62828), // Navbar atas merah
         elevation: 0,
         actions: [
-        IconButton(
-          onPressed: () => _showLogoutDialog(context),
-          icon: Container(
-            padding: const EdgeInsets.all(6), // Memberi ruang agar terlihat seperti lingkaran
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: const Color(0xFFC62828), // Outline merah
-                width: 1.5,
+          IconButton(
+            onPressed: () => _showLogoutDialog(context),
+            icon: Container(
+              padding: const EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 1.5,
+                ),
+              ),
+              child: const Icon(
+                Icons.logout_rounded,
+                color: Colors.white,
+                size: 18,
               ),
             ),
-            child: const Icon(
-              Icons.logout_rounded, // Icon Log Out
-              color: Color(0xFFC62828),
-              size: 18,
-            ),
           ),
-        ),
-        const SizedBox(width: 10),
-      ],
+          const SizedBox(width: 10),
+        ],
       ),
       body: Obx(() => IndexedStack(
             index: toppingC.currentIndex.value,
             children: [
               _buildToppingBody(context),
-              const Center(child: Text("Halaman Reports")),
+              ReportPage(),
               StaffPage(),
             ],
           )),
@@ -80,8 +81,6 @@ class ToppingPage extends StatelessWidget {
   Widget _buildToppingBody(BuildContext context) {
     return Column(
       children: [
-        // --- HEADER SECTION (Search & Chips) ---
-        // Menggunakan shrinkWrap agar tidak memakan tempat berlebih di layar kecil
         Container(
           color: Colors.white,
           child: Column(
@@ -95,7 +94,7 @@ class ToppingPage extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: "Cari topping...",
                     prefixIcon: const Icon(Icons.search, size: 20),
-                    isDense: true, // Membuat tinggi textfield lebih ringkas
+                    isDense: true,
                     filled: true,
                     fillColor: const Color(0xFFEBEBEB),
                     border: OutlineInputBorder(
@@ -128,7 +127,7 @@ class ToppingPage extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(10)),
                             side: BorderSide.none,
                             showCheckmark: false,
-                            visualDensity: VisualDensity.compact, // Mengurangi padding internal chip
+                            visualDensity: VisualDensity.compact,
                           ),
                         );
                       }).toList(),
@@ -137,8 +136,6 @@ class ToppingPage extends StatelessWidget {
             ],
           ),
         ),
-
-        // --- TOMBOL TAMBAH ---
         Padding(
           padding: const EdgeInsets.all(12),
           child: ElevatedButton.icon(
@@ -157,8 +154,6 @@ class ToppingPage extends StatelessWidget {
             ),
           ),
         ),
-
-        // --- LIST TOPPING ---
         Expanded(
           child: Obx(() {
             if (toppingC.isLoading.value) {
@@ -188,7 +183,6 @@ class ToppingPage extends StatelessWidget {
                   ),
                   child: Row(
                     children: [
-                      // Gambar Adaptif
                       ClipRRect(
                         borderRadius: BorderRadius.circular(10),
                         child: item.imageUrl != null
@@ -201,8 +195,6 @@ class ToppingPage extends StatelessWidget {
                                 child: const Icon(Icons.image, size: 30)),
                       ),
                       const SizedBox(width: 12),
-                      
-                      // Konten Teks yang fleksibel (Mencegah Overflow)
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,13 +208,12 @@ class ToppingPage extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
-                            // Membungkus Row harga/stok dengan Wrap agar aman jika teks panjang
                             Wrap(
                               crossAxisAlignment: WrapCrossAlignment.center,
                               children: [
                                 Text(
                                   "Rp ${item.harga}",
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       color: Color(0xFFC62828),
                                       fontWeight: FontWeight.bold,
                                       fontSize: 12),
@@ -232,12 +223,11 @@ class ToppingPage extends StatelessWidget {
                                   child: Icon(Icons.circle,
                                       size: 3, color: Colors.grey),
                                 ),
+                                // Logika Teks Stok Unlimited di Inventory
                                 Text(
-                                  "Stok: ${isHabis ? 'Habis' : item.stok}",
+                                  item.stok == -1 ? "Stok: Unlimited" : "Stok: ${isHabis ? 'Habis' : item.stok}",
                                   style: TextStyle(
-                                      color: isHabis
-                                          ? Colors.red
-                                          : Colors.grey[600],
+                                      color: item.stok == -1 ? Colors.green : (isHabis ? Colors.red : Colors.grey[600]),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12),
                                 ),
@@ -246,8 +236,6 @@ class ToppingPage extends StatelessWidget {
                           ],
                         ),
                       ),
-
-                      // Tombol Aksi
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -297,8 +285,8 @@ class ToppingPage extends StatelessWidget {
       confirmTextColor: Colors.white,
       buttonColor: const Color(0xFFC62828),
       onConfirm: () {
-        toppingC.hapusTopping(id, url);
         Get.back();
+        toppingC.hapusTopping(id, nama, url);
       },
     );
   }

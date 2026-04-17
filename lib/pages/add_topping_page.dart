@@ -322,10 +322,13 @@ class _AddToppingPageState extends State<AddToppingPage> {
   if (stokVal == null) {
     setState(() => errorStok = "Wajib diisi angka");
     isInvalid = true;
+  } else if (stokVal < -1) { 
+    // --- BARIS BARU UNTUK MENCEGAH MINUS SELAIN -1 ---
+    setState(() => errorStok = "Gunakan -1 untuk Unlimited");
+    isInvalid = true;
   }
 
   if (isInvalid) return;
-
   // Jalankan proses simpan jika valid
   await toppingC.simpanTopping(
     namaInput,

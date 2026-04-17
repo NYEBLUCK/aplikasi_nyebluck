@@ -319,6 +319,10 @@ class _EditToppingPageState extends State<EditToppingPage> {
   if (stokVal == null) {
     setState(() => errorStok = "Wajib angka");
     isInvalid = true;
+  } else if (stokVal < -1) { 
+    // --- BARIS BARU UNTUK MENCEGAH MINUS SELAIN -1 ---
+    setState(() => errorStok = "Gunakan -1 untuk Unlimited");
+    isInvalid = true;
   }
 
   if (isInvalid) return;

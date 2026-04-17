@@ -8,7 +8,6 @@ import 'pembayaran_page.dart';
 import 'history_page.dart';
 
 class KasirPage extends StatelessWidget {
-  // Menggunakan satu inisialisasi saja agar tidak boros memori
   final ToppingController toppingC = Get.put(ToppingController());
   final KasirController kasirCtrl = Get.put(KasirController());
   final TextEditingController searchC = TextEditingController();
@@ -23,11 +22,11 @@ class KasirPage extends StatelessWidget {
         title: Text(
           "NYEBLUCK",
           style: GoogleFonts.poppins(
-              color: const Color(0xFFC62828),
+              color: Colors.white,
               fontWeight: FontWeight.w900,
               letterSpacing: 1),
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: const Color(0xFFC62828), // Navbar atas merah
         elevation: 0,
         actions: [
           IconButton(
@@ -37,13 +36,13 @@ class KasirPage extends StatelessWidget {
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: const Color(0xFFC62828),
+                  color: Colors.white, // Border putih
                   width: 1.5,
                 ),
               ),
               child: const Icon(
                 Icons.logout_rounded,
-                color: Color(0xFFC62828),
+                color: Colors.white, // Icon putih
                 size: 18,
               ),
             ),
@@ -52,19 +51,18 @@ class KasirPage extends StatelessWidget {
         ],
       ),
 
-      // --- BODY BERGANTI SESUAI TAB ---
       body: Obx(() {
         if (kasirCtrl.tabIndex.value == 0) {
           return _buildKasirBody();
         } else {
-          return _buildHistoryBody();
+          return HistoryPage();
         }
       }),
 
-      // --- BOTTOM NAVIGATION BAR ---
       bottomNavigationBar: Obx(() => BottomNavigationBar(
-            selectedItemColor: const Color(0xFFC62828),
-            unselectedItemColor: Colors.grey,
+            backgroundColor: Colors.white, // Navbar bawah merah
+            selectedItemColor: const Color(0xFFC62828), // Icon aktif putih
+            unselectedItemColor: Colors.grey, // Icon tidak aktif putih redup
             currentIndex: kasirCtrl.tabIndex.value,
             type: BottomNavigationBarType.fixed,
             selectedLabelStyle:
@@ -80,13 +78,11 @@ class KasirPage extends StatelessWidget {
     );
   }
 
-  // --- KONTEN HALAMAN KASIR ---
   Widget _buildKasirBody() {
     return Stack(
       children: [
         Column(
           children: [
-            // Area Search dan Filter
             Container(
               color: Colors.white,
               child: Column(
@@ -147,7 +143,6 @@ class KasirPage extends StatelessWidget {
                 ],
               ),
             ),
-            // List Produk
             Expanded(
               child: Obx(() {
                 if (toppingC.isLoading.value) {
@@ -165,18 +160,12 @@ class KasirPage extends StatelessWidget {
             ),
           ],
         ),
-        // Sticky Button (Keranjang)
         Obx(() => kasirCtrl.cart.isNotEmpty
             ? Positioned(
                 bottom: 20, left: 16, right: 16, child: _buildStickyButton())
             : const SizedBox.shrink()),
       ],
     );
-  }
-
-  // --- KONTEN HALAMAN RIWAYAT ---
-  Widget _buildHistoryBody() {
-    return HistoryPage();
   }
 
   Widget _buildProductItem(dynamic topping) {
@@ -209,13 +198,16 @@ class KasirPage extends StatelessWidget {
                 Text(topping.namaTopping,
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16)),
-                Text(topping.stok > 0 ? "Stok: ${topping.stok}" : "Stok Habis",
+                // Logika Teks Stok Unlimited
+                Text(topping.stok == -1 
+                      ? "Stok: Unlimited" 
+                      : (topping.stok > 0 ? "Stok: ${topping.stok}" : "Stok Habis"),
                     style: TextStyle(
-                        color: topping.stok > 0 ? Colors.grey : Colors.red,
+                        color: topping.stok == -1 ? Colors.green : (topping.stok > 0 ? Colors.grey : Colors.red),
                         fontSize: 12)),
                 Text("Rp ${topping.harga}",
                     style: const TextStyle(
-                        color: Color(0xFFB71C1C), fontWeight: FontWeight.bold)),
+                        color: Color(0xFFC62828), fontWeight: FontWeight.bold)),
               ],
             ),
           ),
@@ -223,11 +215,11 @@ class KasirPage extends StatelessWidget {
             int qty = kasirCtrl.cart[topping.id] ?? 0;
             return qty == 0
                 ? ElevatedButton(
-                    onPressed: topping.stok > 0
+                    onPressed: (topping.stok > 0 || topping.stok == -1)
                         ? () => kasirCtrl.tambahKeKeranjang(topping.id)
                         : null,
                     style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFB71C1C),
+                        backgroundColor: const Color(0xFFC62828),
                         foregroundColor: Colors.white),
                     child: const Text("Tambah"),
                   )
@@ -240,12 +232,12 @@ class KasirPage extends StatelessWidget {
                       Text("$qty",
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       IconButton(
-                          onPressed: topping.stok > 0
+                          onPressed: (topping.stok > 0 || topping.stok == -1)
                               ? () => kasirCtrl.tambahKeKeranjang(topping.id)
                               : null,
                           icon: Icon(Icons.add_circle,
-                              color: topping.stok > 0
-                                  ? const Color(0xFFB71C1C)
+                              color: (topping.stok > 0 || topping.stok == -1)
+                                  ? const Color(0xFFC62828)
                                   : Colors.grey)),
                     ],
                   );
@@ -259,7 +251,7 @@ class KasirPage extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => _showCheckoutSheet(),
       style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFB71C1C),
+          backgroundColor: const Color(0xFFC62828),
           padding: const EdgeInsets.all(16),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),

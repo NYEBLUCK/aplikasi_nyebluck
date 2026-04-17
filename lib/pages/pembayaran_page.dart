@@ -45,14 +45,56 @@ class PembayaranPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 25),
+            
             _sectionLabel("PILIH LEVEL PEDAS"),
             _buildLevelPicker(),
             const SizedBox(height: 25),
+            
             _buildOrderDetailCard(),
             const SizedBox(height: 25),
+            
             _sectionLabel("PILIH METODE PEMBAYARAN"),
             _buildPaymentMethodPicker(),
-            const SizedBox(height: 120), // Spacer agar tidak tertutup bottom bar
+
+            // --- WIDGET INPUT UANG TUNAI DENGAN VALIDASI ERROR ---
+            Obx(() {
+              if (kasirCtrl.metodePembayaran.value == 'tunai') {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 25),
+                    _sectionLabel("NOMINAL UANG DITERIMA (CASH)"),
+                    TextField(
+                      keyboardType: TextInputType.number,
+                      onChanged: (v) {
+                        // BARU: Hilangkan peringatan error saat user mulai mengetik ulang
+                        kasirCtrl.errorUangBayar.value = ""; 
+                        
+                        String cleanNumber = v.replaceAll(RegExp(r'[^0-9]'), '');
+                        kasirCtrl.uangBayar.value = int.tryParse(cleanNumber) ?? 0;
+                      },
+                      decoration: InputDecoration(
+                        hintText: "Contoh: 50000",
+                        filled: true,
+                        fillColor: const Color(0xFFEBEBEB),
+                        prefixText: "Rp ",
+                        // BARU: Menampilkan pesan error di bawah TextField
+                        errorText: kasirCtrl.errorUangBayar.value.isEmpty 
+                            ? null 
+                            : kasirCtrl.errorUangBayar.value, 
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(15),
+                            borderSide: BorderSide.none),
+                      ),
+                    ),
+                  ],
+                );
+              }
+              return const SizedBox.shrink(); 
+            }),
+            // ------------------------------------
+
+            const SizedBox(height: 120), 
           ],
         ),
       ),
@@ -69,7 +111,6 @@ class PembayaranPage extends StatelessWidget {
     );
   }
 
-  // --- PICKER LEVEL PEDAS ---
   Widget _buildLevelPicker() {
     return Obx(() => Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -83,17 +124,10 @@ class PembayaranPage extends StatelessWidget {
                 height: 60,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: isSelected
-                      ? const Color(0xFFFFC107)
-                      : const Color(0xFFEBEBEB),
+                  color: isSelected ? const Color(0xFFFFC107) : const Color(0xFFEBEBEB),
                   shape: BoxShape.circle,
                   boxShadow: isSelected
-                      ? [
-                          BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 10,
-                              offset: const Offset(0, 5))
-                        ]
+                      ? [const BoxShadow(color: Colors.black12, blurRadius: 10, offset: Offset(0, 5))]
                       : [],
                 ),
                 child: Text("$index",
@@ -107,7 +141,6 @@ class PembayaranPage extends StatelessWidget {
         ));
   }
 
-  // --- CARD DETAIL PESANAN DINAMIS ---
   Widget _buildOrderDetailCard() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -121,28 +154,21 @@ class PembayaranPage extends StatelessWidget {
             children: [
               const Icon(Icons.receipt_long, color: Color(0xFFC62828)),
               const SizedBox(width: 10),
-              Text("Detail Pesanan",
-                  style: GoogleFonts.poppins(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
+              Text("Detail Pesanan", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
             ],
           ),
           const Divider(height: 30),
           
-          // Looping Produk dari Keranjang
           Obx(() {
             if (kasirCtrl.cart.isEmpty) {
               return const Text("Keranjang Kosong");
             }
             return Column(
               children: kasirCtrl.cart.entries.map((entry) {
-                // Mencari data topping berdasarkan ID yang ada di cart
-                final produk = toppingCtrl.allTopping
-                    .firstWhere((t) => t.id == entry.key);
+                final produk = toppingCtrl.allTopping.firstWhere((t) => t.id == entry.key);
                 int qty = entry.value;
                 int subtotalItem = produk.harga * qty;
-
-                return _orderItem(
-                    produk.namaTopping, "${qty}x", "Rp $subtotalItem", produk.kategori ?? "Topping");
+                return _orderItem(produk.namaTopping, "${qty}x", "Rp $subtotalItem", produk.kategori ?? "Topping");
               }).toList(),
             );
           }),
@@ -151,12 +177,9 @@ class PembayaranPage extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text("Subtotal",
-                  style:
-                      GoogleFonts.poppins(fontSize: 16, color: Colors.black54)),
+              Text("Subtotal", style: GoogleFonts.poppins(fontSize: 16, color: Colors.black54)),
               Obx(() => Text("Rp ${kasirCtrl.totalBayar}",
-                  style: GoogleFonts.poppins(
-                      fontSize: 18, fontWeight: FontWeight.w900))),
+                  style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.w900))),
             ],
           )
         ],
@@ -173,10 +196,8 @@ class PembayaranPage extends StatelessWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("$title $qty",
-                  style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
-              Text(category,
-                  style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              Text("$title $qty", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+              Text(category, style: const TextStyle(fontSize: 12, color: Colors.grey)),
             ],
           ),
           Text(price, style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
@@ -185,7 +206,6 @@ class PembayaranPage extends StatelessWidget {
     );
   }
 
-  // --- PICKER METODE PEMBAYARAN ---
   Widget _buildPaymentMethodPicker() {
     return Obx(() => Row(
           children: [
@@ -194,7 +214,10 @@ class PembayaranPage extends StatelessWidget {
                 label: "Tunai",
                 icon: Icons.payments_outlined,
                 isSelected: kasirCtrl.metodePembayaran.value == "tunai",
-                onTap: () => kasirCtrl.metodePembayaran.value = "tunai",
+                onTap: () {
+                  kasirCtrl.metodePembayaran.value = "tunai";
+                  kasirCtrl.errorUangBayar.value = ""; // Reset error jika ganti metode
+                },
               ),
             ),
             const SizedBox(width: 15),
@@ -203,7 +226,10 @@ class PembayaranPage extends StatelessWidget {
                 label: "QRIS",
                 icon: Icons.qr_code_scanner_rounded,
                 isSelected: kasirCtrl.metodePembayaran.value == "qris",
-                onTap: () => kasirCtrl.metodePembayaran.value = "qris",
+                onTap: () {
+                  kasirCtrl.metodePembayaran.value = "qris";
+                  kasirCtrl.errorUangBayar.value = ""; // Reset error jika ganti metode
+                },
               ),
             ),
           ],
@@ -230,9 +256,7 @@ class PembayaranPage extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: isSelected
-                  ? const Color(0xFFC62828).withOpacity(0.1)
-                  : Colors.black.withOpacity(0.05),
+              color: isSelected ? const Color(0xFFC62828).withOpacity(0.1) : Colors.black.withOpacity(0.05),
               blurRadius: 10,
               offset: const Offset(0, 5),
             )
@@ -240,9 +264,7 @@ class PembayaranPage extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Icon(icon,
-                size: 35,
-                color: isSelected ? const Color(0xFFC62828) : Colors.grey),
+            Icon(icon, size: 35, color: isSelected ? const Color(0xFFC62828) : Colors.grey),
             const SizedBox(height: 10),
             Text(label,
                 style: GoogleFonts.poppins(
@@ -254,7 +276,6 @@ class PembayaranPage extends StatelessWidget {
     );
   }
 
-  // --- BOTTOM ACTION BAR ---
   Widget _buildBottomAction() {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -270,13 +291,9 @@ class PembayaranPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               const Text("TOTAL BAYAR",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 12,
-                      color: Colors.grey)),
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: Colors.grey)),
               Obx(() => Text("Rp ${kasirCtrl.totalBayar}",
-                  style: GoogleFonts.poppins(
-                      fontSize: 24, fontWeight: FontWeight.w900))),
+                  style: GoogleFonts.poppins(fontSize: 24, fontWeight: FontWeight.w900))),
             ],
           ),
           const SizedBox(height: 20),
@@ -290,28 +307,22 @@ class PembayaranPage extends StatelessWidget {
                       foregroundColor: Colors.black,
                       minimumSize: const Size(0, 55),
                       elevation: 0,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15))),
-                  child: const Text("BATAL",
-                      style: TextStyle(fontWeight: FontWeight.bold)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
+                  child: const Text("BATAL", style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(width: 15),
               Expanded(
                 child: Obx(() => ElevatedButton(
-                      onPressed: kasirCtrl.isLoading.value
-                          ? null
-                          : () => kasirCtrl.prosesPembayaran(),
+                      onPressed: kasirCtrl.isLoading.value ? null : () => kasirCtrl.prosesPembayaran(),
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFFC62828),
                           foregroundColor: Colors.white,
                           minimumSize: const Size(0, 55),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(15))),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                       child: kasirCtrl.isLoading.value
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text("BAYAR",
-                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          : const Text("BAYAR", style: TextStyle(fontWeight: FontWeight.bold)),
                     )),
               ),
             ],

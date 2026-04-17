@@ -17,7 +17,7 @@ class StaffPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF9F6F3),
       body: Column(
         children: [
-          // 2. Search Bar dengan gaya rounded
+          // 2. Search Bar
           Padding(
             padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
             child: TextField(
@@ -38,7 +38,7 @@ class StaffPage extends StatelessWidget {
             ),
           ),
 
-          // 3. Tombol Tambah Pekerja (Warna Merah Utama)
+          // 3. Tombol Tambah Pekerja
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: ElevatedButton.icon(
@@ -125,7 +125,6 @@ class StaffPage extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 6),
-                    // Tag Status AKTIF sesuai image_c04199.png
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                       decoration: BoxDecoration(
@@ -145,17 +144,54 @@ class StaffPage extends StatelessWidget {
                   ],
                 ),
               ),
-              // Menu Titik Tiga
-              IconButton(
-                onPressed: () => _showActionMenu(context, staff),
+              // OVERFLOW MENU (TITIK TIGA)
+              PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.grey),
-                constraints: const BoxConstraints(),
-                padding: EdgeInsets.zero,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                onSelected: (String value) {
+                  if (value == 'edit') {
+                    _dialogEditStaff(context, staff);
+                  } else if (value == 'toggle') {
+                    _konfirmasiToggle(staff);
+                  }
+                },
+                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                  PopupMenuItem<String>(
+                    value: 'edit',
+                    child: Row(
+                      children: [
+                        const Icon(Icons.edit_outlined, size: 20, color: Colors.black87),
+                        const SizedBox(width: 12),
+                        Text("Edit Data Pekerja", style: GoogleFonts.poppins(fontSize: 13)),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem<String>(
+                    value: 'toggle',
+                    child: Row(
+                      children: [
+                        Icon(
+                          staff.isActive ? Icons.person_off_outlined : Icons.person_outline, 
+                          size: 20, 
+                          color: staff.isActive ? Colors.red : Colors.green
+                        ),
+                        const SizedBox(width: 12),
+                        Text(
+                          staff.isActive ? "Nonaktifkan Akun" : "Aktifkan Kembali", 
+                          style: GoogleFonts.poppins(
+                            fontSize: 13, 
+                            color: staff.isActive ? Colors.red : Colors.green
+                          )
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               )
             ],
           ),
           const SizedBox(height: 20),
-          // Baris Informasi dengan Ikon Halus
           _infoRow(Icons.email, staff.email),
           _infoRow(Icons.phone, staff.nomorTelpon),
           _infoRow(Icons.location_on, staff.alamat),
@@ -186,52 +222,12 @@ class StaffPage extends StatelessWidget {
     );
   }
 
-  void _showActionMenu(BuildContext context, StaffModel staff) {
-    Get.bottomSheet(
-      Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.edit_outlined),
-              title: const Text("Edit Data Pekerja"),
-              onTap: () {
-                Get.back();
-                _dialogEditStaff(context, staff);
-              },
-            ),
-            ListTile(
-              leading: Icon(
-                staff.isActive ? Icons.person_off_outlined : Icons.person_outline,
-                color: staff.isActive ? Colors.red : Colors.green,
-              ),
-              title: Text(
-                staff.isActive ? "Nonaktifkan Akun" : "Aktifkan Kembali",
-                style: GoogleFonts.poppins(color: staff.isActive ? Colors.red : Colors.green),
-              ),
-              onTap: () {
-                Get.back();
-                _konfirmasiToggle(staff);
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   // Dialog Edit Data
   void _dialogEditStaff(BuildContext context, StaffModel staff) {
     final namaC = TextEditingController(text: staff.namaLengkap);
     final telpC = TextEditingController(text: staff.nomorTelpon);
     final alamatC = TextEditingController(text: staff.alamat);
 
-    // Variabel untuk menampung pesan error
     String? errorNama;
     String? errorTelp;
     String? errorAlamat;
@@ -248,13 +244,9 @@ class StaffPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                "Edit Data Pekerja",
-                style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
+              Text("Edit Data Pekerja", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               
-              // Field Nama
               TextField(
                 controller: namaC,
                 onChanged: (value) {
@@ -281,7 +273,6 @@ class StaffPage extends StatelessWidget {
               ),
               const SizedBox(height: 15),
 
-              // Field Telepon
               TextField(
                 controller: telpC,
                 keyboardType: TextInputType.phone,
@@ -294,7 +285,6 @@ class StaffPage extends StatelessWidget {
               ),
               const SizedBox(height: 15),
 
-              // Field Alamat
               TextField(
                 controller: alamatC,
                 maxLines: 2,
@@ -309,7 +299,6 @@ class StaffPage extends StatelessWidget {
 
               ElevatedButton(
                 onPressed: () {
-                  // LOGIKA VALIDASI MODEL "isInvalid"
                   bool isInvalid = false;
 
                   setModalState(() {
@@ -317,13 +306,11 @@ class StaffPage extends StatelessWidget {
                     errorTelp = null;
                     errorAlamat = null;
 
-                    // 1. Validasi Nama
                     if (namaC.text.trim().isEmpty) {
                       errorNama = "Nama lengkap wajib diisi";
                       isInvalid = true;
                     }
 
-                    // 2. Validasi Telepon
                     String telp = telpC.text.trim();
                     if (telp.isEmpty) {
                       errorTelp = "Nomor telepon wajib diisi";
@@ -333,14 +320,12 @@ class StaffPage extends StatelessWidget {
                       isInvalid = true;
                     }
 
-                    // 3. Validasi Alamat
                     if (alamatC.text.trim().isEmpty) {
                       errorAlamat = "Alamat wajib diisi";
                       isInvalid = true;
                     }
                   });
 
-                  // Eksekusi jika tidak ada yang invalid
                   if (!isInvalid) {
                     staffC.updateStaff(
                       staff.id!,
@@ -355,10 +340,7 @@ class StaffPage extends StatelessWidget {
                   minimumSize: const Size(double.infinity, 50),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                child: Text(
-                  "Simpan Perubahan",
-                  style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold),
-                ),
+                child: Text("Simpan Perubahan", style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 10),
             ],
@@ -378,10 +360,11 @@ class StaffPage extends StatelessWidget {
       textConfirm: "Ya, Ubah",
       textCancel: "Batal",
       confirmTextColor: Colors.white,
-      buttonColor: staff.isActive ? const Color(0xFFC62828) : const Color(0xFFC62828),
+      buttonColor: const Color(0xFFC62828),
       onConfirm: () {
+        // Penting: Tutup dialog konfirmasi (pertanyaan Yakin?) DULU, baru eksekusi
+        Get.back(); 
         staffC.toggleStatusStaff(staff.id!, staff.isActive);
-        Get.back();
       },
     );
   }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:intl/intl.dart'; 
+import 'package:intl/intl.dart';
 import '../controllers/kasir_controller.dart';
+import 'nota_preview_page.dart'; // PASTI KAN FILE INI SUDAH ADA & LOKASI SESUAI
 
 class HistoryPage extends StatelessWidget {
   final KasirController kasirCtrl = Get.find<KasirController>();
@@ -37,8 +38,7 @@ class HistoryPage extends StatelessWidget {
             child: Obx(() {
               if (kasirCtrl.isLoading.value) {
                 return const Center(
-                  child: CircularProgressIndicator(color: Color(0xFFB71C1C))
-                );
+                    child: CircularProgressIndicator(color: Color(0xFFB71C1C)));
               }
 
               if (kasirCtrl.historyToday.isEmpty) {
@@ -68,9 +68,10 @@ class HistoryPage extends StatelessWidget {
   Widget _buildTransactionCard(Map<String, dynamic> data) {
     final DateTime createdAt = DateTime.parse(data['created_at']).toLocal();
     final String timeFormatted = DateFormat('HH:mm').format(createdAt);
-    
-    // Format ID Invoice: INV/Tahun/4-Digit-ID
-    final String invoiceId = "INV/${createdAt.year}/${data['id'].toString().substring(0, 4).toUpperCase()}";
+
+    // Memastikan format ID tidak error jika ID terlalu pendek
+    final String uuidSegment = data['id'].toString().split('-').first.toUpperCase();
+    final String invoiceId = "INV/${createdAt.year}/$uuidSegment";
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -95,13 +96,13 @@ class HistoryPage extends StatelessWidget {
               Text(
                 invoiceId,
                 style: const TextStyle(
-                  color: Color(0xFFB71C1C), 
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15
-                ),
+                    color: Color(0xFFB71C1C),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                 decoration: BoxDecoration(
                   color: const Color(0xFFE3F2FD),
                   borderRadius: BorderRadius.circular(20),
@@ -109,10 +110,9 @@ class HistoryPage extends StatelessWidget {
                 child: const Text(
                   "SELESAI",
                   style: TextStyle(
-                    color: Colors.blue, 
-                    fontSize: 10, 
-                    fontWeight: FontWeight.bold
-                  ),
+                      color: Colors.blue,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold),
                 ),
               ),
             ],
@@ -126,20 +126,18 @@ class HistoryPage extends StatelessWidget {
           Row(
             children: [
               Icon(
-                data['metode'].toString().toLowerCase() == 'qris' 
-                    ? Icons.qr_code_scanner 
-                    : Icons.payments_outlined,
-                size: 18, 
-                color: Colors.grey[600]
-              ),
+                  data['metode'].toString().toLowerCase() == 'qris'
+                      ? Icons.qr_code_scanner
+                      : Icons.payments_outlined,
+                  size: 18,
+                  color: Colors.grey[600]),
               const SizedBox(width: 8),
               Text(
                 data['metode'].toString().toUpperCase(),
                 style: TextStyle(
-                  color: Colors.grey[700], 
-                  fontWeight: FontWeight.w600,
-                  fontSize: 14
-                ),
+                    color: Colors.grey[700],
+                    fontWeight: FontWeight.w600,
+                    fontSize: 14),
               ),
             ],
           ),
@@ -150,37 +148,61 @@ class HistoryPage extends StatelessWidget {
               Text(
                 "Rp ${data['total_harga']}",
                 style: const TextStyle(
-                  fontSize: 20, 
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black
-                ),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black),
               ),
               Row(
                 children: [
                   OutlinedButton.icon(
-                    onPressed: () {
-                      // Fungsi cetak nota bisa diletakkan di sini
+                    onPressed: () async {
+                      try {
+                        // 1. Tampilkan loading spinner sementara data diambil
+                        Get.dialog(
+                          const Center(
+                              child: CircularProgressIndicator(
+                                  color: Color(0xFFB71C1C))),
+                          barrierDismissible: false,
+                        );
+
+                        // 2. Ambil detail item dari tabel transaction_items berdasarkan ID transaksi
+                        final itemsResponse = await kasirCtrl.supabase
+                            .from('transaction_items')
+                            .select()
+                            .eq('transaction_id', data['id']);
+
+                        // 3. Tutup loading dialog setelah data didapat
+                        Get.back();
+
+                        // 4. Ambil informasi nama/email kasir
+                        final String kasirEmail = kasirCtrl.supabase.auth.currentUser?.email?.split('@')[0] ?? "Kasir";
+
+                        // 5. Buka Halaman Preview Nota
+                        Get.to(() => NotaPreviewPage(
+                          transactionData: data,
+                          transactionItems: itemsResponse,
+                          cashierName: kasirEmail,
+                        ));
+                        
+                      } catch (e) {
+                        if (Get.isDialogOpen ?? false) Get.back();
+                        Get.snackbar("Gagal", "Tidak dapat memuat nota: $e",
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white);
+                      }
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFFB71C1C),
                       side: BorderSide(color: Colors.grey[300]!),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)
-                      ),
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 12, vertical: 8),
                     ),
-                    icon: const Icon(Icons.print_outlined, size: 18),
-                    label: const Text("Cetak Nota", style: TextStyle(fontSize: 13)),
+                    icon: const Icon(Icons.receipt_long, size: 18),
+                    label: const Text("Lihat Nota",
+                        style: TextStyle(fontSize: 13)),
                   ),
-                  const SizedBox(width: 10),
-                  Container(
-                    padding: const EdgeInsets.all(6),
-                    decoration: BoxDecoration(
-                      color: Colors.grey[100],
-                      shape: BoxShape.circle
-                    ),
-                    child: const Icon(Icons.chevron_right, color: Colors.grey, size: 20),
-                  )
                 ],
               ),
             ],
@@ -207,7 +229,8 @@ class HistoryPage extends StatelessWidget {
           const SizedBox(height: 16),
           const Text(
             "Mencapai Akhir Riwayat",
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
+            style:
+                TextStyle(fontWeight: FontWeight.bold, color: Colors.black54),
           ),
           const SizedBox(height: 4),
           const Text(
