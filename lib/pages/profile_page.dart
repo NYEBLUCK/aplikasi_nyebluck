@@ -27,7 +27,6 @@ class ProfilePage extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              // --- NAMA LENGKAP ---
               Text(
                 user.namaLengkap,
                 style: GoogleFonts.poppins(
@@ -40,7 +39,6 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // --- BADGE ROLE ---
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4), 
                 decoration: BoxDecoration(
@@ -60,7 +58,6 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 30), 
 
-              // --- INFO CARDS ---
               _buildInfoCard(Icons.email_rounded, "EMAIL", user.email),
               const SizedBox(height: 12), 
               _buildInfoCard(Icons.phone_rounded, "NOMOR TELEPON", user.nomorTelpon),
@@ -69,7 +66,6 @@ class ProfilePage extends StatelessWidget {
 
               const SizedBox(height: 35),
 
-              // --- TOMBOL EKSKLUSIF ADMIN: GANTI PASSWORD ---
               if (user.role.toLowerCase() == 'admin') ...[
                 SizedBox(
                   width: double.infinity,
@@ -96,7 +92,6 @@ class ProfilePage extends StatelessWidget {
                 const SizedBox(height: 15),
               ],
 
-              // --- TOMBOL KELUAR ---
               SizedBox(
                 width: double.infinity,
                 height: 48, 
@@ -185,7 +180,6 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
-  // --- DIALOG POP UP GANTI PASSWORD PRIBADI ---
   void _dialogGantiPasswordAdmin(BuildContext context, ProfileController profileC) {
     final passwordC = TextEditingController();
     bool isObscure = true;
@@ -205,7 +199,7 @@ class ProfilePage extends StatelessWidget {
             children: [
               Text("Ganti Password Anda", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 5),
-              Text("Masukkan password baru untuk mengamankan akun ini.", style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey)),
+              Text("Masukkan password baru", style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey)),
               const SizedBox(height: 25),
               
               TextField(
@@ -224,7 +218,6 @@ class ProfilePage extends StatelessWidget {
               ),
               const SizedBox(height: 25),
 
-              // --- TOMBOL BATAL & SIMPAN ---
               Row(
                 children: [
                   Expanded(
@@ -237,7 +230,7 @@ class ProfilePage extends StatelessWidget {
                         minimumSize: const Size(0, 50),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       ),
-                      child: Text("Batal", style: GoogleFonts.poppins(color: Colors.black, fontWeight: FontWeight.bold)),
+                      child: Text("Batal", style: GoogleFonts.poppins(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold)),
                     ),
                   ),
                   const SizedBox(width: 15),
@@ -249,8 +242,8 @@ class ProfilePage extends StatelessWidget {
                           errorPassword = null;
                           if (passwordC.text.trim().isEmpty) {
                             errorPassword = "Password tidak boleh kosong";
-                          } else if (passwordC.text.trim().length < 6) {
-                            errorPassword = "Password minimal 6 karakter";
+                          } else if (passwordC.text.trim().length < 8) {
+                            errorPassword = "Password minimal 8 karakter";
                           }
                         });
 

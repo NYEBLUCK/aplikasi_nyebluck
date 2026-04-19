@@ -42,8 +42,8 @@ class KasirPage extends StatelessWidget {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(1.0),
           child: Container(
-            color: Colors.grey[300], // Warna garis abu-abu halus
-            height: 1.0, // Ketebalan garis
+            color: Colors.grey[300],
+            height: 1.0,
           ),
         ),
       ),
@@ -62,12 +62,11 @@ class KasirPage extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(
-                // PENGATURAN GARIS TIPIS DI ATAS BOTTOM NAV
                 top: BorderSide(color: Colors.grey.shade300, width: 2.0), 
               ),
             ),
             child: BottomNavigationBar(
-              elevation: 0, // Wajib 0 agar garisnya terlihat bersih tanpa bayangan
+              elevation: 0,
               backgroundColor: Colors.white, 
               selectedItemColor: const Color(0xFFC62828), 
               unselectedItemColor: Colors.grey, 
@@ -157,9 +156,7 @@ class KasirPage extends StatelessWidget {
               ),
             ),
             
-            // --- GARIS PEMBATAS ANTARA FILTER DAN LIST TOPPING ---
             Divider(height: 1, thickness: 1, color: Colors.grey[300]),
-            // -----------------------------------------------------
 
             Expanded(
               child: Obx(() {
@@ -167,7 +164,6 @@ class KasirPage extends StatelessWidget {
                   return const Center(child: CircularProgressIndicator());
                 }
                 
-                // MENGGUNAKAN LISTVIEW.SEPARATED AGAR ADA GARIS TIAP ITEM
                 return ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 100),
                   itemCount: toppingC.filteredTopping.length,
@@ -194,7 +190,6 @@ class KasirPage extends StatelessWidget {
   }
 
   Widget _buildProductItem(dynamic topping) {
-    // Container tidak lagi diberikan gaya putih & border (Card dihapus)
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Row(
@@ -221,7 +216,6 @@ class KasirPage extends StatelessWidget {
                 Text(topping.namaTopping,
                     style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold, fontSize: 16)),
-                // --- BARU: Menggunakan logika takTerbatas dari database ---
                 Text(topping.takTerbatas 
                       ? "Stok: Tak Terbatas" 
                       : (topping.stok > 0 ? "Stok: ${topping.stok}" : "Stok Habis"),
@@ -238,7 +232,6 @@ class KasirPage extends StatelessWidget {
             int qty = kasirCtrl.cart[topping.id] ?? 0;
             return qty == 0
                 ? ElevatedButton(
-                    // --- BARU: Pengecekan takTerbatas (bukan -1) ---
                     onPressed: (topping.stok > 0 || topping.takTerbatas)
                         ? () => kasirCtrl.tambahKeKeranjang(topping.id)
                         : null,
@@ -257,7 +250,6 @@ class KasirPage extends StatelessWidget {
                       Text("$qty",
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       IconButton(
-                          // --- BARU: Pengecekan takTerbatas ---
                           onPressed: (topping.stok > 0 || topping.takTerbatas)
                               ? () => kasirCtrl.tambahKeKeranjang(topping.id)
                               : null,

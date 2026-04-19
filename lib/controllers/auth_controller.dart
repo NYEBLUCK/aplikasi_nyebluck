@@ -7,7 +7,6 @@ import '../pages/topping_page.dart';
 import '../pages/kasir_page.dart'; 
 import '../pages/login_page.dart';
 
-// --- WIDGET KHUSUS UNTUK ANIMASI 5 TITIK BERGERAK ---
 class DotLoadingIndicator extends StatefulWidget {
   const DotLoadingIndicator({super.key});
 
@@ -71,7 +70,6 @@ class _DotLoadingIndicatorState extends State<DotLoadingIndicator> with SingleTi
     );
   }
 }
-// --------------------------------------------------------
 
 class AuthController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -102,7 +100,7 @@ class AuthController extends GetxController {
         ),
       ),
       barrierDismissible: false,
-      barrierColor: Colors.black.withOpacity(0.7), 
+      barrierColor: Colors.black.withValues(alpha: 0.7), 
       name: "LoadingOverlay",
     );
   }
@@ -215,9 +213,9 @@ class AuthController extends GetxController {
 
         // --- UBAH ANIMASI LOGIN JADI GESER (SLIDE) ---
         if (userRole.value == 'admin') {
-          Get.offAll(() => ToppingPage(), transition: Transition.rightToLeftWithFade, duration: const Duration(milliseconds: 600));
+          Get.offAll(() => ToppingPage());
         } else {
-          Get.offAll(() => KasirPage(), transition: Transition.rightToLeftWithFade, duration: const Duration(milliseconds: 600));
+          Get.offAll(() => KasirPage()); 
         }
       }
     } catch (e) {
@@ -261,7 +259,6 @@ class AuthController extends GetxController {
     
     _hideLoadingOverlay(); 
     
-    // --- ANIMASI LOGOUT TETAP FADE IN ---
     Get.offAll(() => const LoginPage(), transition: Transition.fadeIn, duration: const Duration(milliseconds: 600));
   }
 }

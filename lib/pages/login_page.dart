@@ -27,7 +27,7 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
     
     _animController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 1500), // Total durasi 1.5 detik
+      duration: const Duration(milliseconds: 1500),
     );
 
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -98,7 +98,6 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
 
           Expanded(
             flex: 7,
-            // Bungkus dengan Slide dan Fade Transition
             child: SlideTransition(
               position: _slideCardAnimation,
               child: FadeTransition(

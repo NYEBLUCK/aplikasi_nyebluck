@@ -10,21 +10,16 @@ class PdfService {
     required String cashierName,
   }) async {
     
-    // --- 1. DEFINISIKAN FONT ICON DI SINI ---
     final iconFont = await PdfGoogleFonts.materialIcons();
-    // ----------------------------------------
 
     final pdf = pw.Document();
 
-    // Format Tanggal & Waktu
     final DateTime createdAt = DateTime.parse(transaction['created_at']).toLocal();
     
-    // 👇 FORMAT TANGGAL DIUBAH MENJADI STANDAR INDONESIA (HARI/BULAN/TAHUN) 👇
     final String dateFormatted = DateFormat('dd/MM/yyyy').format(createdAt);
     
     final String timeFormatted = DateFormat('HH:mm:ss').format(createdAt);
-    
-    // Potong ID agar tidak terlalu panjang (menyerupai struk asli)
+
     final String shortId = transaction['id'].toString().replaceAll('-', '').substring(0, 16).toUpperCase();
 
     pdf.addPage(
@@ -37,7 +32,6 @@ class PdfService {
             children: [
               pw.Center(
                 child: pw.Column(children: [
-                  // 2. GUNAKAN FONT ICON YANG SUDAH DIDEFINISIKAN
                   pw.Icon(
                     const pw.IconData(0xe8d1), 
                     font: iconFont, 
@@ -56,27 +50,24 @@ class PdfService {
                   pw.Divider(borderStyle: pw.BorderStyle.dashed),
                 ]),
               ),
-
-              // --- INFO STRUK DENGAN LABEL KASIR & PELANGGAN ---
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(dateFormatted),
-                  pw.Text("Kasir : $cashierName"), // Label Kasir
+                  pw.Text("Kasir : $cashierName"),
                 ]
               ),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(timeFormatted),
-                  pw.Text("${transaction['nama_pembeli'] ?? 'Pelanggan'}"), // Label Pelanggan
+                  pw.Text("${transaction['nama_pembeli'] ?? 'Pelanggan'}"),
                 ]
               ),
               pw.SizedBox(height: 5),
               pw.Text("Level Pedas: ${transaction['level_pedas']}"),
               pw.Divider(borderStyle: pw.BorderStyle.dashed),
 
-              // --- DAFTAR BARANG ---
               pw.SizedBox(height: 5),
               ...items.asMap().entries.map((entry) {
                 int index = entry.key + 1;
@@ -101,7 +92,6 @@ class PdfService {
               pw.SizedBox(height: 5),
               pw.Divider(borderStyle: pw.BorderStyle.dashed),
 
-              // --- TOTAL & PEMBAYARAN ---
               pw.SizedBox(height: 5),
               pw.Text("Total QTY : ${transaction['total_quantity'] ?? '-'}"),
               pw.SizedBox(height: 10),
@@ -135,7 +125,6 @@ class PdfService {
                 ]
               ),
 
-              // --- FOOTER ---
               pw.SizedBox(height: 20),
               pw.Center(child: pw.Text("Terimakasih Telah Datang")),
               pw.SizedBox(height: 10),

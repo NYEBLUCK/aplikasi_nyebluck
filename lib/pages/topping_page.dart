@@ -158,7 +158,6 @@ class ToppingPage extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(12),
           child: ElevatedButton.icon(
-            // --- MENGGUNAKAN fullscreenDialog AGAR ANIMASI BAWAAN FLUTTER LEBIH MULUS ---
             onPressed: () => Get.to(
               () => const AddToppingPage(), 
               fullscreenDialog: true, 
@@ -269,7 +268,6 @@ class ToppingPage extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          // --- MENGGUNAKAN fullscreenDialog ---
                           _buildActionButton(Icons.edit, 
                               () => Get.to(
                                 () => const EditToppingPage(), 
@@ -374,7 +372,7 @@ class ToppingPage extends StatelessWidget {
           ),
         ),
       ),
-      barrierColor: Colors.black.withValues(alpha: 0.7), // Latar belakang gelap transparan
+      barrierColor: Colors.black.withValues(alpha: 0.7),
     );
   }
 }

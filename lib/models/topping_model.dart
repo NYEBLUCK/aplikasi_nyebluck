@@ -4,7 +4,7 @@ class ToppingModel {
   String kategori;
   int harga;
   int stok;
-  bool takTerbatas; // BARU: Tambahan kolom tak terbatas
+  bool takTerbatas;
   String? imageUrl;
 
   ToppingModel({
@@ -13,7 +13,7 @@ class ToppingModel {
     required this.kategori,
     required this.harga,
     required this.stok,
-    required this.takTerbatas, // BARU
+    required this.takTerbatas,
     this.imageUrl,
   });
 
@@ -24,7 +24,7 @@ class ToppingModel {
       kategori: json['kategori'] ?? 'Lainnya', 
       harga: json['harga'] ?? 0,
       stok: json['stok'] ?? 0,
-      takTerbatas: json['tak_terbatas'] ?? false, // BARU
+      takTerbatas: json['tak_terbatas'] ?? false,
       imageUrl: json['image_url'],
     );
   }
@@ -35,7 +35,7 @@ class ToppingModel {
       'kategori': kategori,
       'harga': harga,
       'stok': stok,
-      'tak_terbatas': takTerbatas, // BARU
+      'tak_terbatas': takTerbatas,
       'image_url': imageUrl,
     };
   }

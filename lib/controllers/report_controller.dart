@@ -10,7 +10,6 @@ class ReportController extends GetxController {
   var isLoading = false.obs;
   var transactions = <Map<String, dynamic>>[].obs;
   
-  // State Filter Tanggal
   var startDate = Rxn<DateTime>();
   var endDate = Rxn<DateTime>();
 
@@ -20,7 +19,6 @@ class ReportController extends GetxController {
     super.onInit();
   }
 
-  // --- AMBIL DATA DARI DATABASE ---
   Future<void> fetchReportData() async {
     try {
       isLoading(true);
@@ -44,7 +42,6 @@ class ReportController extends GetxController {
     }
   }
 
-  // --- FUNGSI FILTER & RESET ---
   void setDateRange(DateTime start, DateTime end) {
     startDate.value = start;
     endDate.value = end;
@@ -57,14 +54,12 @@ class ReportController extends GetxController {
     fetchReportData(); 
   }
 
-  // --- GETTER METRIK KEUANGAN ---
   int get jumlahTransaksi => transactions.length;
 
   int get totalPendapatan {
     return transactions.fold(0, (sum, item) => sum + (item['total_harga'] as int? ?? 0));
   }
 
-  // --- PERSIAPAN DATA GRAFIK (FL_CHART) ---
   List<FlSpot> get chartSpots {
     if (transactions.isEmpty) return [];
 
@@ -72,7 +67,6 @@ class ReportController extends GetxController {
     DateTime start;
     DateTime end;
 
-    // 1. Tentukan rentang tanggal dari filter, atau dari data transaksi pertama & terakhir
     if (startDate.value != null && endDate.value != null) {
       start = startDate.value!;
       end = endDate.value!;
@@ -84,27 +78,23 @@ class ReportController extends GetxController {
       }
     }
 
-    // 2. Isi HARI YANG KOSONG dengan pendapatan 0
     DateTime current = DateTime(start.year, start.month, start.day);
     DateTime last = DateTime(end.year, end.month, end.day);
     
     while (!current.isAfter(last)) {
-      // PENTING: Gunakan yyyy-MM-dd agar saat di-sort, urutannya benar (Tahun -> Bulan -> Hari)
       final key = DateFormat('yyyy-MM-dd').format(current);
       dailyTotals[key] = 0;
       current = current.add(const Duration(days: 1));
     }
 
-    // 3. Masukkan data transaksi yang sebenarnya
     for (var tx in transactions) {
       final dateWita = DateTime.parse(tx['created_at']).toUtc().add(const Duration(hours: 8));
       final key = DateFormat('yyyy-MM-dd').format(dateWita);
       if (dailyTotals.containsKey(key)) {
-         dailyTotals[key] = dailyTotals[key]! + (tx['total_harga'] as int? ?? 0);
+        dailyTotals[key] = dailyTotals[key]! + (tx['total_harga'] as int? ?? 0);
       }
     }
 
-    // 4. Urutkan tanggal
     var sortedKeys = dailyTotals.keys.toList()..sort();
     
     List<FlSpot> spots = [];
@@ -112,10 +102,8 @@ class ReportController extends GetxController {
       spots.add(FlSpot(i.toDouble(), dailyTotals[sortedKeys[i]]!.toDouble()));
     }
 
-    // 5. ANTI-ERROR GRAFIK 1 TITIK (Titik kecil)
-    // fl_chart butuh minimal 2 titik untuk menggambar garis
     if (spots.length == 1) {
-      spots.add(FlSpot(1, spots.first.y)); // Tarik garis lurus mendatar
+      spots.add(FlSpot(1, spots.first.y));
     }
 
     return spots;

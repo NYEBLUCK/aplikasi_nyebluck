@@ -5,7 +5,6 @@ import 'package:google_fonts/google_fonts.dart';
 import '../models/staff_model.dart';
 import '../pages/login_page.dart';
 
-// --- WIDGET ANIMASI LOADING 5 TITIK KHUSUS PROFIL ---
 class ProfileDotLoading extends StatefulWidget {
   const ProfileDotLoading({super.key});
   @override
@@ -42,7 +41,6 @@ class _ProfileDotLoadingState extends State<ProfileDotLoading> with SingleTicker
     );
   }
 }
-// ----------------------------------------------------
 
 class ProfileController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -51,7 +49,6 @@ class ProfileController extends GetxController {
 
   @override void onInit() { fetchProfile(); super.onInit(); }
 
-  // --- FUNGSI LAYAR LOADING GELAP ---
   void _showLoadingOverlay() {
     Get.dialog(
       PopScope(
@@ -76,7 +73,7 @@ class ProfileController extends GetxController {
     if (Get.isDialogOpen == true) Get.back();
   }
 
- void _showSuccessDialog(String title, String message) {
+  void _showSuccessDialog(String title, String message) {
     Get.dialog(
       Dialog(
         shape: RoundedRectangleBorder(
@@ -225,26 +222,25 @@ class ProfileController extends GetxController {
 
   // --- ALUR GANTI PASSWORD BARU ---
   Future<void> gantiPasswordPribadi(String passwordBaru) async {
-    Get.back(); // 1. TUTUP FORM BOTTOM SHEET TERLEBIH DAHULU
-    _showLoadingOverlay(); // 2. MUNCULKAN LAYAR LOADING GELAP
+    Get.back();
+    _showLoadingOverlay();
 
     try {
-      // Sedikit jeda agar loading terlihat natural
       await Future.delayed(const Duration(milliseconds: 1000));
       
       await supabase.auth.updateUser(UserAttributes(password: passwordBaru));
       
-      _hideLoadingOverlay(); // 3. TUTUP LAYAR LOADING
-      _showSuccessDialog("Berhasil!", "Password Anda berhasil diperbarui."); // 4. MUNCULKAN NOTIF
+      _hideLoadingOverlay();
+      _showSuccessDialog("Berhasil!", "Password Anda berhasil diperbarui");
     } on AuthException catch (e) {
-      _hideLoadingOverlay(); // Tutup loading jika gagal
+      _hideLoadingOverlay();
       String pesan = e.message;
       if (pesan.toLowerCase().contains("different") || pesan.toLowerCase().contains("same")) { 
         pesan = "Password baru tidak boleh sama dengan yang lama!"; 
       }
       _showErrorDialog("Gagal", pesan);
     } catch (e) {
-      _hideLoadingOverlay(); // Tutup loading jika error sistem
+      _hideLoadingOverlay();
       _showErrorDialog("Error", "Terjadi kesalahan sistem: $e");
     } 
   }
@@ -332,7 +328,7 @@ class ProfileController extends GetxController {
           ),
         ),
       ),
-      barrierColor: Colors.black.withOpacity(0.8),
+      barrierColor: Colors.black.withValues(alpha: 0.8),
     );
   }
 }

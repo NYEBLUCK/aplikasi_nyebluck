@@ -53,8 +53,7 @@ class PembayaranPage extends StatelessWidget {
             _buildOrderDetailCard(),
             const SizedBox(height: 25),
             
-            // --- KOLOM TUNAI PERMANEN ---
-            _sectionLabel("NOMINAL UANG DITERIMA (CASH)"),
+            _sectionLabel("NOMINAL UANG DITERIMA"),
             Obx(() => TextField(
               keyboardType: TextInputType.number,
               onChanged: (v) {
@@ -212,15 +211,15 @@ class PembayaranPage extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton(
+                child: 
+                OutlinedButton(
                   onPressed: () => Get.back(),
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFEBEBEB),
-                      foregroundColor: Colors.black,
+                  style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFFC62828),
+                      side: const BorderSide(color: Color(0xFFC62828), width: 2),
                       minimumSize: const Size(0, 55),
-                      elevation: 0,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                  child: const Text("BATAL", style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text("BATAL", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
                 ),
               ),
               const SizedBox(width: 15),
@@ -234,7 +233,7 @@ class PembayaranPage extends StatelessWidget {
                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
                       child: kasirCtrl.isLoading.value
                           ? const CircularProgressIndicator(color: Colors.white)
-                          : const Text("BAYAR", style: TextStyle(fontWeight: FontWeight.bold)),
+                          : Text("BAYAR", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
                     )),
               ),
             ],

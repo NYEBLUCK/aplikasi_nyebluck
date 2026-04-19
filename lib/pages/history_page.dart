@@ -8,7 +8,6 @@ class HistoryPage extends StatelessWidget {
   final KasirController kasirCtrl = Get.find<KasirController>();
 
   HistoryPage({super.key}) {
-    // Memastikan data terbaru diambil saat halaman dibuka
     kasirCtrl.fetchHistoryToday();
   }
 
@@ -18,7 +17,6 @@ class HistoryPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF8F8F8),
       body: Column(
         children: [
-          // --- HEADER INFO ---
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
@@ -33,12 +31,11 @@ class HistoryPage extends StatelessWidget {
             ),
           ),
 
-          // --- LIST TRANSAKSI ---
           Expanded(
             child: Obx(() {
               if (kasirCtrl.isLoading.value) {
                 return const Center(
-                    child: CircularProgressIndicator(color: Color(0xFFB71C1C)));
+                    child: CircularProgressIndicator(color: Color(0xFFC62828)));
               }
 
               if (kasirCtrl.historyToday.isEmpty) {
@@ -47,7 +44,7 @@ class HistoryPage extends StatelessWidget {
 
               return RefreshIndicator(
                 onRefresh: () => kasirCtrl.fetchHistoryToday(),
-                color: const Color(0xFFB71C1C),
+                color: const Color(0xFFC62828),
                 child: ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: kasirCtrl.historyToday.length,
@@ -64,12 +61,9 @@ class HistoryPage extends StatelessWidget {
     );
   }
 
-  // --- WIDGET CARD RIWAYAT ---
   Widget _buildTransactionCard(Map<String, dynamic> data) {
     final DateTime createdAt = DateTime.parse(data['created_at']).toLocal();
     final String timeFormatted = DateFormat('HH:mm').format(createdAt);
-
-    // Memastikan format ID tidak error jika ID terlalu pendek
     final String uuidSegment = data['id'].toString().split('-').first.toUpperCase();
     final String invoiceId = "INV/${createdAt.year}/$uuidSegment";
 
@@ -79,9 +73,10 @@ class HistoryPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade300, width: 1), 
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.02),
+            color: Colors.black.withValues(alpha: 0.02),
             blurRadius: 10,
             offset: const Offset(0, 4),
           )
@@ -96,7 +91,7 @@ class HistoryPage extends StatelessWidget {
               Text(
                 invoiceId,
                 style: const TextStyle(
-                    color: Color(0xFFB71C1C),
+                    color: Color(0xFFC62828),
                     fontWeight: FontWeight.bold,
                     fontSize: 15),
               ),
@@ -135,35 +130,31 @@ class HistoryPage extends StatelessWidget {
               ),
               Row(
                 children: [
-                  OutlinedButton.icon(
+                  ElevatedButton.icon(
                     onPressed: () async {
                       try {
-                        // 1. Tampilkan loading spinner sementara data diambil
                         Get.dialog(
                           const Center(
                               child: CircularProgressIndicator(
-                                  color: Color(0xFFB71C1C))),
+                                  color: Color(0xFFC62828))),
                           barrierDismissible: false,
                         );
 
-                        // 2. Ambil detail item dari tabel transaction_items berdasarkan ID transaksi
                         final itemsResponse = await kasirCtrl.supabase
                             .from('transaction_items')
                             .select()
                             .eq('transaction_id', data['id']);
 
-                        // 3. Tutup loading dialog setelah data didapat
                         Get.back();
 
-                        // 4. Ambil informasi nama/email kasir
                         final String kasirEmail = kasirCtrl.supabase.auth.currentUser?.email?.split('@')[0] ?? "Kasir";
 
-                        // 5. Buka Halaman Preview Nota
-                        Get.to(() => NotaPreviewPage(
-                          transactionData: data,
-                          transactionItems: itemsResponse,
-                          cashierName: kasirEmail,
-                        ));
+                        Get.to(
+                          () => NotaPreviewPage(
+                            transactionData: data,
+                            transactionItems: itemsResponse,
+                            cashierName: kasirEmail,
+                          ));
                         
                       } catch (e) {
                         if (Get.isDialogOpen ?? false) Get.back();
@@ -172,9 +163,10 @@ class HistoryPage extends StatelessWidget {
                             colorText: Colors.white);
                       }
                     },
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: const Color(0xFFB71C1C),
-                      side: BorderSide(color: Colors.grey[300]!),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFC62828),
+                      foregroundColor: Colors.white,
+                      elevation: 0,
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(10)),
                       padding: const EdgeInsets.symmetric(
@@ -182,7 +174,7 @@ class HistoryPage extends StatelessWidget {
                     ),
                     icon: const Icon(Icons.receipt_long, size: 18),
                     label: const Text("Lihat Nota",
-                        style: TextStyle(fontSize: 13)),
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -193,7 +185,6 @@ class HistoryPage extends StatelessWidget {
     );
   }
 
-  // --- WIDGET EMPTY STATE ---
   Widget _buildEmptyState() {
     return Center(
       child: Column(

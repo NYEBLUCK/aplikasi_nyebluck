@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'topping_controller.dart';
 import '../pages/kasir_page.dart';
-import '../pages/nota_preview_page.dart'; // BARU: Wajib diimport untuk preview nota
+import '../pages/nota_preview_page.dart';
 
 class KasirController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -82,7 +83,6 @@ class KasirController extends GetxController {
       int finalBayar = uangBayar.value;
       int finalKembalian = finalBayar - totalBayar;
 
-      // BARU: Hapus .select('id') dan ganti jadi .select() untuk mengambil semua data transaksi terbaru
       final transactionData = await supabase.from('transactions').insert({
         'cashier_id': userId,
         'nama_pembeli': namaPembeli.value.isEmpty ? "Pelanggan" : namaPembeli.value,
@@ -125,10 +125,8 @@ class KasirController extends GetxController {
         }
       }
 
-      // Ambil nama kasir
       final String kasirEmail = supabase.auth.currentUser?.email?.split('@')[0] ?? "Kasir";
 
-      // Panggil popup dan kirim data untuk ditampilkan di halaman Nota Preview nanti
       _showSuccessDialog(
         transactionData: transactionData,
         transactionItems: itemsToInsert,
@@ -160,8 +158,7 @@ class KasirController extends GetxController {
             children: [
               const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
               const SizedBox(height: 16),
-              // BARU: Judul diubah, detail dihilangkan
-              const Text("Pembayaran Sukses!", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+              Text("Pembayaran berhasil", style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 32),
               
               SizedBox(
@@ -170,14 +167,12 @@ class KasirController extends GetxController {
                   onPressed: () {
                     Get.back(); // Tutup dialog popup
                     
-                    // Bersihkan keranjang & input
                     cart.clear();
                     namaPembeli.value = "";
                     levelPedas.value = 0;
                     uangBayar.value = 0;
                     errorUangBayar.value = ""; 
                     
-                    // Pindah ke halaman Nota Preview (menggantikan halaman PembayaranPage)
                     Get.off(() => NotaPreviewPage(
                       transactionData: transactionData,
                       transactionItems: transactionItems,
@@ -189,7 +184,7 @@ class KasirController extends GetxController {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                  child: const Text("LANJUTKAN", style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text("LANJUTKAN", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -235,7 +230,6 @@ class KasirController extends GetxController {
     );
   }
 
-  // Fungsi reset standar jika kembali ke kasir dengan cara lain (misalnya tombol batal)
   void resetTransactionState() {
     cart.clear();
     namaPembeli.value = "";

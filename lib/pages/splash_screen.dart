@@ -10,10 +10,8 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-// 1. Tambahkan SingleTickerProviderStateMixin untuk animasi
 class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
   
-  // Siapkan controller dan animasi
   late AnimationController _animController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -22,13 +20,11 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
   void initState() {
     super.initState();
     
-    // 2. Konfigurasi Durasi Animasi Splash Screen (1.5 Detik)
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1500),
     );
 
-    // Animasi Muncul Perlahan (Fade)
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
@@ -36,35 +32,30 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
       ),
     );
 
-    // Animasi Membesar & Sedikit Memantul (Scale & Bounce)
     _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
       CurvedAnimation(
         parent: _animController,
-        curve: Curves.easeOutBack, // Memberikan efek pantulan elegan
+        curve: Curves.easeOutBack,
       ),
     );
 
-    // Mulai animasi
     _animController.forward();
 
-    // Menjalankan fungsi pindah halaman setelah 3 detik
     _navigateToLogin();
   }
 
   void _navigateToLogin() async {
     await Future.delayed(const Duration(seconds: 3));
     
-    // 3. Tambahkan efek transisi fadeIn agar mulus saat pindah ke LoginPage
     Get.offAll(
       () => const LoginPage(),
       transition: Transition.fadeIn, 
-      duration: const Duration(milliseconds: 800), // Durasi transisi antar halaman
+      duration: const Duration(milliseconds: 800),
     );
   }
 
   @override
   void dispose() {
-    // Bersihkan memori animasi saat pindah halaman
     _animController.dispose();
     super.dispose();
   }
@@ -77,7 +68,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Bungkus Logo dengan Animasi Scale & Fade
             ScaleTransition(
               scale: _scaleAnimation,
               child: FadeTransition(
@@ -98,16 +88,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
                     );
                   },
                 ),
-              ),
-            ),
-            const SizedBox(height: 30),
-            
-            // Bungkus Loading dengan Animasi Fade saja
-            FadeTransition(
-              opacity: _fadeAnimation,
-              child: const CircularProgressIndicator(
-                color: Colors.white,
-                strokeWidth: 3,
               ),
             ),
           ],

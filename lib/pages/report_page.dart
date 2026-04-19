@@ -44,15 +44,12 @@ class ReportPage extends StatelessWidget {
           return const Center(child: CircularProgressIndicator(color: Color(0xFFC62828)));
         }
 
-        // --- REFRESH INDICATOR DIHAPUS ---
         return SingleChildScrollView(
-          // --- UBAH PHYSICS MENJADI CLAMPING AGAR TIDAK MEMANTUL ---
           physics: const ClampingScrollPhysics(),
           padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // --- CARD FILTER TANGGAL ---
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
@@ -130,7 +127,6 @@ class ReportPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // --- TOMBOL CETAK PDF ---
               ElevatedButton.icon(
                 onPressed: reportC.transactions.isEmpty ? null : () {
                   PdfReportService.generateReport(
@@ -150,13 +146,11 @@ class ReportPage extends StatelessWidget {
               ),
               const SizedBox(height: 20),
 
-              // --- SUMMARY CARDS ---
               _buildSummaryCard("Jumlah Transaksi", "${reportC.jumlahTransaksi} Transaksi", Icons.receipt_long, "Total keseluruhan"),
               const SizedBox(height: 15),
               _buildSummaryCard("Total Pendapatan", "Rp ${reportC.totalPendapatan}", Icons.payments_outlined, "Pendapatan kotor"),
               const SizedBox(height: 25),
 
-              // --- CHART TREN PENDAPATAN ---
               if (reportC.transactions.isNotEmpty)
                 Container(
                   padding: const EdgeInsets.all(20),
@@ -248,7 +242,6 @@ class ReportPage extends StatelessWidget {
 
               const SizedBox(height: 30),
 
-              // --- DETAIL TRANSAKSI TERBARU ---
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [

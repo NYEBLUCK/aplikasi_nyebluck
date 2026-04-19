@@ -42,7 +42,7 @@ class _AddStaffPageState extends State<AddStaffPage> {
       setState(() => errorNama = "Nama lengkap wajib diisi");
       isInvalid = true;
     }
-    // 2. Validasi Email
+
     if (emailC.text.trim().isEmpty) {
       setState(() => errorEmail = "Email wajib diisi");
       isInvalid = true;
@@ -51,7 +51,6 @@ class _AddStaffPageState extends State<AddStaffPage> {
       isInvalid = true;
     } else {
       staffC.isLoading(true);
-      // Pastikan di Controller namanya sudah: cekEmailTersedia
       bool tersedia = await staffC.cekEmailTersedia(emailC.text.trim());
       staffC.isLoading(false);
 
@@ -63,7 +62,6 @@ class _AddStaffPageState extends State<AddStaffPage> {
       }
     }
 
-    // 3. Validasi Nomor Telepon (10-13 Karakter)
     String telp = telpC.text.trim();
     if (telp.isEmpty) {
       setState(() => errorTelp = "Nomor telepon wajib diisi");
@@ -73,13 +71,11 @@ class _AddStaffPageState extends State<AddStaffPage> {
       isInvalid = true;
     }
 
-    // 4. Validasi Alamat
     if (alamatC.text.trim().isEmpty) {
       setState(() => errorAlamat = "Alamat wajib diisi");
       isInvalid = true;
     }
 
-    // 5. Validasi Password
     if (passC.text.trim().isEmpty) {
       setState(() => errorPass = "Password wajib diisi");
       isInvalid = true;
@@ -132,13 +128,11 @@ class _AddStaffPageState extends State<AddStaffPage> {
                 errorText: errorNama,
                 onChanged: (value) {
                   if (value.isNotEmpty) {
-                    // Logika mengubah "deni pradana" -> "Deni Pradana"
                     String capitalized = value.split(' ').map((word) {
                       if (word.isEmpty) return "";
                       return word[0].toUpperCase() + word.substring(1).toLowerCase();
                     }).join(' ');
 
-                    // Update controller dan jaga posisi kursor agar tidak pindah ke depan
                     if (value != capitalized) {
                       namaC.value = namaC.value.copyWith(
                         text: capitalized,
@@ -182,7 +176,6 @@ class _AddStaffPageState extends State<AddStaffPage> {
           ],
         ),
       ),
-      // MENGGUNAKAN BOTTOM NAVIGATION BAR AGAR TIDAK IKUT SCROLL
       bottomNavigationBar: Container(
         color: Colors.white,
         padding: const EdgeInsets.fromLTRB(25, 10, 25, 30),
@@ -243,11 +236,11 @@ class _AddStaffPageState extends State<AddStaffPage> {
   String? errorText,
   TextInputType keyboardType = TextInputType.text,
   int maxLines = 1,
-  Function(String)? onChanged, // Tambahkan ini
+  Function(String)? onChanged,
 }) {
   return TextField(
     controller: controller,
-    onChanged: onChanged, // Pasang di sini
+    onChanged: onChanged,
     keyboardType: keyboardType,
     maxLines: maxLines,
     style: GoogleFonts.poppins(fontSize: 15, fontWeight: FontWeight.w600),

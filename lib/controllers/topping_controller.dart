@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import '../models/topping_model.dart';
@@ -38,7 +39,7 @@ class ToppingController extends GetxController {
             children: [
               const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
               const SizedBox(height: 16),
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: Colors.black)),
+              Text(title, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18, color: Color(0xFFC62828))),
               const SizedBox(height: 12),
               Text(message, textAlign: TextAlign.center, style: const TextStyle(color: Colors.black, fontSize: 13)),
               const SizedBox(height: 32),
@@ -51,7 +52,7 @@ class ToppingController extends GetxController {
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                  child: const Text("TUTUP", style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: Text("TUTUP", style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -133,7 +134,7 @@ class ToppingController extends GetxController {
 
       ambilDataTopping();
       Get.back(); 
-      _showSuccessDialog("Berhasil!", "Topping '$namaFormatted' telah ditambahkan.");
+      _showSuccessDialog("Berhasil!", "Topping $namaFormatted telah ditambahkan");
       return true;
     } catch (e) {
       Get.snackbar("Error", "Gagal Simpan: $e");
@@ -143,7 +144,6 @@ class ToppingController extends GetxController {
     }
   }
 
-  // --- UPDATE: Tambah parameter bool hapusFotoLama ---
   Future<bool> updateTopping(String id, String nama, String kategori, int harga,
       int stok, bool takTerbatas, String? urlLama, XFile? fotoBaru, bool hapusFotoLama) async {
     try {
@@ -157,9 +157,7 @@ class ToppingController extends GetxController {
       String namaFormatted = _toTitleCase(nama);
       String? finalImageUrl = urlLama;
 
-      // Logika Penanganan Foto
       if (fotoBaru != null) {
-        // Kasus 1: User upload foto BARU (hapus yang lama jika ada, upload yang baru)
         if (urlLama != null && urlLama.contains('topping-images')) {
           try {
             final String oldFileName = urlLama.split('/').last;
@@ -180,7 +178,6 @@ class ToppingController extends GetxController {
             .getPublicUrl(newFileName);
       } 
       else if (hapusFotoLama && urlLama != null) {
-        // Kasus 2: User tidak upload foto baru, tapi menekan tombol HAPUS pada foto lama
         if (urlLama.contains('topping-images')) {
           try {
             final String oldFileName = urlLama.split('/').last;
@@ -189,9 +186,8 @@ class ToppingController extends GetxController {
             print("Info: File lama gagal dihapus atau tidak ditemukan.");
           }
         }
-        finalImageUrl = null; // Set di database jadi null
+        finalImageUrl = null;
       }
-      // Kasus 3: Tidak ada perubahan foto (finalImageUrl tetap urlLama)
 
       await supabase.from('toppings').update({
         'nama_topping': namaFormatted, 
@@ -205,7 +201,7 @@ class ToppingController extends GetxController {
       ambilDataTopping();
       Get.back(); 
       
-      _showSuccessDialog("Berhasil!", "Data '$namaFormatted' berhasil diperbarui.");
+      _showSuccessDialog("Berhasil!", "Data topping $namaFormatted berhasil diperbarui");
       return true;
     } catch (e) {
       Get.snackbar("Error", "Gagal Update: $e");
@@ -230,7 +226,7 @@ class ToppingController extends GetxController {
       }
       
       ambilDataTopping();
-      _showSuccessDialog("Terhapus", "Topping '$nama' telah dihapus dari daftar.");
+      _showSuccessDialog("Terhapus", "Topping $nama telah dihapus");
     } catch (e) {
       Get.snackbar("Error", "Gagal Hapus: $e");
     } finally {

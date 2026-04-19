@@ -20,20 +20,19 @@ class NotaPreviewPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final DateTime createdAt = DateTime.parse(transactionData['created_at']).toLocal();
     
-    // 👇 FORMAT TANGGAL DIUBAH MENJADI STANDAR INDONESIA (HARI/BULAN/TAHUN) 👇
     final String dateFormatted = DateFormat('dd/MM/yyyy').format(createdAt);
     
     final String timeFormatted = DateFormat('HH:mm:ss').format(createdAt);
     
-    // Potong ID agar menyerupai struk asli
     final String shortId = transactionData['id'].toString().replaceAll('-', '').substring(0, 16).toUpperCase();
 
     return Scaffold(
       backgroundColor: Colors.grey[200], 
       appBar: AppBar(
-        title: const Text("Preview Nota", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        centerTitle: true,
+        title: Text("Preview Nota", style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
-        iconTheme: const IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Color(0xFFC62828)),
         elevation: 0,
       ),
       body: Column(
@@ -49,13 +48,12 @@ class NotaPreviewPage extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
-                      BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10, offset: const Offset(0, 5))
+                      BoxShadow(color: Colors.black.withValues(alpha: 0.1), blurRadius: 10, offset: const Offset(0, 5))
                     ]
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // --- HEADER STRUK ---
                       Center(
                         child: Column(
                           children: [
@@ -77,19 +75,18 @@ class NotaPreviewPage extends StatelessWidget {
                       const _DashedDivider(),
                       const SizedBox(height: 10),
 
-                      // --- INFO STRUK DENGAN LABEL ---
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(dateFormatted, style: const TextStyle(fontSize: 12)),
-                          Text("Kasir : $cashierName", style: const TextStyle(fontSize: 12)), // Label Kasir
+                          Text("Kasir : $cashierName", style: const TextStyle(fontSize: 12)),
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(timeFormatted, style: const TextStyle(fontSize: 12)),
-                          Text("${transactionData['nama_pembeli'] ?? 'Pelanggan'}", style: const TextStyle(fontSize: 12)), // Label Pelanggan
+                          Text("${transactionData['nama_pembeli'] ?? 'Pelanggan'}", style: const TextStyle(fontSize: 12)),
                         ],
                       ),
                       const SizedBox(height: 5),
@@ -98,7 +95,6 @@ class NotaPreviewPage extends StatelessWidget {
                       const _DashedDivider(),
                       const SizedBox(height: 10),
 
-                      // --- DAFTAR BARANG ---
                       ...transactionItems.asMap().entries.map((entry) {
                         int index = entry.key + 1;
                         var item = entry.value;
@@ -124,7 +120,6 @@ class NotaPreviewPage extends StatelessWidget {
                       const _DashedDivider(),
                       const SizedBox(height: 10),
 
-                      // --- TOTAL & BAYAR ---
                       Text("Total QTY : ${transactionData['total_quantity'] ?? '-'}", style: const TextStyle(fontSize: 12)),
                       const SizedBox(height: 10),
                       
@@ -158,7 +153,6 @@ class NotaPreviewPage extends StatelessWidget {
                         ],
                       ),
 
-                      // --- FOOTER ---
                       const SizedBox(height: 30),
                       const Center(child: Text("Terimakasih Telah Datang", style: TextStyle(fontSize: 13))),
                       const SizedBox(height: 15),
@@ -170,7 +164,6 @@ class NotaPreviewPage extends StatelessWidget {
             ),
           ),
 
-          // --- BOTTOM ACTION (KEMBALI & CETAK) ---
           Container(
             padding: const EdgeInsets.all(20),
             decoration: const BoxDecoration(
@@ -185,10 +178,10 @@ class NotaPreviewPage extends StatelessWidget {
                     onPressed: () => Get.back(),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 15),
-                      side: const BorderSide(color: Colors.grey),
+                      side: const BorderSide(color: Color(0xFFC62828),width: 2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
                     ),
-                    child: Text("Kembali", style: GoogleFonts.poppins(color: Colors.black, fontWeight: FontWeight.bold)),
+                    child: Text("Kembali", style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 15),

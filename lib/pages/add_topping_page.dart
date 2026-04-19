@@ -51,7 +51,6 @@ class _AddToppingPageState extends State<AddToppingPage> {
     }
   }
 
-  // --- FUNGSI HAPUS FOTO YANG DIPILIH ---
   void hapusPilihanFoto() {
     setState(() {
       fotoProduk = null;
@@ -89,7 +88,7 @@ class _AddToppingPageState extends State<AddToppingPage> {
                   Center(
                     child: Column(
                       children: [
-                        Stack( // Ubah GestureDetector jadi Stack
+                        Stack(
                           children: [
                             GestureDetector(
                               onTap: pickImage,
@@ -115,9 +114,8 @@ class _AddToppingPageState extends State<AddToppingPage> {
                               ),
                             ),
                             
-                            // Tombol Edit (Pensil)
                             Positioned(
-                              bottom: 0, // Disesuaikan agar pas di pojok
+                              bottom: 0,
                               right: 0,
                               child: GestureDetector(
                                 onTap: pickImage,
@@ -132,7 +130,6 @@ class _AddToppingPageState extends State<AddToppingPage> {
                               ),
                             ),
 
-                            // --- BARU: Tombol Hapus (Sampah) - Muncul jika ada foto ---
                             if (adaFoto)
                               Positioned(
                                 top: 0,

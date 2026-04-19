@@ -11,11 +11,9 @@ class PdfReportService {
     required int totalPendapatan,
   }) async {
     
-    // --- 1. DOWNLOAD FONT POPPINS UNTUK PDF ---
     final fontRegular = await PdfGoogleFonts.poppinsRegular();
     final fontBold = await PdfGoogleFonts.poppinsBold();
 
-    // Terapkan font sebagai tema dasar dokumen PDF
     final pdf = pw.Document(
       theme: pw.ThemeData.withFont(
         base: fontRegular,
@@ -25,7 +23,6 @@ class PdfReportService {
 
     String periode = "Keseluruhan Waktu";
     if (startDate != null && endDate != null) {
-      // Menggunakan Format Indonesia DD/MM/YYYY
       periode = "${DateFormat('dd/MM/yyyy').format(startDate)} - ${DateFormat('dd/MM/yyyy').format(endDate)}";
     }
 
@@ -35,13 +32,11 @@ class PdfReportService {
         margin: const pw.EdgeInsets.all(30),
         build: (context) {
           return [
-            // --- HEADER ---
             pw.Text("NYEBLUCK", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.red800)),
             pw.Text("Laporan Penjualan", style: pw.TextStyle(fontSize: 18)),
             pw.Text("Periode: $periode", style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700)),
             pw.SizedBox(height: 20),
 
-            // --- SUMMARY CARDS ---
             pw.Row(
               children: [
                 pw.Expanded(child: _buildSummaryCard("Total Transaksi", "${transactions.length} Transaksi")),
@@ -51,35 +46,30 @@ class PdfReportService {
             ),
             pw.SizedBox(height: 30),
 
-            // --- TABLE DATA (KOLOM METODE DIHAPUS) ---
             pw.Text("Detail Transaksi", style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 10),
             
             pw.TableHelper.fromTextArray(
               headers: ['Kode', 'Waktu (WITA)', 'Kasir', 'Total (Rp)'],
-              // Lebar kolom disesuaikan karena hanya sisa 4 kolom
               columnWidths: {
-                0: const pw.FlexColumnWidth(1.5), // Kode Transaksi
-                1: const pw.FlexColumnWidth(2.5), // Waktu
-                2: const pw.FlexColumnWidth(2.5), // Nama Kasir
-                3: const pw.FlexColumnWidth(2.0), // Total Harga
+                0: const pw.FlexColumnWidth(1.5),
+                1: const pw.FlexColumnWidth(2.5),
+                2: const pw.FlexColumnWidth(2.5),
+                3: const pw.FlexColumnWidth(2.0),
               },
               data: transactions.map((tx) {
-                // Pastikan Konversi ke WITA (UTC+8)
                 final dateWita = DateTime.parse(tx['created_at']).toUtc().add(const Duration(hours: 8));
                 final waktuStr = DateFormat('dd/MM/yy, HH:mm').format(dateWita);
                 
-                // Ambil Kode Pendek
                 final shortId = tx['id'].toString().split('-').first.toUpperCase();
                 
-                // Ambil Nama Kasir (Atasi jika null)
                 final namaKasir = tx['profiles']?['nama_lengkap'] ?? 'Kasir';
 
                 return [
                   shortId,
                   waktuStr,
                   namaKasir,
-                  tx['total_harga'].toString(), // Data metode sudah dihapus
+                  tx['total_harga'].toString(),
                 ];
               }).toList(),
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white, fontSize: 11),
@@ -90,7 +80,7 @@ class PdfReportService {
                 0: pw.Alignment.centerLeft,
                 1: pw.Alignment.centerLeft,
                 2: pw.Alignment.centerLeft,
-                3: pw.Alignment.centerRight, // Total ditaruh rata kanan
+                3: pw.Alignment.centerRight,
               },
             ),
           ];

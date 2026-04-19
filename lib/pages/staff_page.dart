@@ -98,7 +98,7 @@ class StaffPage extends StatelessWidget {
         border: Border.all(color: Colors.grey.shade300, width: 2.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04), 
+            color: Colors.black.withValues(alpha: 0.04), 
             blurRadius: 12, 
             offset: const Offset(0, 4)
           ),
@@ -146,6 +146,8 @@ class StaffPage extends StatelessWidget {
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.grey),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                color: Colors.white,
+                surfaceTintColor: Colors.white,
                 onSelected: (String value) {
                   if (value == 'edit') {
                     _dialogEditStaff(context, staff);
@@ -271,7 +273,6 @@ class StaffPage extends StatelessWidget {
               ),
               const SizedBox(height: 25),
 
-              // --- TOMBOL BATAL & SIMPAN ---
               Row(
                 children: [
                   Expanded(

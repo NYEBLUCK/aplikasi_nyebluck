@@ -30,7 +30,6 @@ class _EditToppingPageState extends State<EditToppingPage> {
   XFile? fotoBaru;
   Uint8List? webImage;
 
-  // --- BARU: State untuk menandai user ingin menghapus foto LAMA yang ada di DB ---
   bool hapusFotoLamaTakTersimpan = false;
 
   @override
@@ -56,29 +55,23 @@ class _EditToppingPageState extends State<EditToppingPage> {
         setState(() {
           webImage = f;
           fotoBaru = image;
-          // Jika pilih foto baru, batalkan niat hapus foto lama (jika ada)
           hapusFotoLamaTakTersimpan = false; 
         });
       } else {
         setState(() {
           fotoBaru = image;
-          // Jika pilih foto baru, batalkan niat hapus foto lama (jika ada)
           hapusFotoLamaTakTersimpan = false;
         });
       }
     }
   }
 
-  // --- FUNGSI LOGIKA TOMBOL SAMPAH ---
   void aksiTombolHapus() {
     setState(() {
       if (fotoBaru != null || webImage != null) {
-        // Kondisi A: User sedang preview foto BARU, lalu dihapus (kembali ke kondisi awal)
         fotoBaru = null;
         webImage = null;
       } else if (toppingData.imageUrl != null && !hapusFotoLamaTakTersimpan) {
-        // Kondisi B: User sedang melihat foto LAMA (dari DB), lalu menekan hapus
-        // Kita tandai untuk dihapus saat simpan nanti
         hapusFotoLamaTakTersimpan = true;
       }
     });
@@ -86,11 +79,9 @@ class _EditToppingPageState extends State<EditToppingPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Logika menampilkan tombol sampah
     bool adaFotoBaru = (fotoBaru != null || webImage != null);
     bool adaFotoLamaDiDB = (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty);
     
-    // Tombol sampah muncul jika: Ada foto baru terpilih OR (Ada foto lama DAN belum ditandai hapus)
     bool tampilkanTombolHapus = adaFotoBaru || (adaFotoLamaDiDB && !hapusFotoLamaTakTersimpan);
 
     return Scaffold(
@@ -117,7 +108,7 @@ class _EditToppingPageState extends State<EditToppingPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Center(
-                    child: Stack( // Ubah GestureDetector jadi Stack
+                    child: Stack(
                       children: [
                         GestureDetector(
                           onTap: pickImage,
@@ -133,7 +124,6 @@ class _EditToppingPageState extends State<EditToppingPage> {
                           ),
                         ),
 
-                        // Tombol Edit (Pensil)
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -147,7 +137,6 @@ class _EditToppingPageState extends State<EditToppingPage> {
                           ),
                         ),
 
-                        // --- BARU: Tombol Hapus (Sampah) - Muncul sesuai logika ---
                         if (tampilkanTombolHapus)
                           Positioned(
                             top: 0,
@@ -347,13 +336,9 @@ class _EditToppingPageState extends State<EditToppingPage> {
   }
 
   Widget? _buildPlaceholder() {
-    // Priority 1: Sedang preview foto baru terpilih
     if (webImage != null || fotoBaru != null) return null;
-
-    // Priority 2: Sedang preview foto lama dari DB (dan belum ditandai hapus)
     if (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty && !hapusFotoLamaTakTersimpan) return null;
 
-    // Priority 3: Tidak ada foto sama sekali (atau foto lama sudah ditandai hapus) -> Tampilkan placeholder
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -365,17 +350,14 @@ class _EditToppingPageState extends State<EditToppingPage> {
   }
 
   DecorationImage? _buildImageDecoration() {
-    // Priority 1: Tampilkan foto BARU terpilih (Web atau Mobile)
     if (kIsWeb && webImage != null) {
       return DecorationImage(image: MemoryImage(webImage!), fit: BoxFit.cover);
     } else if (!kIsWeb && fotoBaru != null) {
       return DecorationImage(image: FileImage(File(fotoBaru!.path)), fit: BoxFit.cover);
     } 
-    // Priority 2: Tampilkan foto LAMA dari DB (jika user TIDAK menandai hapus)
     else if (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty && !hapusFotoLamaTakTersimpan) {
       return DecorationImage(image: NetworkImage(toppingData.imageUrl), fit: BoxFit.cover);
     }
-    // Priority 3: Placeholder (kembalikan null agar warna background Container terlihat)
     return null;
   }
 
@@ -429,7 +411,7 @@ class _EditToppingPageState extends State<EditToppingPage> {
       isTakTerbatas, 
       toppingData.imageUrl,
       fotoBaru,
-      hapusFotoLamaTakTersimpan, // Kirim state hapus foto lama ke controller
+      hapusFotoLamaTakTersimpan,
     );
   }
 }

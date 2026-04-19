@@ -5,7 +5,7 @@ class StaffModel {
   String nomorTelpon;
   String alamat;
   String role;
-  bool isActive; // Tambahkan ini
+  bool isActive;
 
   StaffModel({
     this.id,
@@ -14,7 +14,7 @@ class StaffModel {
     required this.nomorTelpon,
     required this.alamat,
     required this.role,
-    this.isActive = true, // Default true
+    this.isActive = true,
   });
 
   factory StaffModel.fromJson(Map<String, dynamic> json) {
@@ -25,7 +25,7 @@ class StaffModel {
       nomorTelpon: json['nomor_telpon'] ?? '',
       alamat: json['alamat'] ?? '',
       role: json['role'] ?? 'kasir',
-      isActive: json['is_active'] ?? true, // Ambil dari DB
+      isActive: json['is_active'] ?? true,
     );
   }
 
@@ -36,7 +36,7 @@ class StaffModel {
       'nomor_telpon': nomorTelpon,
       'alamat': alamat,
       'role': role,
-      'is_active': isActive, // Kirim ke DB
+      'is_active': isActive,
     };
   }
 }

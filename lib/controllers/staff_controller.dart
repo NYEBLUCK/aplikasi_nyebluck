@@ -5,7 +5,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart'; 
 import '../models/staff_model.dart'; 
 
-// --- WIDGET ANIMASI LOADING 5 TITIK KHUSUS STAFF ---
 class StaffDotLoading extends StatefulWidget {
   const StaffDotLoading({super.key});
   @override
@@ -42,7 +41,6 @@ class _StaffDotLoadingState extends State<StaffDotLoading> with SingleTickerProv
     );
   }
 }
-// ----------------------------------------------------
 
 class StaffController extends GetxController {
   final supabase = Supabase.instance.client;
@@ -57,7 +55,6 @@ class StaffController extends GetxController {
     super.onInit();
   }
 
-  // --- FUNGSI LAYAR LOADING GELAP ---
   void _showLoadingOverlay() {
     Get.dialog(
       PopScope(
@@ -217,10 +214,9 @@ class StaffController extends GetxController {
     }
   }
 
-  // --- ALUR UPDATE STAFF BARU ---
   Future<void> updateStaff(String id, String nama, String telp, String alamat) async {
-    Get.back(); // 1. TUTUP FORM BOTTOM SHEET TERLEBIH DAHULU
-    _showLoadingOverlay(); // 2. TAMPILKAN LAYAR LOADING GELAP
+    Get.back();
+    _showLoadingOverlay();
 
     try {
       await supabase.from('profiles').update({
@@ -229,20 +225,19 @@ class StaffController extends GetxController {
         'alamat': _sanitizeInput(alamat), 
       }).eq('id', id);
 
-      await ambilDataStaff(); // Perbarui data dari server
+      await ambilDataStaff();
       
-      _hideLoadingOverlay(); // 3. TUTUP LAYAR LOADING
-      _showSuccessDialog("Diperbarui!", "Data pekerja berhasil diperbarui."); // 4. TAMPILKAN POP UP SUKSES
+      _hideLoadingOverlay();
+      _showSuccessDialog("Diperbarui!", "Data staff berhasil diperbarui.");
       
     } catch (e) {
-      _hideLoadingOverlay(); // Tutup loading jika gagal
+      _hideLoadingOverlay();
       _showErrorDialog("Error", "Gagal update: $e");
     } 
   }
 
-  // --- ALUR UBAH STATUS (NONAKTIF/AKTIF) BARU ---
   Future<void> toggleStatusStaff(String id, bool currentStatus) async {
-    _showLoadingOverlay(); // Langsung muncul loading (Get.back form konfirmasi sudah dipanggil di UI)
+    _showLoadingOverlay(); 
     try {
       await supabase
           .from('profiles')
@@ -251,21 +246,20 @@ class StaffController extends GetxController {
       
       await ambilDataStaff();
       
-      _hideLoadingOverlay(); // Tutup loading
+      _hideLoadingOverlay();
       String status = !currentStatus ? "diaktifkan" : "dinonaktifkan";
-      _showSuccessDialog("Status Diubah", "Akun pekerja telah $status.");
+      _showSuccessDialog("Status Diubah", "Akun staff telah $status.");
     } catch (e) {
-      _hideLoadingOverlay(); // Tutup loading jika gagal
+      _hideLoadingOverlay();
       _showErrorDialog("Error", "Gagal mengubah status: $e");
     }
   }
 
   Future<void> gantiPasswordAdmin(String idPekerja, String passwordBaru) async {
-    Get.back(); // 1. TUTUP FORM BOTTOM SHEET TERLEBIH DAHULU
-    _showLoadingOverlay(); // 2. MUNCULKAN LAYAR LOADING GELAP
+    Get.back();
+    _showLoadingOverlay();
 
     try {
-      // Sedikit jeda agar animasi terlihat natural
       await Future.delayed(const Duration(milliseconds: 1000));
 
       final String supabaseUrl = dotenv.env['SUPABASE_URL']!;
@@ -277,14 +271,14 @@ class StaffController extends GetxController {
         attributes: AdminUserAttributes(password: passwordBaru),
       );
 
-      _hideLoadingOverlay(); // 3. TUTUP LOADING
-      _showSuccessDialog("Berhasil", "Password pekerja telah berhasil diganti tanpa email."); // 4. NOTIF SUKSES
+      _hideLoadingOverlay();
+      _showSuccessDialog("Berhasil", "Password staff telah berhasil diganti");
       
     } on AuthException catch (e) {
-      _hideLoadingOverlay(); // Tutup loading jika gagal
+      _hideLoadingOverlay();
       String pesanError = e.message;
       if (pesanError.toLowerCase().contains("different") || pesanError.toLowerCase().contains("same")) {
-        pesanError = "Password baru tidak boleh sama dengan password pekerja yang lama!";
+        pesanError = "Password baru tidak boleh sama dengan password staff yang lama!";
       }
       _showErrorDialog("Gagal", pesanError);
     } catch (e) {
