@@ -68,8 +68,11 @@ SUPABASE_ANON_KEY=your_supabase_anon_key
 ## 🚀 Cara Menjalankan Projek Menggunakan Source Code
 
 📌 Prasyarat
+
 Flutter SDK yang kompatibel dengan batas sdk di pubspec.yaml.
+
 Proyek Supabase dengan skema dan kebijakan akses (RLS) yang selaras dengan aplikasi.
+
 Perintah flutter dan dart tersedia di terminal.
 
 
@@ -97,7 +100,7 @@ Perintah flutter dan dart tersedia di terminal.
 
 🌐 Menjalankan di Web (Alternatif tanpa .env)
 
-Gunakan --dart-define:
+ Gunakan --dart-define:
 
     flutter run -d chrome \
   --dart-define=SUPABASE_URL=YOUR_URL \
@@ -105,20 +108,20 @@ Gunakan --dart-define:
 
 
 
-5 Membangun APK release
+ 5 Membangun APK release
 
 
     flutter build apk --release
 
 
-build yang lebih dioptimalkan (obfuscate, simbol terpisah, tree-shake ikon):
+ build yang lebih dioptimalkan (obfuscate, simbol terpisah, tree-shake ikon):
 
 
 
     flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/app/debug-info --tree-shake-icons
 
 
-Output umum: build/app/outputs/flutter-apk/. Salin ke folder release/ jika ingin dilampirkan pada repo atau rilis.
+ Output umum: build/app/outputs/flutter-apk/. Salin ke folder release/ jika ingin dilampirkan pada repo atau rilis.
 
 
 
