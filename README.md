@@ -62,7 +62,6 @@ Aplikasi ini menggunakan package tambahan yaitu [nama package] untuk [fungsi], s
 Aplikasi ini menggunakan file `.env` untuk menyimpan konfigurasi sensitif seperti Supabase URL dan API Key.
 
 ### Contoh isi file `.env`:
-```env
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
 
