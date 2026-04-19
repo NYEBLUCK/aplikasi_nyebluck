@@ -65,15 +65,15 @@ Aplikasi ini menggunakan file `.env` untuk menyimpan konfigurasi sensitif sepert
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
 
-## Cara Menjalankan Projek Source Code
+## 🚀 Cara Menjalankan Projek Menggunakan Source Code
 
-Prasyarat
+📌 Prasyarat
 Flutter SDK yang kompatibel dengan batas sdk di pubspec.yaml.
 Proyek Supabase dengan skema dan kebijakan akses (RLS) yang selaras dengan aplikasi.
 Perintah flutter dan dart tersedia di terminal.
 
 
-Langkah ringkas
+⚙️ Langkah Langkah
 1. Buka terminal pada root folder proyek (folder yang berisi pubspec.yaml).
 
 2. Sambungkan ke Supabase (hanya di komputer pengembang)
@@ -87,7 +87,39 @@ Langkah ringkas
 
 3. Pasang dependensi:
 
-    flutter pub get
+      flutter pub get
+
+
+4. Jalankan Aplikasi
+
+      flutter run
+
+
+🌐 Menjalankan di Web (Alternatif tanpa .env)
+
+Gunakan --dart-define:
+
+    flutter run -d chrome \
+  --dart-define=SUPABASE_URL=YOUR_URL \
+  --dart-define=SUPABASE_ANON_KEY=YOUR_KEY
+
+
+
+5 Membangun APK release
+
+
+    flutter build apk --release
+
+
+build yang lebih dioptimalkan (obfuscate, simbol terpisah, tree-shake ikon):
+
+
+
+    flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/app/debug-info --tree-shake-icons
+
+
+Output umum: build/app/outputs/flutter-apk/. Salin ke folder release/ jika ingin dilampirkan pada repo atau rilis.
+
 
 
 
