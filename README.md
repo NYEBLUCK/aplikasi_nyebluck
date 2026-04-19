@@ -65,7 +65,28 @@ Aplikasi ini menggunakan file `.env` untuk menyimpan konfigurasi sensitif sepert
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
 
-## Cara Menjalankan Projek
+## Cara Menjalankan Projek Source Code
+
+Prasyarat
+Flutter SDK yang kompatibel dengan batas sdk di pubspec.yaml.
+Proyek Supabase dengan skema dan kebijakan akses (RLS) yang selaras dengan aplikasi.
+Perintah flutter dan dart tersedia di terminal.
+
+
+Langkah ringkas
+1. Buka terminal pada root folder proyek (folder yang berisi pubspec.yaml).
+
+2. Sambungkan ke Supabase (hanya di komputer pengembang)
+
+   * Duplikat berkas .env.example dan simpan sebagai .env di folder yang sama.
+
+    * Isi URL proyek dan anon key dari dashboard Supabase (Settings → API).
+
+Berkas .env hanya dipakai secara lokal. Jangan ikut mengunggahnya ke repositori publik (pastikan terdaftar di .gitignore).
+
+
+
+
 
 ## Screenshot Aplikasi
 
