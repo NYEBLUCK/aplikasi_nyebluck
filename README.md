@@ -130,9 +130,11 @@ Perintah flutter dan dart tersedia di terminal.
 
 ## Screenshot Aplikasi
 
-## Struktur Folder
 
 
+## 📁 Struktur Folder
+
+```text
 /
 ├── android/              ← konfigurasi & build Android
 ├── ios/                  ← konfigurasi & build iOS
@@ -144,7 +146,7 @@ Perintah flutter dan dart tersedia di terminal.
 ├── assets/
 │   └── images/           ← gambar & resource aplikasi
 
-├── lib/                  ← source code utama Flutter
+├── lib/
 │   ├── main.dart         ← entry point aplikasi
 │   ├── config/           ← konfigurasi (tema, Supabase, dll.)
 │   ├── core/             ← utilitas umum (helper, service, dll.)
@@ -159,4 +161,5 @@ Perintah flutter dan dart tersedia di terminal.
 ├── README.md
 ├── analysis_options.yaml ← aturan linting
 ├── pubspec.yaml          ← konfigurasi project Flutter
-├── pubspec.lock
+└── pubspec.lock
+```
