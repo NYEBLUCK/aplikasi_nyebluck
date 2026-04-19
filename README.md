@@ -82,7 +82,12 @@ Langkah ringkas
 
     * Isi URL proyek dan anon key dari dashboard Supabase (Settings → API).
 
-Berkas .env hanya dipakai secara lokal. Jangan ikut mengunggahnya ke repositori publik (pastikan terdaftar di .gitignore).
+     Berkas .env hanya dipakai secara lokal. Jangan ikut mengunggahnya ke repositori publik (pastikan terdaftar di .gitignore).
+
+
+3. Pasang dependensi:
+
+    flutter pub get
 
 
 
