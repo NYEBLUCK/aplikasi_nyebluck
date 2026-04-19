@@ -17,14 +17,13 @@ class StaffPage extends StatelessWidget {
       backgroundColor: const Color(0xFFF9F6F3),
       body: Column(
         children: [
-          // 2. Search Bar
           Padding(
             padding: const EdgeInsets.fromLTRB(15, 10, 15, 15),
             child: TextField(
               controller: searchC,
               onChanged: (v) => staffC.filterStaff(v),
               decoration: InputDecoration(
-                hintText: "Cari nama atau peran pekerja...",
+                hintText: "Cari nama Staff",
                 hintStyle: const TextStyle(color: Colors.grey, fontSize: 14),
                 prefixIcon: const Icon(Icons.search, color: Colors.black54),
                 filled: true,
@@ -38,14 +37,16 @@ class StaffPage extends StatelessWidget {
             ),
           ),
 
-          // 3. Tombol Tambah Pekerja
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: ElevatedButton.icon(
-              onPressed: () => Get.to(() => const AddStaffPage()),
+              onPressed: () => Get.to(
+                () => const AddStaffPage(),
+                fullscreenDialog: true,
+              ),
               icon: const Icon(Icons.person_add_alt_1, color: Colors.white, size: 20),
               label: Text(
-                "Tambah Pekerja",
+                "Tambah Staff",
                 style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 15),
               ),
               style: ElevatedButton.styleFrom(
@@ -59,7 +60,6 @@ class StaffPage extends StatelessWidget {
 
           const SizedBox(height: 15),
 
-          // 4. List Staff
           Expanded(
             child: Obx(() {
               if (staffC.isLoading.value) {
@@ -72,16 +72,14 @@ class StaffPage extends StatelessWidget {
                 );
               }
 
-              return RefreshIndicator(
-                onRefresh: () => staffC.ambilDataStaff(),
-                child: ListView.builder(
-                  padding: const EdgeInsets.only(bottom: 100),
-                  itemCount: staffC.filteredStaff.length,
-                  itemBuilder: (context, index) {
-                    final staff = staffC.filteredStaff[index];
-                    return _buildStaffCard(context, staff);
-                  },
-                ),
+              return ListView.builder(
+                physics: const ClampingScrollPhysics(), 
+                padding: const EdgeInsets.only(bottom: 100),
+                itemCount: staffC.filteredStaff.length,
+                itemBuilder: (context, index) {
+                  final staff = staffC.filteredStaff[index];
+                  return _buildStaffCard(context, staff);
+                },
               );
             }),
           ),
@@ -97,11 +95,12 @@ class StaffPage extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(25),
+        border: Border.all(color: Colors.grey.shade300, width: 2.0),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.03), 
-            blurRadius: 15, 
-            offset: const Offset(0, 5)
+            color: Colors.black.withOpacity(0.04), 
+            blurRadius: 12, 
+            offset: const Offset(0, 4)
           ),
         ],
       ),
@@ -121,7 +120,7 @@ class StaffPage extends StatelessWidget {
                       style: GoogleFonts.poppins(
                         fontSize: 18, 
                         fontWeight: FontWeight.w900, 
-                        color: Colors.black
+                        color: Color(0xFFD32F2F)
                       ),
                     ),
                     const SizedBox(height: 6),
@@ -144,13 +143,14 @@ class StaffPage extends StatelessWidget {
                   ],
                 ),
               ),
-              // OVERFLOW MENU (TITIK TIGA)
               PopupMenuButton<String>(
                 icon: const Icon(Icons.more_vert, color: Colors.grey),
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
                 onSelected: (String value) {
                   if (value == 'edit') {
                     _dialogEditStaff(context, staff);
+                  } else if (value == 'ganti_password') {
+                    _dialogGantiPasswordAdmin(context, staff); 
                   } else if (value == 'toggle') {
                     _konfirmasiToggle(staff);
                   }
@@ -162,7 +162,18 @@ class StaffPage extends StatelessWidget {
                       children: [
                         const Icon(Icons.edit_outlined, size: 20, color: Colors.black87),
                         const SizedBox(width: 12),
-                        Text("Edit Data Pekerja", style: GoogleFonts.poppins(fontSize: 13)),
+                        Text("Edit Data Staff", style: GoogleFonts.poppins(fontSize: 13)),
+                      ],
+                    ),
+                  ),
+                  const PopupMenuDivider(),
+                  PopupMenuItem<String>(
+                    value: 'ganti_password',
+                    child: Row(
+                      children: [
+                        const Icon(Icons.password, size: 20, color: Colors.blue),
+                        const SizedBox(width: 12),
+                        Text("Ganti Password", style: GoogleFonts.poppins(fontSize: 13, color: Colors.blue)),
                       ],
                     ),
                   ),
@@ -205,7 +216,7 @@ class StaffPage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          Icon(icon, size: 16, color: const Color(0xFF8D6E63)),
+          Icon(icon, size: 16, color: Colors.black),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
@@ -222,7 +233,97 @@ class StaffPage extends StatelessWidget {
     );
   }
 
-  // Dialog Edit Data
+  void _dialogGantiPasswordAdmin(BuildContext context, StaffModel staff) {
+    final passwordC = TextEditingController();
+    bool isObscure = true;
+    String? errorPassword;
+
+    Get.bottomSheet(
+      StatefulBuilder(builder: (context, setModalState) {
+        return Container(
+          padding: const EdgeInsets.all(25),
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text("Ganti Password Staff", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 5),
+              Text("Ubah password untuk akun ${staff.namaLengkap}", style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey)),
+              const SizedBox(height: 25),
+              
+              TextField(
+                controller: passwordC,
+                obscureText: isObscure,
+                decoration: InputDecoration(
+                  labelText: "Masukkan Password Baru",
+                  errorText: errorPassword, 
+                  border: const OutlineInputBorder(),
+                  prefixIcon: const Icon(Icons.lock_outline),
+                  suffixIcon: IconButton(
+                    icon: Icon(isObscure ? Icons.visibility_off : Icons.visibility),
+                    onPressed: () => setModalState(() => isObscure = !isObscure),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 25),
+
+              // --- TOMBOL BATAL & SIMPAN ---
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEBEBEB),
+                        side: const BorderSide(color: Color(0xFFD32F2F), width: 2),
+                        minimumSize: const Size(0, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Text("Batal", style: GoogleFonts.poppins(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        setModalState(() {
+                          errorPassword = null;
+                          if (passwordC.text.trim().isEmpty) {
+                            errorPassword = "Password tidak boleh kosong";
+                          } else if (passwordC.text.trim().length < 8) {
+                            errorPassword = "Password minimal 8 karakter";
+                          }
+                        });
+
+                        if (errorPassword == null) {
+                          staffC.gantiPasswordAdmin(staff.id!, passwordC.text.trim());
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC62828), 
+                        minimumSize: const Size(0, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Text("Simpan", style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      }),
+      isScrollControlled: true,
+    );
+  }
+
   void _dialogEditStaff(BuildContext context, StaffModel staff) {
     final namaC = TextEditingController(text: staff.namaLengkap);
     final telpC = TextEditingController(text: staff.nomorTelpon);
@@ -244,7 +345,7 @@ class StaffPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Edit Data Pekerja", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text("Edit Data Staff", style: GoogleFonts.poppins(fontSize: 18, fontWeight: FontWeight.bold)),
               const SizedBox(height: 20),
               
               TextField(
@@ -297,50 +398,71 @@ class StaffPage extends StatelessWidget {
               ),
               const SizedBox(height: 25),
 
-              ElevatedButton(
-                onPressed: () {
-                  bool isInvalid = false;
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        backgroundColor: const Color(0xFFEBEBEB),
+                        side: const BorderSide(color: Color(0xFFD32F2F), width: 2),
+                        minimumSize: const Size(0, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Text("Batal", style: GoogleFonts.poppins(color: Color(0xFFD32F2F), fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    flex: 2,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        bool isInvalid = false;
 
-                  setModalState(() {
-                    errorNama = null;
-                    errorTelp = null;
-                    errorAlamat = null;
+                        setModalState(() {
+                          errorNama = null;
+                          errorTelp = null;
+                          errorAlamat = null;
 
-                    if (namaC.text.trim().isEmpty) {
-                      errorNama = "Nama lengkap wajib diisi";
-                      isInvalid = true;
-                    }
+                          if (namaC.text.trim().isEmpty) {
+                            errorNama = "Nama lengkap wajib diisi";
+                            isInvalid = true;
+                          }
 
-                    String telp = telpC.text.trim();
-                    if (telp.isEmpty) {
-                      errorTelp = "Nomor telepon wajib diisi";
-                      isInvalid = true;
-                    } else if (telp.length < 10 || telp.length > 13) {
-                      errorTelp = "Nomor telepon harus 10-13 digit";
-                      isInvalid = true;
-                    }
+                          String telp = telpC.text.trim();
+                          if (telp.isEmpty) {
+                            errorTelp = "Nomor telepon wajib diisi";
+                            isInvalid = true;
+                          } else if (telp.length < 10 || telp.length > 13) {
+                            errorTelp = "Nomor telepon harus 10-13 digit";
+                            isInvalid = true;
+                          }
 
-                    if (alamatC.text.trim().isEmpty) {
-                      errorAlamat = "Alamat wajib diisi";
-                      isInvalid = true;
-                    }
-                  });
+                          if (alamatC.text.trim().isEmpty) {
+                            errorAlamat = "Alamat wajib diisi";
+                            isInvalid = true;
+                          }
+                        });
 
-                  if (!isInvalid) {
-                    staffC.updateStaff(
-                      staff.id!,
-                      namaC.text.trim(),
-                      telpC.text.trim(),
-                      alamatC.text.trim(),
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC62828),
-                  minimumSize: const Size(double.infinity, 50),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                ),
-                child: Text("Simpan Perubahan", style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+                        if (!isInvalid) {
+                          staffC.updateStaff(
+                            staff.id!,
+                            namaC.text.trim(),
+                            telpC.text.trim(),
+                            alamatC.text.trim(),
+                          );
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC62828),
+                        minimumSize: const Size(0, 50),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
+                      child: Text("Simpan", style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
             ],
@@ -351,21 +473,73 @@ class StaffPage extends StatelessWidget {
     );
   }
 
-  // Dialog Konfirmasi Nonaktif/Aktif
   void _konfirmasiToggle(StaffModel staff) {
-    Get.defaultDialog(
-      title: staff.isActive ? "Nonaktifkan Akun" : "Aktifkan Kembali",
-      titleStyle: GoogleFonts.poppins(fontWeight: FontWeight.bold),
-      middleText: "Yakin ingin mengubah status akun ${staff.namaLengkap}?",
-      textConfirm: "Ya, Ubah",
-      textCancel: "Batal",
-      confirmTextColor: Colors.white,
-      buttonColor: const Color(0xFFC62828),
-      onConfirm: () {
-        // Penting: Tutup dialog konfirmasi (pertanyaan Yakin?) DULU, baru eksekusi
-        Get.back(); 
-        staffC.toggleStatusStaff(staff.id!, staff.isActive);
-      },
+    String aksi = staff.isActive ? "menonaktifkan" : "mengaktifkan kembali";
+    
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Konfirmasi",
+                style: GoogleFonts.poppins(
+                  color: const Color(0xFFC62828),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                "Apakah anda yakin ingin $aksi akun ${staff.namaLengkap}?",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.black87,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 25),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: Color(0xFFC62828), width: 2),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text("Tidak", style: GoogleFonts.poppins(color: const Color(0xFFC62828), fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.back(); 
+                        staffC.toggleStatusStaff(staff.id!, staff.isActive);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC62828),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 0,
+                      ),
+                      child: Text("Ya", style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+      barrierColor: Colors.black.withValues(alpha: 0.7),
     );
   }
 }

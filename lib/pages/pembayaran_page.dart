@@ -53,47 +53,29 @@ class PembayaranPage extends StatelessWidget {
             _buildOrderDetailCard(),
             const SizedBox(height: 25),
             
-            _sectionLabel("PILIH METODE PEMBAYARAN"),
-            _buildPaymentMethodPicker(),
-
-            // --- WIDGET INPUT UANG TUNAI DENGAN VALIDASI ERROR ---
-            Obx(() {
-              if (kasirCtrl.metodePembayaran.value == 'tunai') {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 25),
-                    _sectionLabel("NOMINAL UANG DITERIMA (CASH)"),
-                    TextField(
-                      keyboardType: TextInputType.number,
-                      onChanged: (v) {
-                        // BARU: Hilangkan peringatan error saat user mulai mengetik ulang
-                        kasirCtrl.errorUangBayar.value = ""; 
-                        
-                        String cleanNumber = v.replaceAll(RegExp(r'[^0-9]'), '');
-                        kasirCtrl.uangBayar.value = int.tryParse(cleanNumber) ?? 0;
-                      },
-                      decoration: InputDecoration(
-                        hintText: "Contoh: 50000",
-                        filled: true,
-                        fillColor: const Color(0xFFEBEBEB),
-                        prefixText: "Rp ",
-                        // BARU: Menampilkan pesan error di bawah TextField
-                        errorText: kasirCtrl.errorUangBayar.value.isEmpty 
-                            ? null 
-                            : kasirCtrl.errorUangBayar.value, 
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(15),
-                            borderSide: BorderSide.none),
-                      ),
-                    ),
-                  ],
-                );
-              }
-              return const SizedBox.shrink(); 
-            }),
-            // ------------------------------------
-
+            // --- KOLOM TUNAI PERMANEN ---
+            _sectionLabel("NOMINAL UANG DITERIMA (CASH)"),
+            Obx(() => TextField(
+              keyboardType: TextInputType.number,
+              onChanged: (v) {
+                kasirCtrl.errorUangBayar.value = ""; 
+                String cleanNumber = v.replaceAll(RegExp(r'[^0-9]'), '');
+                kasirCtrl.uangBayar.value = int.tryParse(cleanNumber) ?? 0;
+              },
+              decoration: InputDecoration(
+                hintText: "Contoh: 50000",
+                filled: true,
+                fillColor: const Color(0xFFEBEBEB),
+                prefixText: "Rp ",
+                errorText: kasirCtrl.errorUangBayar.value.isEmpty 
+                    ? null 
+                    : kasirCtrl.errorUangBayar.value, 
+                border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(15),
+                    borderSide: BorderSide.none),
+              ),
+            )),
+            
             const SizedBox(height: 120), 
           ],
         ),
@@ -202,76 +184,6 @@ class PembayaranPage extends StatelessWidget {
           ),
           Text(price, style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPaymentMethodPicker() {
-    return Obx(() => Row(
-          children: [
-            Expanded(
-              child: _paymentCard(
-                label: "Tunai",
-                icon: Icons.payments_outlined,
-                isSelected: kasirCtrl.metodePembayaran.value == "tunai",
-                onTap: () {
-                  kasirCtrl.metodePembayaran.value = "tunai";
-                  kasirCtrl.errorUangBayar.value = ""; // Reset error jika ganti metode
-                },
-              ),
-            ),
-            const SizedBox(width: 15),
-            Expanded(
-              child: _paymentCard(
-                label: "QRIS",
-                icon: Icons.qr_code_scanner_rounded,
-                isSelected: kasirCtrl.metodePembayaran.value == "qris",
-                onTap: () {
-                  kasirCtrl.metodePembayaran.value = "qris";
-                  kasirCtrl.errorUangBayar.value = ""; // Reset error jika ganti metode
-                },
-              ),
-            ),
-          ],
-        ));
-  }
-
-  Widget _paymentCard({
-    required String label,
-    required IconData icon,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: isSelected ? const Color(0xFFC62828) : Colors.transparent,
-            width: 2,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: isSelected ? const Color(0xFFC62828).withOpacity(0.1) : Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 5),
-            )
-          ],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, size: 35, color: isSelected ? const Color(0xFFC62828) : Colors.grey),
-            const SizedBox(height: 10),
-            Text(label,
-                style: GoogleFonts.poppins(
-                    fontWeight: FontWeight.bold,
-                    color: isSelected ? const Color(0xFFC62828) : Colors.black54)),
-          ],
-        ),
       ),
     );
   }

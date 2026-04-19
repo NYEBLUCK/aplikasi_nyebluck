@@ -3,23 +3,19 @@ import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'topping_controller.dart';
 import '../pages/kasir_page.dart';
+import '../pages/nota_preview_page.dart'; // BARU: Wajib diimport untuk preview nota
 
 class KasirController extends GetxController {
   final supabase = Supabase.instance.client;
   final ToppingController toppingCtrl = Get.find<ToppingController>();
 
-  // --- STATE NAVIGASI & UI ---
   var tabIndex = 0.obs;
   var isLoading = false.obs;
 
-  // --- STATE TRANSAKSI ---
   var cart = <String, int>{}.obs; 
   var namaPembeli = "".obs;
   var levelPedas = 0.obs;
-  var metodePembayaran = "tunai".obs;
   var uangBayar = 0.obs; 
-  
-  // BARU: State untuk menampung pesan error pada input uang cash
   var errorUangBayar = "".obs; 
 
   var historyToday = <Map<String, dynamic>>[].obs;
@@ -32,12 +28,10 @@ class KasirController extends GetxController {
   void tambahKeKeranjang(String id) {
     try {
       var item = toppingCtrl.allTopping.firstWhere((t) => t.id == id);
-      // BISA DITAMBAH JIKA STOK > 0 ATAU STOK == -1 (Unlimited)
-      if (item.stok > 0 || item.stok == -1) {
+      if (item.stok > 0 || item.takTerbatas) {
         cart[id] = (cart[id] ?? 0) + 1;
         
-        // KURANGI STOK SEMENTARA HANYA JIKA BUKAN UNLIMITED
-        if (item.stok != -1) item.stok--; 
+        if (!item.takTerbatas) item.stok--; 
         
         toppingCtrl.allTopping.refresh();
         toppingCtrl.filteredTopping.refresh();
@@ -56,31 +50,25 @@ class KasirController extends GetxController {
         cart[id] = cart[id]! - 1;
       }
       
-      // KEMBALIKAN STOK SEMENTARA HANYA JIKA BUKAN UNLIMITED
-      if (item.stok != -1) item.stok++; 
+      if (!item.takTerbatas) item.stok++; 
       
       toppingCtrl.allTopping.refresh();
       toppingCtrl.filteredTopping.refresh();
     }
   }
 
-  // --- PROSES SIMPAN TRANSAKSI ---
   Future<void> prosesPembayaran() async {
     if (cart.isEmpty) return;
 
-    // --- BARU: BLOK VALIDASI UANG TUNAI ---
-    if (metodePembayaran.value == 'tunai') {
-      if (uangBayar.value == 0) {
-        errorUangBayar.value = "Nominal uang tidak boleh kosong";
-        return; // Hentikan proses jika error
-      } else if (uangBayar.value < totalBayar) {
-        errorUangBayar.value = "Uang kurang Rp ${totalBayar - uangBayar.value}";
-        return; // Hentikan proses jika error
-      }
+    if (uangBayar.value == 0) {
+      errorUangBayar.value = "Nominal uang tidak boleh kosong";
+      return; 
+    } else if (uangBayar.value < totalBayar) {
+      errorUangBayar.value = "Uang kurang Rp ${totalBayar - uangBayar.value}";
+      return; 
     }
-    // Jika lolos validasi, kosongkan pesan error
+    
     errorUangBayar.value = "";
-    // --------------------------------------
     
     try {
       isLoading.value = true;
@@ -91,21 +79,20 @@ class KasirController extends GetxController {
         return;
       }
 
-      int finalBayar = metodePembayaran.value == 'qris' ? totalBayar : uangBayar.value;
-      if (finalBayar < totalBayar) finalBayar = totalBayar; 
+      int finalBayar = uangBayar.value;
       int finalKembalian = finalBayar - totalBayar;
 
+      // BARU: Hapus .select('id') dan ganti jadi .select() untuk mengambil semua data transaksi terbaru
       final transactionData = await supabase.from('transactions').insert({
         'cashier_id': userId,
         'nama_pembeli': namaPembeli.value.isEmpty ? "Pelanggan" : namaPembeli.value,
         'level_pedas': levelPedas.value,
-        'metode': metodePembayaran.value, 
         'total_harga': totalBayar,
         'total_quantity': totalItems, 
         'bayar': finalBayar,          
         'kembalian': finalKembalian,  
         'created_at': DateTime.now().toUtc().toIso8601String(), 
-      }).select('id').single();
+      }).select().single(); 
 
       final String transactionId = transactionData['id'];
 
@@ -129,7 +116,8 @@ class KasirController extends GetxController {
       for (var entry in cart.entries) {
         String id = entry.key;
         var item = toppingCtrl.allTopping.firstWhere((t) => t.id == id);
-        if (item.stok != -1) {
+        
+        if (!item.takTerbatas) {
           await supabase
               .from('toppings')
               .update({'stok': item.stok})
@@ -137,14 +125,14 @@ class KasirController extends GetxController {
         }
       }
 
+      // Ambil nama kasir
+      final String kasirEmail = supabase.auth.currentUser?.email?.split('@')[0] ?? "Kasir";
+
+      // Panggil popup dan kirim data untuk ditampilkan di halaman Nota Preview nanti
       _showSuccessDialog(
-        transactionId: transactionId,
-        namaPembeli: namaPembeli.value.isEmpty ? "Pelanggan" : namaPembeli.value,
-        totalHarga: totalBayar,
-        totalQuantity: totalItems,
-        bayar: finalBayar,
-        kembalian: finalKembalian,
-        metode: metodePembayaran.value,
+        transactionData: transactionData,
+        transactionItems: itemsToInsert,
+        cashierName: kasirEmail,
       );
 
       fetchHistoryToday();
@@ -158,13 +146,9 @@ class KasirController extends GetxController {
   }
 
   void _showSuccessDialog({
-    required String transactionId,
-    required String namaPembeli,
-    required int totalHarga,
-    required int totalQuantity,
-    required int bayar,
-    required int kembalian,
-    required String metode,
+    required Map<String, dynamic> transactionData,
+    required List<dynamic> transactionItems,
+    required String cashierName,
   }) {
     Get.dialog(
       Dialog(
@@ -176,26 +160,36 @@ class KasirController extends GetxController {
             children: [
               const Icon(Icons.check_circle_outline, size: 80, color: Colors.green),
               const SizedBox(height: 16),
-              const Text("Transaksi Berhasil!", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              const SizedBox(height: 24),
-              _buildDialogDetailRow("Metode", metode.toUpperCase()),
-              _buildDialogDetailRow("Total QTY", "$totalQuantity item"),
-              _buildDialogDetailRow("Total Bayar", "Rp $totalHarga"),
-              _buildDialogDetailRow("Kembalian", "Rp $kembalian"),
+              // BARU: Judul diubah, detail dihilangkan
+              const Text("Pembayaran Sukses!", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
               const SizedBox(height: 32),
+              
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    Get.back(); 
-                    resetTransactionState(); 
+                    Get.back(); // Tutup dialog popup
+                    
+                    // Bersihkan keranjang & input
+                    cart.clear();
+                    namaPembeli.value = "";
+                    levelPedas.value = 0;
+                    uangBayar.value = 0;
+                    errorUangBayar.value = ""; 
+                    
+                    // Pindah ke halaman Nota Preview (menggantikan halaman PembayaranPage)
+                    Get.off(() => NotaPreviewPage(
+                      transactionData: transactionData,
+                      transactionItems: transactionItems,
+                      cashierName: cashierName,
+                    ));
                   },
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFC62828),
                       foregroundColor: Colors.white,
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15))),
-                  child: const Text("OKE, KEMBALI KE KASIR", style: TextStyle(fontWeight: FontWeight.bold)),
+                  child: const Text("LANJUTKAN", style: TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
             ],
@@ -241,26 +235,13 @@ class KasirController extends GetxController {
     );
   }
 
-  Widget _buildDialogDetailRow(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.black, fontSize: 12)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-        ],
-      ),
-    );
-  }
-
+  // Fungsi reset standar jika kembali ke kasir dengan cara lain (misalnya tombol batal)
   void resetTransactionState() {
     cart.clear();
     namaPembeli.value = "";
     levelPedas.value = 0;
-    metodePembayaran.value = "tunai";
     uangBayar.value = 0;
-    errorUangBayar.value = ""; // BARU: Reset error state
+    errorUangBayar.value = ""; 
     Get.offAll(() => KasirPage());
   }
 

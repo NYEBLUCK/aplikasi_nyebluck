@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import '../services/pdf_service.dart';
 
@@ -18,14 +19,17 @@ class NotaPreviewPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final DateTime createdAt = DateTime.parse(transactionData['created_at']).toLocal();
-    final String dateFormatted = DateFormat('yyyy-MM-dd').format(createdAt);
+    
+    // 👇 FORMAT TANGGAL DIUBAH MENJADI STANDAR INDONESIA (HARI/BULAN/TAHUN) 👇
+    final String dateFormatted = DateFormat('dd/MM/yyyy').format(createdAt);
+    
     final String timeFormatted = DateFormat('HH:mm:ss').format(createdAt);
     
     // Potong ID agar menyerupai struk asli
     final String shortId = transactionData['id'].toString().replaceAll('-', '').substring(0, 16).toUpperCase();
 
     return Scaffold(
-      backgroundColor: Colors.grey[200], // Background agak gelap agar "kertas" putih menonjol
+      backgroundColor: Colors.grey[200], 
       appBar: AppBar(
         title: const Text("Preview Nota", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
         backgroundColor: Colors.white,
@@ -39,7 +43,7 @@ class NotaPreviewPage extends StatelessWidget {
               padding: const EdgeInsets.all(20),
               child: Center(
                 child: Container(
-                  width: 350, // Lebar fixed menyerupai kertas struk thermal
+                  width: 350, 
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -58,8 +62,8 @@ class NotaPreviewPage extends StatelessWidget {
                             const Icon(Icons.storefront, size: 50),
                             const SizedBox(height: 10),
                             const Text("NYEBLUCK", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-                            const Text("Jl. Jakarta No.19, Samarinda", textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
-                            const Text("No. Telp 0812345678", style: TextStyle(fontSize: 12)),
+                            const Text("Jl. Jakarta Blok CT No.15, Samarinda", textAlign: TextAlign.center, style: TextStyle(fontSize: 12)),
+                            const Text("No. Telp 082152069178", style: TextStyle(fontSize: 12)),
                             const SizedBox(height: 5),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -73,23 +77,23 @@ class NotaPreviewPage extends StatelessWidget {
                       const _DashedDivider(),
                       const SizedBox(height: 10),
 
-                      // --- INFO STRUK ---
+                      // --- INFO STRUK DENGAN LABEL ---
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(dateFormatted, style: const TextStyle(fontSize: 12)),
-                          Text(cashierName, style: const TextStyle(fontSize: 12)),
+                          Text("Kasir : $cashierName", style: const TextStyle(fontSize: 12)), // Label Kasir
                         ],
                       ),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(timeFormatted, style: const TextStyle(fontSize: 12)),
-                          Text(transactionData['nama_pembeli'] ?? "Pelanggan", style: const TextStyle(fontSize: 12)),
+                          Text("${transactionData['nama_pembeli'] ?? 'Pelanggan'}", style: const TextStyle(fontSize: 12)), // Label Pelanggan
                         ],
                       ),
                       const SizedBox(height: 5),
-                      Text("Metode: ${transactionData['metode'].toString().toUpperCase()} - Lvl: ${transactionData['level_pedas']}", style: const TextStyle(fontSize: 12)),
+                      Text("Level Pedas: ${transactionData['level_pedas']}", style: const TextStyle(fontSize: 12)),
                       const SizedBox(height: 10),
                       const _DashedDivider(),
                       const SizedBox(height: 10),
@@ -142,7 +146,7 @@ class NotaPreviewPage extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text("Bayar (${transactionData['metode'].toString().toUpperCase()})", style: const TextStyle(fontSize: 13)),
+                          const Text("Bayar", style: TextStyle(fontSize: 13)),
                           Text("Rp ${transactionData['bayar'] ?? transactionData['total_harga']}", style: const TextStyle(fontSize: 13)),
                         ],
                       ),
@@ -150,15 +154,15 @@ class NotaPreviewPage extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text("Kembali", style: TextStyle(fontSize: 13)),
-                          Text("Rp ${transactionData['kembalian'] ?? 0}", style: const TextStyle(fontSize: 13)),
+                          Text("Rp ${transactionData['kembalian'] ?? 0}", style: GoogleFonts.poppins(fontSize: 13)),
                         ],
                       ),
 
                       // --- FOOTER ---
                       const SizedBox(height: 30),
-                      const Center(child: Text("Terimakasih Telah Berbelanja", style: TextStyle(fontSize: 13))),
+                      const Center(child: Text("Terimakasih Telah Datang", style: TextStyle(fontSize: 13))),
                       const SizedBox(height: 15),
-                      const Center(child: Text("Powered by Nyebluck System", style: TextStyle(fontSize: 9, color: Colors.grey))),
+                      const Center(child: Text("Powered by Nyebluck", style: TextStyle(fontSize: 9, color: Colors.grey))),
                     ],
                   ),
                 ),
@@ -184,14 +188,13 @@ class NotaPreviewPage extends StatelessWidget {
                       side: const BorderSide(color: Colors.grey),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
                     ),
-                    child: const Text("Kembali", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+                    child: Text("Kembali", style: GoogleFonts.poppins(color: Colors.black, fontWeight: FontWeight.bold)),
                   ),
                 ),
                 const SizedBox(width: 15),
                 Expanded(
                   child: ElevatedButton.icon(
                     onPressed: () async {
-                      // Panggil PDF Service untuk print/simpan
                       await PdfService.generateReceipt(
                         transaction: transactionData,
                         items: transactionItems,
@@ -204,7 +207,7 @@ class NotaPreviewPage extends StatelessWidget {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10))
                     ),
                     icon: const Icon(Icons.print, color: Colors.white),
-                    label: const Text("Cetak Nota", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    label: Text("Cetak Nota", style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
                   ),
                 ),
               ],
@@ -216,7 +219,6 @@ class NotaPreviewPage extends StatelessWidget {
   }
 }
 
-// Custom Widget untuk membuat garis putus-putus
 class _DashedDivider extends StatelessWidget {
   const _DashedDivider();
   @override

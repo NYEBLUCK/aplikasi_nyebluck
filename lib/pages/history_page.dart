@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import '../controllers/kasir_controller.dart';
-import 'nota_preview_page.dart'; // PASTI KAN FILE INI SUDAH ADA & LOKASI SESUAI
+import 'nota_preview_page.dart'; 
 
 class HistoryPage extends StatelessWidget {
   final KasirController kasirCtrl = Get.find<KasirController>();
@@ -123,25 +123,6 @@ class HistoryPage extends StatelessWidget {
             style: const TextStyle(color: Colors.grey, fontSize: 13),
           ),
           const SizedBox(height: 20),
-          Row(
-            children: [
-              Icon(
-                  data['metode'].toString().toLowerCase() == 'qris'
-                      ? Icons.qr_code_scanner
-                      : Icons.payments_outlined,
-                  size: 18,
-                  color: Colors.grey[600]),
-              const SizedBox(width: 8),
-              Text(
-                data['metode'].toString().toUpperCase(),
-                style: TextStyle(
-                    color: Colors.grey[700],
-                    fontWeight: FontWeight.w600,
-                    fontSize: 14),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

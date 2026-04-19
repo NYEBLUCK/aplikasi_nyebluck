@@ -10,7 +10,18 @@ class PdfReportService {
     required DateTime? endDate,
     required int totalPendapatan,
   }) async {
-    final pdf = pw.Document();
+    
+    // --- 1. DOWNLOAD FONT POPPINS UNTUK PDF ---
+    final fontRegular = await PdfGoogleFonts.poppinsRegular();
+    final fontBold = await PdfGoogleFonts.poppinsBold();
+
+    // Terapkan font sebagai tema dasar dokumen PDF
+    final pdf = pw.Document(
+      theme: pw.ThemeData.withFont(
+        base: fontRegular,
+        bold: fontBold,
+      ),
+    );
 
     String periode = "Keseluruhan Waktu";
     if (startDate != null && endDate != null) {
@@ -26,7 +37,7 @@ class PdfReportService {
           return [
             // --- HEADER ---
             pw.Text("NYEBLUCK", style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold, color: PdfColors.red800)),
-            pw.Text("Laporan Penjualan Transaksi", style: pw.TextStyle(fontSize: 18)),
+            pw.Text("Laporan Penjualan", style: pw.TextStyle(fontSize: 18)),
             pw.Text("Periode: $periode", style: const pw.TextStyle(fontSize: 12, color: PdfColors.grey700)),
             pw.SizedBox(height: 20),
 
@@ -40,19 +51,18 @@ class PdfReportService {
             ),
             pw.SizedBox(height: 30),
 
-            // --- TABLE DATA ---
+            // --- TABLE DATA (KOLOM METODE DIHAPUS) ---
             pw.Text("Detail Transaksi", style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold)),
             pw.SizedBox(height: 10),
             
             pw.TableHelper.fromTextArray(
-              headers: ['Kode', 'Waktu (WITA)', 'Kasir', 'Metode', 'Total (Rp)'],
-              // PENTING: Mengunci proporsi lebar kolom agar tidak melewati kertas PDF
+              headers: ['Kode', 'Waktu (WITA)', 'Kasir', 'Total (Rp)'],
+              // Lebar kolom disesuaikan karena hanya sisa 4 kolom
               columnWidths: {
-                0: const pw.FlexColumnWidth(1.2), // Kode Transaksi
-                1: const pw.FlexColumnWidth(2.0), // Waktu (Lebih lebar karena ada tanggal & jam)
-                2: const pw.FlexColumnWidth(2.0), // Nama Kasir
-                3: const pw.FlexColumnWidth(1.2), // Metode (QRIS/Tunai)
-                4: const pw.FlexColumnWidth(1.5), // Total Harga
+                0: const pw.FlexColumnWidth(1.5), // Kode Transaksi
+                1: const pw.FlexColumnWidth(2.5), // Waktu
+                2: const pw.FlexColumnWidth(2.5), // Nama Kasir
+                3: const pw.FlexColumnWidth(2.0), // Total Harga
               },
               data: transactions.map((tx) {
                 // Pastikan Konversi ke WITA (UTC+8)
@@ -69,8 +79,7 @@ class PdfReportService {
                   shortId,
                   waktuStr,
                   namaKasir,
-                  tx['metode'].toString().toUpperCase(),
-                  tx['total_harga'].toString(),
+                  tx['total_harga'].toString(), // Data metode sudah dihapus
                 ];
               }).toList(),
               headerStyle: pw.TextStyle(fontWeight: pw.FontWeight.bold, color: PdfColors.white, fontSize: 11),
@@ -81,8 +90,7 @@ class PdfReportService {
                 0: pw.Alignment.centerLeft,
                 1: pw.Alignment.centerLeft,
                 2: pw.Alignment.centerLeft,
-                3: pw.Alignment.center,
-                4: pw.Alignment.centerRight,
+                3: pw.Alignment.centerRight, // Total ditaruh rata kanan
               },
             ),
           ];

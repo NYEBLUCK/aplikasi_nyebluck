@@ -38,7 +38,7 @@ class _AddStaffPageState extends State<AddStaffPage> {
 
     bool isInvalid = false;
 
-    if (namaC.text.isEmpty) {
+    if (namaC.text.trim().isEmpty) {
       setState(() => errorNama = "Nama lengkap wajib diisi");
       isInvalid = true;
     }
@@ -80,10 +80,10 @@ class _AddStaffPageState extends State<AddStaffPage> {
     }
 
     // 5. Validasi Password
-    if (passC.text.isEmpty) {
+    if (passC.text.trim().isEmpty) {
       setState(() => errorPass = "Password wajib diisi");
       isInvalid = true;
-    } else if (passC.text.length < 8) {
+    } else if (passC.text.trim().length < 8) {
       setState(() => errorPass = "Password minimal 8 karakter");
       isInvalid = true;
     }

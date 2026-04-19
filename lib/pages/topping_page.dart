@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../controllers/topping_controller.dart';
-import '../pages/login_page.dart';
 import 'edit_topping_page.dart';
 import 'add_topping_page.dart';
 import 'staff_page.dart';
 import 'report_page.dart';
+import 'profile_page.dart'; 
 
 class ToppingPage extends StatelessWidget {
   ToppingPage({super.key});
@@ -18,62 +18,78 @@ class ToppingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F6F3),
+      
       appBar: AppBar(
-        title: Text(
-          "NYEBLUCK",
-          style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1),
-        ),
-        backgroundColor: const Color(0xFFC62828), // Navbar atas merah
+        title: Obx(() {
+          String judul = "Kelola Topping";
+          if (toppingC.currentIndex.value == 1) {
+            judul = "Laporan Penjualan";
+          } else if (toppingC.currentIndex.value == 2) {
+            judul = "Kelola Staff";
+          } else if (toppingC.currentIndex.value == 3) {
+            judul = "Profil";
+          }
+          
+          return Text(
+            judul,
+            style: GoogleFonts.poppins(
+                color: const Color(0xFFC62828), 
+                fontWeight: FontWeight.w800,
+                fontSize: 20,
+                letterSpacing: 1),
+          );
+        }),
+        backgroundColor: Colors.white, 
+        surfaceTintColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () => _showLogoutDialog(context),
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white,
-                  width: 1.5,
-                ),
-              ),
-              child: const Icon(
-                Icons.logout_rounded,
-                color: Colors.white,
-                size: 18,
-              ),
-            ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey[300], 
+            height: 1.0, 
           ),
-          const SizedBox(width: 10),
-        ],
+        ),
       ),
+
       body: Obx(() => IndexedStack(
             index: toppingC.currentIndex.value,
             children: [
               _buildToppingBody(context),
               ReportPage(),
               StaffPage(),
+              const ProfilePage(), 
             ],
           )),
-      bottomNavigationBar: Obx(() => BottomNavigationBar(
-            selectedItemColor: const Color(0xFFC62828),
-            unselectedItemColor: Colors.grey,
-            currentIndex: toppingC.currentIndex.value,
-            onTap: (index) => toppingC.currentIndex.value = index,
-            type: BottomNavigationBarType.fixed,
-            selectedLabelStyle:
-                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 11),
-            unselectedLabelStyle: GoogleFonts.poppins(fontSize: 10),
-            items: const [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.inventory_2), label: "TOPPING"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.bar_chart_rounded), label: "LAPORAN"),
-              BottomNavigationBarItem(icon: Icon(Icons.group), label: "STAFF"),
-            ],
+
+      bottomNavigationBar: Obx(() => Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                top: BorderSide(color: Colors.grey.shade300, width: 2.0), 
+              ),
+            ),
+            child: BottomNavigationBar(
+              elevation: 0, 
+              backgroundColor: Colors.white, 
+              selectedItemColor: const Color(0xFFC62828),
+              unselectedItemColor: Colors.grey,
+              currentIndex: toppingC.currentIndex.value,
+              onTap: (index) => toppingC.currentIndex.value = index,
+              type: BottomNavigationBarType.fixed,
+              selectedLabelStyle:
+                  GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 11),
+              unselectedLabelStyle: GoogleFonts.poppins(fontSize: 10),
+              items: const [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.inventory_2), label: "TOPPING"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.bar_chart_rounded), label: "LAPORAN"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.group), label: "STAFF"),
+                BottomNavigationBarItem( 
+                    icon: Icon(Icons.person), label: "PROFIL"),
+              ],
+            ),
           )),
     );
   }
@@ -92,7 +108,7 @@ class ToppingPage extends StatelessWidget {
                   onChanged: (v) =>
                       toppingC.filterData(v, toppingC.selectedCategory.value),
                   decoration: InputDecoration(
-                    hintText: "Cari topping...",
+                    hintText: "Cari topping",
                     prefixIcon: const Icon(Icons.search, size: 20),
                     isDense: true,
                     filled: true,
@@ -136,10 +152,17 @@ class ToppingPage extends StatelessWidget {
             ],
           ),
         ),
+        
+        Divider(height: 1, thickness: 1, color: Colors.grey[300]),
+
         Padding(
           padding: const EdgeInsets.all(12),
           child: ElevatedButton.icon(
-            onPressed: () => Get.to(() => const AddToppingPage()),
+            // --- MENGGUNAKAN fullscreenDialog AGAR ANIMASI BAWAAN FLUTTER LEBIH MULUS ---
+            onPressed: () => Get.to(
+              () => const AddToppingPage(), 
+              fullscreenDialog: true, 
+            ),
             icon: const Icon(Icons.add_circle, color: Colors.white, size: 20),
             label: Text("Tambah Topping",
                 style: GoogleFonts.poppins(
@@ -169,7 +192,8 @@ class ToppingPage extends StatelessWidget {
               itemCount: toppingC.filteredTopping.length,
               itemBuilder: (context, index) {
                 final item = toppingC.filteredTopping[index];
-                bool isHabis = (item.stok == 0);
+                
+                bool isHabis = (!item.takTerbatas && item.stok == 0);
 
                 return Container(
                   margin: const EdgeInsets.only(bottom: 10),
@@ -178,8 +202,15 @@ class ToppingPage extends StatelessWidget {
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(15),
                     border: isHabis
-                        ? Border.all(color: Colors.orange.shade300, width: 1.5)
-                        : null,
+                        ? Border.all(color: Colors.orange.shade300, width: 2.0)
+                        : Border.all(color: Colors.grey.shade300, width: 2.0),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04), 
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
                   child: Row(
                     children: [
@@ -223,11 +254,10 @@ class ToppingPage extends StatelessWidget {
                                   child: Icon(Icons.circle,
                                       size: 3, color: Colors.grey),
                                 ),
-                                // Logika Teks Stok Unlimited di Inventory
                                 Text(
-                                  item.stok == -1 ? "Stok: Unlimited" : "Stok: ${isHabis ? 'Habis' : item.stok}",
+                                  item.takTerbatas ? "Stok: Tak Terbatas" : "Stok: ${isHabis ? 'Habis' : item.stok}",
                                   style: TextStyle(
-                                      color: item.stok == -1 ? Colors.green : (isHabis ? Colors.red : Colors.grey[600]),
+                                      color: item.takTerbatas ? Colors.green : (isHabis ? Colors.red : Colors.grey[600]),
                                       fontWeight: FontWeight.w600,
                                       fontSize: 12),
                                 ),
@@ -239,8 +269,13 @@ class ToppingPage extends StatelessWidget {
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
+                          // --- MENGGUNAKAN fullscreenDialog ---
                           _buildActionButton(Icons.edit, 
-                              () => Get.to(() => const EditToppingPage(), arguments: item)),
+                              () => Get.to(
+                                () => const EditToppingPage(), 
+                                arguments: item,
+                                fullscreenDialog: true, 
+                              )),
                           const SizedBox(width: 6),
                           _buildActionButton(Icons.delete, 
                               () => _konfirmasiHapus(context, item.id!, item.namaTopping, item.imageUrl), 
@@ -276,30 +311,70 @@ class ToppingPage extends StatelessWidget {
 
   void _konfirmasiHapus(
       BuildContext context, String id, String nama, String? url) {
-    Get.defaultDialog(
-      title: "Hapus",
-      titleStyle: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold),
-      middleText: "Hapus $nama?",
-      textConfirm: "Ya",
-      textCancel: "Tidak",
-      confirmTextColor: Colors.white,
-      buttonColor: const Color(0xFFC62828),
-      onConfirm: () {
-        Get.back();
-        toppingC.hapusTopping(id, nama, url);
-      },
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    Get.defaultDialog(
-      title: "Keluar",
-      middleText: "Yakin ingin keluar?",
-      textCancel: "Batal",
-      textConfirm: "Ya",
-      confirmTextColor: Colors.white,
-      buttonColor: const Color(0xFFC62828),
-      onConfirm: () => Get.offAll(const LoginPage()),
+    Get.dialog(
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: Colors.white,
+        child: Padding(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                "Konfirmasi",
+                style: GoogleFonts.poppins(
+                  color: const Color(0xFFC62828),
+                  fontSize: 20,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const SizedBox(height: 15),
+              Text(
+                "Apakah anda yakin ingin menghapus $nama?",
+                textAlign: TextAlign.center,
+                style: GoogleFonts.poppins(
+                  color: Colors.black87,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 25),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        side: const BorderSide(color: Color(0xFFC62828), width: 2),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                      child: Text("Tidak", style: GoogleFonts.poppins(color: const Color(0xFFC62828), fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Get.back();
+                        toppingC.hapusTopping(id, nama, url);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC62828),
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        elevation: 0,
+                      ),
+                      child: Text("Ya", style: GoogleFonts.poppins(color: Colors.white, fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ],
+              )
+            ],
+          ),
+        ),
+      ),
+      barrierColor: Colors.black.withValues(alpha: 0.7), // Latar belakang gelap transparan
     );
   }
 }

@@ -4,7 +4,6 @@ class TransactionModel {
   String namaPembeli;
   int totalHarga;
   int levelPedas;
-  String metode;
   DateTime? createdAt;
 
   TransactionModel({
@@ -13,7 +12,6 @@ class TransactionModel {
     required this.namaPembeli,
     required this.totalHarga,
     required this.levelPedas,
-    required this.metode,
     this.createdAt,
   });
 
@@ -23,7 +21,6 @@ class TransactionModel {
       'nama_pembeli': namaPembeli,
       'total_harga': totalHarga,
       'level_pedas': levelPedas,
-      'metode': metode,
     };
   }
 }

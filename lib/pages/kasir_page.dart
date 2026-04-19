@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'login_page.dart';
 import 'pembayaran_page.dart';
 import 'history_page.dart';
+import 'profile_page.dart'; 
 
 class KasirPage extends StatelessWidget {
   final ToppingController toppingC = Get.put(ToppingController());
@@ -17,63 +18,75 @@ class KasirPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F8F8),
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text(
-          "NYEBLUCK",
-          style: GoogleFonts.poppins(
-              color: Colors.white,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 1),
-        ),
-        backgroundColor: const Color(0xFFC62828), // Navbar atas merah
+        title: Obx(() {
+          String judul = "Kasir";
+          if (kasirCtrl.tabIndex.value == 1) {
+            judul = "Riwayat Transaksi";
+          } else if (kasirCtrl.tabIndex.value == 2) {
+            judul = "Profil";
+          }
+          
+          return Text(
+            judul,
+            style: GoogleFonts.poppins(
+                color: const Color(0xFFC62828), 
+                fontWeight: FontWeight.w800,
+                fontSize: 20,
+                letterSpacing: 1),
+          );
+        }),
+        backgroundColor: Colors.white, 
+        surfaceTintColor: Colors.white,
         elevation: 0,
-        actions: [
-          IconButton(
-            onPressed: () => _showLogoutDialog(context),
-            icon: Container(
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: Colors.white, // Border putih
-                  width: 1.5,
-                ),
-              ),
-              child: const Icon(
-                Icons.logout_rounded,
-                color: Colors.white, // Icon putih
-                size: 18,
-              ),
-            ),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(1.0),
+          child: Container(
+            color: Colors.grey[300], // Warna garis abu-abu halus
+            height: 1.0, // Ketebalan garis
           ),
-          const SizedBox(width: 10),
-        ],
+        ),
       ),
 
       body: Obx(() {
         if (kasirCtrl.tabIndex.value == 0) {
           return _buildKasirBody();
-        } else {
+        } else if (kasirCtrl.tabIndex.value == 1) {
           return HistoryPage();
+        } else {
+          return const ProfilePage(); 
         }
       }),
 
-      bottomNavigationBar: Obx(() => BottomNavigationBar(
-            backgroundColor: Colors.white, // Navbar bawah merah
-            selectedItemColor: const Color(0xFFC62828), // Icon aktif putih
-            unselectedItemColor: Colors.grey, // Icon tidak aktif putih redup
-            currentIndex: kasirCtrl.tabIndex.value,
-            type: BottomNavigationBarType.fixed,
-            selectedLabelStyle:
-                GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 11),
-            unselectedLabelStyle: GoogleFonts.poppins(fontSize: 10),
-            onTap: (index) => kasirCtrl.changeTab(index),
-            items: const [
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.receipt_long), label: "KASIR"),
-              BottomNavigationBarItem(icon: Icon(Icons.history), label: "RIWAYAT"),
-            ],
+      bottomNavigationBar: Obx(() => Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(
+                // PENGATURAN GARIS TIPIS DI ATAS BOTTOM NAV
+                top: BorderSide(color: Colors.grey.shade300, width: 2.0), 
+              ),
+            ),
+            child: BottomNavigationBar(
+              elevation: 0, // Wajib 0 agar garisnya terlihat bersih tanpa bayangan
+              backgroundColor: Colors.white, 
+              selectedItemColor: const Color(0xFFC62828), 
+              unselectedItemColor: Colors.grey, 
+              currentIndex: kasirCtrl.tabIndex.value,
+              type: BottomNavigationBarType.fixed,
+              selectedLabelStyle:
+                  GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 11),
+              unselectedLabelStyle: GoogleFonts.poppins(fontSize: 10),
+              onTap: (index) => kasirCtrl.changeTab(index),
+              items: const [
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.receipt_long), label: "KASIR"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.history), label: "RIWAYAT"),
+                BottomNavigationBarItem(
+                    icon: Icon(Icons.person), label: "PROFIL"),
+              ],
+            ),
           )),
     );
   }
@@ -94,7 +107,7 @@ class KasirPage extends StatelessWidget {
                       onChanged: (v) =>
                           toppingC.filterData(v, toppingC.selectedCategory.value),
                       decoration: InputDecoration(
-                        hintText: "Cari topping...",
+                        hintText: "Cari topping",
                         prefixIcon: const Icon(Icons.search, size: 20),
                         isDense: true,
                         filled: true,
@@ -140,17 +153,30 @@ class KasirPage extends StatelessWidget {
                           }).toList(),
                         )),
                   ),
+                  const SizedBox(height: 5),
                 ],
               ),
             ),
+            
+            // --- GARIS PEMBATAS ANTARA FILTER DAN LIST TOPPING ---
+            Divider(height: 1, thickness: 1, color: Colors.grey[300]),
+            // -----------------------------------------------------
+
             Expanded(
               child: Obx(() {
                 if (toppingC.isLoading.value) {
                   return const Center(child: CircularProgressIndicator());
                 }
-                return ListView.builder(
+                
+                // MENGGUNAKAN LISTVIEW.SEPARATED AGAR ADA GARIS TIAP ITEM
+                return ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 10, 16, 100),
                   itemCount: toppingC.filteredTopping.length,
+                  separatorBuilder: (context, index) => Divider(
+                    color: Colors.grey[300],
+                    height: 20, 
+                    thickness: 1, 
+                  ),
                   itemBuilder: (context, index) {
                     final topping = toppingC.filteredTopping[index];
                     return _buildProductItem(topping);
@@ -169,11 +195,9 @@ class KasirPage extends StatelessWidget {
   }
 
   Widget _buildProductItem(dynamic topping) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-          color: Colors.white, borderRadius: BorderRadius.circular(15)),
+    // Container tidak lagi diberikan gaya putih & border (Card dihapus)
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
       child: Row(
         children: [
           ClipRRect(
@@ -196,17 +220,17 @@ class KasirPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(topping.namaTopping,
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                         fontWeight: FontWeight.bold, fontSize: 16)),
-                // Logika Teks Stok Unlimited
-                Text(topping.stok == -1 
-                      ? "Stok: Unlimited" 
+                // --- BARU: Menggunakan logika takTerbatas dari database ---
+                Text(topping.takTerbatas 
+                      ? "Stok: Tak Terbatas" 
                       : (topping.stok > 0 ? "Stok: ${topping.stok}" : "Stok Habis"),
                     style: TextStyle(
-                        color: topping.stok == -1 ? Colors.green : (topping.stok > 0 ? Colors.grey : Colors.red),
+                        color: topping.takTerbatas ? Colors.green : (topping.stok > 0 ? Colors.grey : Colors.red),
                         fontSize: 12)),
                 Text("Rp ${topping.harga}",
-                    style: const TextStyle(
+                    style: GoogleFonts.poppins(
                         color: Color(0xFFC62828), fontWeight: FontWeight.bold)),
               ],
             ),
@@ -215,14 +239,16 @@ class KasirPage extends StatelessWidget {
             int qty = kasirCtrl.cart[topping.id] ?? 0;
             return qty == 0
                 ? ElevatedButton(
-                    onPressed: (topping.stok > 0 || topping.stok == -1)
+                    // --- BARU: Pengecekan takTerbatas (bukan -1) ---
+                    onPressed: (topping.stok > 0 || topping.takTerbatas)
                         ? () => kasirCtrl.tambahKeKeranjang(topping.id)
                         : null,
                     style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFC62828),
                         foregroundColor: Colors.white),
-                    child: const Text("Tambah"),
-                  )
+                    child: Text("Tambah", style: GoogleFonts.poppins(
+                        color: Colors.white, fontWeight: FontWeight.bold),
+                  ))
                 : Row(
                     children: [
                       IconButton(
@@ -232,11 +258,12 @@ class KasirPage extends StatelessWidget {
                       Text("$qty",
                           style: const TextStyle(fontWeight: FontWeight.bold)),
                       IconButton(
-                          onPressed: (topping.stok > 0 || topping.stok == -1)
+                          // --- BARU: Pengecekan takTerbatas ---
+                          onPressed: (topping.stok > 0 || topping.takTerbatas)
                               ? () => kasirCtrl.tambahKeKeranjang(topping.id)
                               : null,
                           icon: Icon(Icons.add_circle,
-                              color: (topping.stok > 0 || topping.stok == -1)
+                              color: (topping.stok > 0 || topping.takTerbatas)
                                   ? const Color(0xFFC62828)
                                   : Colors.grey)),
                     ],

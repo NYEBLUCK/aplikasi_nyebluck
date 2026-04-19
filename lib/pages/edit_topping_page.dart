@@ -26,8 +26,12 @@ class _EditToppingPageState extends State<EditToppingPage> {
   String? errorStok;
 
   late String kategoriTerpilih;
+  late bool isTakTerbatas; 
   XFile? fotoBaru;
   Uint8List? webImage;
+
+  // --- BARU: State untuk menandai user ingin menghapus foto LAMA yang ada di DB ---
+  bool hapusFotoLamaTakTersimpan = false;
 
   @override
   void initState() {
@@ -36,6 +40,7 @@ class _EditToppingPageState extends State<EditToppingPage> {
     hargaC = TextEditingController(text: toppingData.harga.toString());
     stokC = TextEditingController(text: toppingData.stok.toString());
     kategoriTerpilih = toppingData.kategori;
+    isTakTerbatas = toppingData.takTerbatas; 
   }
 
   Future<void> pickImage() async {
@@ -51,17 +56,43 @@ class _EditToppingPageState extends State<EditToppingPage> {
         setState(() {
           webImage = f;
           fotoBaru = image;
+          // Jika pilih foto baru, batalkan niat hapus foto lama (jika ada)
+          hapusFotoLamaTakTersimpan = false; 
         });
       } else {
         setState(() {
           fotoBaru = image;
+          // Jika pilih foto baru, batalkan niat hapus foto lama (jika ada)
+          hapusFotoLamaTakTersimpan = false;
         });
       }
     }
   }
 
+  // --- FUNGSI LOGIKA TOMBOL SAMPAH ---
+  void aksiTombolHapus() {
+    setState(() {
+      if (fotoBaru != null || webImage != null) {
+        // Kondisi A: User sedang preview foto BARU, lalu dihapus (kembali ke kondisi awal)
+        fotoBaru = null;
+        webImage = null;
+      } else if (toppingData.imageUrl != null && !hapusFotoLamaTakTersimpan) {
+        // Kondisi B: User sedang melihat foto LAMA (dari DB), lalu menekan hapus
+        // Kita tandai untuk dihapus saat simpan nanti
+        hapusFotoLamaTakTersimpan = true;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Logika menampilkan tombol sampah
+    bool adaFotoBaru = (fotoBaru != null || webImage != null);
+    bool adaFotoLamaDiDB = (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty);
+    
+    // Tombol sampah muncul jika: Ada foto baru terpilih OR (Ada foto lama DAN belum ditandai hapus)
+    bool tampilkanTombolHapus = adaFotoBaru || (adaFotoLamaDiDB && !hapusFotoLamaTakTersimpan);
+
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -74,7 +105,7 @@ class _EditToppingPageState extends State<EditToppingPage> {
         ),
         title: Text(
           "Edit Topping",
-          style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.w900, fontSize: 18),
+          style: GoogleFonts.poppins(color: const Color(0xFFC62828), fontWeight: FontWeight.w900, fontSize: 18),
         ),
       ),
       body: Column(
@@ -85,13 +116,12 @@ class _EditToppingPageState extends State<EditToppingPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- AREA PREVIEW FOTO ---
                   Center(
-                    child: GestureDetector(
-                      onTap: pickImage,
-                      child: Stack(
-                        children: [
-                          Container(
+                    child: Stack( // Ubah GestureDetector jadi Stack
+                      children: [
+                        GestureDetector(
+                          onTap: pickImage,
+                          child: Container(
                             width: 140,
                             height: 140,
                             decoration: BoxDecoration(
@@ -101,22 +131,45 @@ class _EditToppingPageState extends State<EditToppingPage> {
                             ),
                             child: _buildPlaceholder(),
                           ),
-                          Positioned(
-                            bottom: 5,
-                            right: 5,
+                        ),
+
+                        // Tombol Edit (Pensil)
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: GestureDetector(
+                            onTap: pickImage,
                             child: Container(
-                              padding: const EdgeInsets.all(6),
+                              padding: const EdgeInsets.all(8),
                               decoration: const BoxDecoration(color: Color(0xFFC62828), shape: BoxShape.circle),
-                              child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                              child: const Icon(Icons.edit, color: Colors.white, size: 18),
                             ),
-                          )
-                        ],
-                      ),
+                          ),
+                        ),
+
+                        // --- BARU: Tombol Hapus (Sampah) - Muncul sesuai logika ---
+                        if (tampilkanTombolHapus)
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: aksiTombolHapus,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: Color(0xFFC62828).withOpacity(0.9),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]
+                                ),
+                                child: const Icon(Icons.delete_forever, color: Colors.white, size: 18),
+                              ),
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 35),
 
-                  // --- SECTION TITLE ---
                   Row(
                     children: [
                       Container(width: 5, height: 25, decoration: BoxDecoration(color: const Color(0xFFC62828), borderRadius: BorderRadius.circular(10))),
@@ -162,8 +215,42 @@ class _EditToppingPageState extends State<EditToppingPage> {
                   _buildTextField(hargaC, "0", errorHarga, (v) => setState(() => errorHarga = null), prefix: "Rp"),
 
                   const SizedBox(height: 20),
-                  _buildLabel("Stok"),
-                  _buildTextField(stokC, "0", errorStok, (v) => setState(() => errorStok = null), suffix: "Pcs"),
+
+                  _buildLabel("Status Stok"),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          title: Text("Terbatas", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold)),
+                          value: false,
+                          groupValue: isTakTerbatas,
+                          activeColor: const Color(0xFFC62828),
+                          contentPadding: EdgeInsets.zero,
+                          onChanged: (val) => setState(() => isTakTerbatas = val!),
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          title: Text("Tak Terbatas", style: GoogleFonts.poppins(fontSize: 16,fontWeight: FontWeight.bold)),
+                          value: true,
+                          groupValue: isTakTerbatas,
+                          activeColor: const Color(0xFFC62828),
+                          contentPadding: EdgeInsets.zero,
+                          onChanged: (val) => setState(() {
+                            isTakTerbatas = val!;
+                            stokC.clear(); 
+                            errorStok = null;
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  if (!isTakTerbatas) ...[
+                    const SizedBox(height: 10),
+                    _buildLabel("Stok Awal"),
+                    _buildTextField(stokC, "0", errorStok, (v) => setState(() => errorStok = null), suffix: "Pcs"),
+                  ],
                   
                   const SizedBox(height: 30),
                 ],
@@ -171,7 +258,6 @@ class _EditToppingPageState extends State<EditToppingPage> {
             ),
           ),
           
-          // --- FIXED BOTTOM BUTTONS (BATAL & SIMPAN) ---
           Container(
             padding: const EdgeInsets.fromLTRB(25, 15, 25, 30),
             decoration: const BoxDecoration(
@@ -180,15 +266,14 @@ class _EditToppingPageState extends State<EditToppingPage> {
             ),
             child: Row(
               children: [
-                // Tombol Batal
                 Expanded(
                   flex: 1,
                   child: OutlinedButton.icon(
                     onPressed: () => Get.back(),
-                    icon: const Icon(Icons.close, color: Color(0xFF8D6E63), size: 18),
-                    label: Text("Batal", style: GoogleFonts.poppins(color: Color(0xFF8D6E63), fontWeight: FontWeight.bold)),
+                    icon: const Icon(Icons.close, color: Color(0xFFC62828), size: 18),
+                    label: Text("Batal", style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.bold)),
                     style: OutlinedButton.styleFrom(
-                      side: const BorderSide(color: Color(0xFFEBEBEB), width: 2),
+                      side: const BorderSide(color: Color(0xFFC62828), width: 2),
                       backgroundColor: const Color(0xFFEBEBEB),
                       minimumSize: const Size(0, 55),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
@@ -196,7 +281,6 @@ class _EditToppingPageState extends State<EditToppingPage> {
                   ),
                 ),
                 const SizedBox(width: 15),
-                // Tombol Simpan
                 Expanded(
                   flex: 2,
                   child: Obx(() => ElevatedButton.icon(
@@ -222,12 +306,10 @@ class _EditToppingPageState extends State<EditToppingPage> {
     );
   }
 
-  // --- REUSABLE WIDGETS ---
-
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 2),
-      child: Text(text, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14)),
+      child: Text(text, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
     );
   }
 
@@ -243,7 +325,7 @@ class _EditToppingPageState extends State<EditToppingPage> {
         prefixIcon: prefix != null 
             ? Padding(
                 padding: const EdgeInsets.only(left: 12, right: 12), 
-                child: Text(prefix, style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.bold, fontSize: 16)),
+                child: Text(prefix, style: GoogleFonts.poppins(color: const Color(0xFFC62828), fontWeight: FontWeight.bold, fontSize: 16)),
               ) 
             : (suffix != null ? const SizedBox(width: 12) : null),
         prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
@@ -265,77 +347,89 @@ class _EditToppingPageState extends State<EditToppingPage> {
   }
 
   Widget? _buildPlaceholder() {
-    if (webImage == null && fotoBaru == null && (toppingData.imageUrl == null || toppingData.imageUrl.isEmpty)) {
-      return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey[600]),
-          const Text("AMBIL FOTO", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
-        ],
-      );
-    }
-    return null;
+    // Priority 1: Sedang preview foto baru terpilih
+    if (webImage != null || fotoBaru != null) return null;
+
+    // Priority 2: Sedang preview foto lama dari DB (dan belum ditandai hapus)
+    if (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty && !hapusFotoLamaTakTersimpan) return null;
+
+    // Priority 3: Tidak ada foto sama sekali (atau foto lama sudah ditandai hapus) -> Tampilkan placeholder
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(Icons.add_a_photo_outlined, size: 40, color: Colors.grey[600]),
+        const SizedBox(height: 5),
+        const Text("AMBIL FOTO", style: TextStyle(color: Colors.grey, fontSize: 10, fontWeight: FontWeight.bold)),
+      ],
+    );
   }
 
   DecorationImage? _buildImageDecoration() {
+    // Priority 1: Tampilkan foto BARU terpilih (Web atau Mobile)
     if (kIsWeb && webImage != null) {
       return DecorationImage(image: MemoryImage(webImage!), fit: BoxFit.cover);
     } else if (!kIsWeb && fotoBaru != null) {
       return DecorationImage(image: FileImage(File(fotoBaru!.path)), fit: BoxFit.cover);
-    } else if (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty) {
+    } 
+    // Priority 2: Tampilkan foto LAMA dari DB (jika user TIDAK menandai hapus)
+    else if (toppingData.imageUrl != null && toppingData.imageUrl.isNotEmpty && !hapusFotoLamaTakTersimpan) {
       return DecorationImage(image: NetworkImage(toppingData.imageUrl), fit: BoxFit.cover);
     }
+    // Priority 3: Placeholder (kembalikan null agar warna background Container terlihat)
     return null;
   }
 
-  void _validateAndUpdate() async { // Tambahkan async
-  setState(() {
-    errorNama = null;
-    errorHarga = null;
-    errorStok = null;
-  });
+  void _validateAndUpdate() async { 
+    setState(() {
+      errorNama = null;
+      errorHarga = null;
+      errorStok = null;
+    });
 
-  bool isInvalid = false;
-  String namaInput = namaC.text.trim();
+    bool isInvalid = false;
+    String namaInput = namaC.text.trim().replaceAll('<', '').replaceAll('>', '');
 
-  // 1. Validasi Kosong
-  if (namaInput.isEmpty) {
-    setState(() => errorNama = "Nama topping tidak boleh kosong");
-    isInvalid = true;
-  } 
-  // 2. Validasi Duplikat (Kecuali nama milik ID ini sendiri)
-  else if (toppingC.isNamaDuplikat(namaInput, excludeId: toppingData.id)) {
-    setState(() => errorNama = "Nama topping sudah ada, gunakan nama lain");
-    isInvalid = true;
+    if (namaInput.isEmpty) {
+      setState(() => errorNama = "Nama topping tidak boleh kosong");
+      isInvalid = true;
+    } 
+    else if (toppingC.isNamaDuplikat(namaInput, excludeId: toppingData.id)) {
+      setState(() => errorNama = "Nama topping sudah ada, gunakan nama lain");
+      isInvalid = true;
+    }
+
+    final hargaVal = int.tryParse(hargaC.text);
+    if (hargaVal == null || hargaVal < 500) {
+      setState(() => errorHarga = "Min Rp 500");
+      isInvalid = true;
+    }
+
+    int stokAkhir = 0;
+    if (!isTakTerbatas) {
+      final stokVal = int.tryParse(stokC.text);
+      if (stokVal == null) {
+        setState(() => errorStok = "Wajib angka");
+        isInvalid = true;
+      } else if (stokVal < 0) { 
+        setState(() => errorStok = "Stok tidak boleh minus");
+        isInvalid = true;
+      } else {
+        stokAkhir = stokVal;
+      }
+    }
+
+    if (isInvalid) return;
+
+    await toppingC.updateTopping(
+      toppingData.id,
+      namaInput,
+      kategoriTerpilih,
+      hargaVal!,
+      stokAkhir, 
+      isTakTerbatas, 
+      toppingData.imageUrl,
+      fotoBaru,
+      hapusFotoLamaTakTersimpan, // Kirim state hapus foto lama ke controller
+    );
   }
-
-  final hargaVal = int.tryParse(hargaC.text);
-  if (hargaVal == null || hargaVal < 500) {
-    setState(() => errorHarga = "Min Rp 500");
-    isInvalid = true;
-  }
-
-  final stokVal = int.tryParse(stokC.text);
-  if (stokVal == null) {
-    setState(() => errorStok = "Wajib angka");
-    isInvalid = true;
-  } else if (stokVal < -1) { 
-    // --- BARIS BARU UNTUK MENCEGAH MINUS SELAIN -1 ---
-    setState(() => errorStok = "Gunakan -1 untuk Unlimited");
-    isInvalid = true;
-  }
-
-  if (isInvalid) return;
-
-  // Jalankan update
-  await toppingC.updateTopping(
-    toppingData.id,
-    namaInput,
-    kategoriTerpilih,
-    hargaVal!,
-    stokVal!,
-    toppingData.imageUrl,
-    fotoBaru,
-  );
-}
 }

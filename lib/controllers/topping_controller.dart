@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; // Wajib ditambahkan untuk memanggil UI Dialog
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:image_picker/image_picker.dart';
@@ -19,7 +19,6 @@ class ToppingController extends GetxController {
     super.onInit();
   }
 
-  // --- HELPER: FORMAT TITLE CASE ---
   String _toTitleCase(String text) {
     if (text.isEmpty) return text;
     return text.toLowerCase().split(' ').map((word) {
@@ -28,7 +27,6 @@ class ToppingController extends GetxController {
     }).join(' ');
   }
 
-  // --- HELPER: TAMPILKAN POP UP SUKSES ---
   void _showSuccessDialog(String title, String message) {
     Get.dialog(
       Dialog(
@@ -47,7 +45,7 @@ class ToppingController extends GetxController {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Get.back(), // Tutup pop-up
+                  onPressed: () => Get.back(),
                   style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFFC62828),
                       foregroundColor: Colors.white,
@@ -60,11 +58,10 @@ class ToppingController extends GetxController {
           ),
         ),
       ),
-      barrierDismissible: false, // Wajib klik tombol tutup
+      barrierDismissible: false, 
     );
   }
 
-  // --- LOGIKA AMBIL DATA ---
   void ambilDataTopping() async {
     try {
       isLoading(true);
@@ -83,7 +80,6 @@ class ToppingController extends GetxController {
     }
   }
 
-  // --- LOGIKA FILTER & SEARCH ---
   void filterData(String query, String kategori) {
     selectedCategory.value = kategori;
     var hasil = allTopping.where((item) {
@@ -98,15 +94,13 @@ class ToppingController extends GetxController {
     filteredTopping.value = hasil;
   }
 
-  // --- LOGIKA VALIDASI DUPLIKAT ---
   bool isNamaDuplikat(String nama, {String? excludeId}) {
     return allTopping.any((t) =>
         t.namaTopping.toLowerCase() == nama.toLowerCase() && t.id != excludeId);
   }
 
-  // --- LOGIKA SIMPAN (INSERT) ---
   Future<bool> simpanTopping(
-      String nama, String kategori, int harga, int stok, XFile? foto) async {
+      String nama, String kategori, int harga, int stok, bool takTerbatas, XFile? foto) async {
     try {
       isLoading(true);
 
@@ -115,7 +109,6 @@ class ToppingController extends GetxController {
         return false;
       }
 
-      // FORMAT NAMA MENJADI TITLE CASE
       String namaFormatted = _toTitleCase(nama);
 
       String? imageUrl;
@@ -130,17 +123,16 @@ class ToppingController extends GetxController {
       }
 
       await supabase.from('toppings').insert({
-        'nama_topping': namaFormatted, // Gunakan nama yang sudah diformat
+        'nama_topping': namaFormatted, 
         'kategori': kategori,
         'harga': harga,
         'stok': stok,
+        'tak_terbatas': takTerbatas,
         'image_url': imageUrl,
       });
 
       ambilDataTopping();
-      Get.back(); // Tutup halaman tambah topping
-      
-      // MUNCULKAN POP UP SUKSES
+      Get.back(); 
       _showSuccessDialog("Berhasil!", "Topping '$namaFormatted' telah ditambahkan.");
       return true;
     } catch (e) {
@@ -151,9 +143,9 @@ class ToppingController extends GetxController {
     }
   }
 
-  // --- LOGIKA PERBARUI (UPDATE) ---
+  // --- UPDATE: Tambah parameter bool hapusFotoLama ---
   Future<bool> updateTopping(String id, String nama, String kategori, int harga,
-      int stok, String? urlLama, XFile? fotoBaru) async {
+      int stok, bool takTerbatas, String? urlLama, XFile? fotoBaru, bool hapusFotoLama) async {
     try {
       isLoading.value = true;
 
@@ -162,11 +154,12 @@ class ToppingController extends GetxController {
         return false;
       }
 
-      // FORMAT NAMA MENJADI TITLE CASE
       String namaFormatted = _toTitleCase(nama);
       String? finalImageUrl = urlLama;
 
+      // Logika Penanganan Foto
       if (fotoBaru != null) {
+        // Kasus 1: User upload foto BARU (hapus yang lama jika ada, upload yang baru)
         if (urlLama != null && urlLama.contains('topping-images')) {
           try {
             final String oldFileName = urlLama.split('/').last;
@@ -185,20 +178,33 @@ class ToppingController extends GetxController {
         finalImageUrl = supabase.storage
             .from('topping-images')
             .getPublicUrl(newFileName);
+      } 
+      else if (hapusFotoLama && urlLama != null) {
+        // Kasus 2: User tidak upload foto baru, tapi menekan tombol HAPUS pada foto lama
+        if (urlLama.contains('topping-images')) {
+          try {
+            final String oldFileName = urlLama.split('/').last;
+            await supabase.storage.from('topping-images').remove([oldFileName]);
+          } catch (e) {
+            print("Info: File lama gagal dihapus atau tidak ditemukan.");
+          }
+        }
+        finalImageUrl = null; // Set di database jadi null
       }
+      // Kasus 3: Tidak ada perubahan foto (finalImageUrl tetap urlLama)
 
       await supabase.from('toppings').update({
-        'nama_topping': namaFormatted, // Gunakan nama yang sudah diformat
+        'nama_topping': namaFormatted, 
         'kategori': kategori,
         'harga': harga,
         'stok': stok,
+        'tak_terbatas': takTerbatas,
         'image_url': finalImageUrl,
       }).eq('id', id);
 
       ambilDataTopping();
-      Get.back(); // Tutup halaman edit
+      Get.back(); 
       
-      // MUNCULKAN POP UP SUKSES
       _showSuccessDialog("Berhasil!", "Data '$namaFormatted' berhasil diperbarui.");
       return true;
     } catch (e) {
@@ -209,11 +215,9 @@ class ToppingController extends GetxController {
     }
   }
 
-  // --- LOGIKA HAPUS (DELETE) ---
   Future<void> hapusTopping(String id, String nama, String? imageUrl) async {
     try {
       isLoading(true);
-      
       await supabase.from('toppings').delete().eq('id', id);
 
       if (imageUrl != null && imageUrl.contains('topping-images')) {
@@ -226,8 +230,6 @@ class ToppingController extends GetxController {
       }
       
       ambilDataTopping();
-      
-      // MUNCULKAN POP UP SUKSES
       _showSuccessDialog("Terhapus", "Topping '$nama' telah dihapus dari daftar.");
     } catch (e) {
       Get.snackbar("Error", "Gagal Hapus: $e");

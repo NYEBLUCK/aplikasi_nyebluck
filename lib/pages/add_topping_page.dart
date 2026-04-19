@@ -24,7 +24,8 @@ class _AddToppingPageState extends State<AddToppingPage> {
   String? errorHarga;
   String? errorStok;
 
-  String kategoriTerpilih = "Kering"; // Sesuai desain default chip merah
+  String kategoriTerpilih = "Kering"; 
+  bool isTakTerbatas = false; 
   XFile? fotoProduk;
   Uint8List? webImage;
 
@@ -50,10 +51,20 @@ class _AddToppingPageState extends State<AddToppingPage> {
     }
   }
 
+  // --- FUNGSI HAPUS FOTO YANG DIPILIH ---
+  void hapusPilihanFoto() {
+    setState(() {
+      fotoProduk = null;
+      webImage = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    bool adaFoto = (fotoProduk != null || webImage != null);
+
     return Scaffold(
-      backgroundColor: Colors.white, // Background bersih sesuai desain
+      backgroundColor: Colors.white, 
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
@@ -64,7 +75,7 @@ class _AddToppingPageState extends State<AddToppingPage> {
         ),
         title: Text(
           "Tambah Topping",
-          style: GoogleFonts.poppins(color: Color(0xFFC62828), fontWeight: FontWeight.w900, fontSize: 18),
+          style: GoogleFonts.poppins(color: const Color(0xFFC62828), fontWeight: FontWeight.w900, fontSize: 18),
         ),
       ),
       body: Column(
@@ -75,15 +86,14 @@ class _AddToppingPageState extends State<AddToppingPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // --- AREA UPLOAD FOTO ---
                   Center(
                     child: Column(
                       children: [
-                        GestureDetector(
-                          onTap: pickImage,
-                          child: Stack(
-                            children: [
-                              Container(
+                        Stack( // Ubah GestureDetector jadi Stack
+                          children: [
+                            GestureDetector(
+                              onTap: pickImage,
+                              child: Container(
                                 width: 140,
                                 height: 140,
                                 decoration: BoxDecoration(
@@ -92,7 +102,7 @@ class _AddToppingPageState extends State<AddToppingPage> {
                                   border: Border.all(color: Colors.grey.shade300, style: BorderStyle.none),
                                   image: _buildImageDecoration(),
                                 ),
-                                child: (fotoProduk == null && webImage == null)
+                                child: (!adaFoto)
                                     ? Column(
                                         mainAxisAlignment: MainAxisAlignment.center,
                                         children: [
@@ -103,24 +113,48 @@ class _AddToppingPageState extends State<AddToppingPage> {
                                       )
                                     : null,
                               ),
-                              Positioned(
-                                bottom: 5,
-                                right: 5,
+                            ),
+                            
+                            // Tombol Edit (Pensil)
+                            Positioned(
+                              bottom: 0, // Disesuaikan agar pas di pojok
+                              right: 0,
+                              child: GestureDetector(
+                                onTap: pickImage,
                                 child: Container(
-                                  padding: const EdgeInsets.all(6),
+                                  padding: const EdgeInsets.all(8),
                                   decoration: const BoxDecoration(
                                     color: Color(0xFFC62828),
                                     shape: BoxShape.circle,
                                   ),
-                                  child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                                  child: const Icon(Icons.edit, color: Colors.white, size: 18),
                                 ),
-                              )
-                            ],
-                          ),
+                              ),
+                            ),
+
+                            // --- BARU: Tombol Hapus (Sampah) - Muncul jika ada foto ---
+                            if (adaFoto)
+                              Positioned(
+                                top: 0,
+                                right: 0,
+                                child: GestureDetector(
+                                  onTap: hapusPilihanFoto,
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: Color(0xFFC62828).withOpacity(0.9),
+                                      shape: BoxShape.circle,
+                                      boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 4)]
+                                    ),
+                                    child: const Icon(Icons.delete_forever, color: Colors.white, size: 18),
+                                  ),
+                                ),
+                              ),
+                          ],
                         ),
                         const SizedBox(height: 15),
                         const Text(
-                          "Unggah foto topping untuk memudahkan identifikasi dapur",
+                          "Unggah foto topping",
                           textAlign: TextAlign.center,
                           style: TextStyle(fontSize: 11, color: Colors.black54),
                         ),
@@ -130,7 +164,6 @@ class _AddToppingPageState extends State<AddToppingPage> {
 
                   const SizedBox(height: 35),
 
-                  // --- SECTION TITLE ---
                   Row(
                     children: [
                       Container(width: 5, height: 25, decoration: BoxDecoration(color: const Color(0xFFC62828), borderRadius: BorderRadius.circular(10))),
@@ -175,15 +208,49 @@ class _AddToppingPageState extends State<AddToppingPage> {
                   _buildLabel("Harga Jual"),
                   _buildTextField(
                     hargaC, 
-                    "0", // Hint tetap 0 jika kosong
+                    "0", 
                     errorHarga, 
                     (v) => setState(() => errorHarga = null), 
-                    prefix: "Rp" // Prefix akan otomatis muncul permanen
+                    prefix: "Rp" 
                   ),
 
                   const SizedBox(height: 20),
-                  _buildLabel("Stok Awal"),
-                  _buildTextField(stokC, "0", errorStok, (v) => setState(() => errorStok = null), suffix: "Pcs"),
+                  
+                  _buildLabel("Status Stok"),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          title: Text("Terbatas", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold)),
+                          value: false,
+                          groupValue: isTakTerbatas,
+                          activeColor: const Color(0xFFC62828),
+                          contentPadding: EdgeInsets.zero,
+                          onChanged: (val) => setState(() => isTakTerbatas = val!),
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          title: Text("Tak Terbatas", style: GoogleFonts.poppins(fontSize: 16, fontWeight: FontWeight.bold)),
+                          value: true,
+                          groupValue: isTakTerbatas,
+                          activeColor: const Color(0xFFC62828),
+                          contentPadding: EdgeInsets.zero,
+                          onChanged: (val) => setState(() {
+                            isTakTerbatas = val!;
+                            stokC.clear(); 
+                            errorStok = null;
+                          }),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  if (!isTakTerbatas) ...[
+                    const SizedBox(height: 10),
+                    _buildLabel("Stok Awal"),
+                    _buildTextField(stokC, "0", errorStok, (v) => setState(() => errorStok = null), suffix: "Pcs"),
+                  ],
                   
                   const SizedBox(height: 30),
                 ],
@@ -191,7 +258,6 @@ class _AddToppingPageState extends State<AddToppingPage> {
             ),
           ),
           
-          // --- FIXED BOTTOM BUTTON ---
           Container(
             padding: const EdgeInsets.fromLTRB(25, 10, 25, 30),
             decoration: const BoxDecoration(
@@ -223,7 +289,7 @@ class _AddToppingPageState extends State<AddToppingPage> {
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8, left: 2),
-      child: Text(text, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 14)),
+      child: Text(text, style: GoogleFonts.poppins(fontWeight: FontWeight.bold, fontSize: 18)),
     );
   }
 
@@ -238,27 +304,24 @@ class _AddToppingPageState extends State<AddToppingPage> {
     controller: controller,
     onChanged: onChanged,
     keyboardType: prefix != null || suffix != null ? TextInputType.number : TextInputType.text,
-    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
     decoration: InputDecoration(
       hintText: hint,
       errorText: error,
-      
-      // Jika ada Rp (prefix), tampilkan. 
-      // Jika tidak ada Rp tapi ini input angka (ada suffix), kasih jarak dikit (width: 15).
       prefixIcon: prefix != null 
           ? Padding(
               padding: const EdgeInsets.only(left: 12, right: 12), 
               child: Text(
                 prefix, 
                 style: GoogleFonts.poppins(
-                  color: Color(0xFFC62828), 
+                  color: const Color(0xFFC62828), 
                   fontWeight: FontWeight.bold, 
                   fontSize: 16
                 ),
               ),
             ) 
           : (suffix != null 
-              ? const SizedBox(width: 15) // Jarak sedikit saja dari pinggir kiri
+              ? const SizedBox(width: 15) 
               : null),
       prefixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
 
@@ -277,13 +340,11 @@ class _AddToppingPageState extends State<AddToppingPage> {
             )
           : null,
       suffixIconConstraints: const BoxConstraints(minWidth: 0, minHeight: 0),
-
       filled: true,
       fillColor: const Color(0xFFEBEBEB),
       border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
       contentPadding: EdgeInsets.symmetric(
         vertical: 18, 
-        // Nama Topping (tanpa prefix/suffix) tetap pakai 20 agar rapi
         horizontal: (prefix == null && suffix == null) ? 20 : 0,
       ),
     ),
@@ -291,53 +352,55 @@ class _AddToppingPageState extends State<AddToppingPage> {
 }
 
   void _validateAndSave() async {
-  setState(() {
-    errorNama = null;
-    errorHarga = null;
-    errorStok = null;
-  });
+    setState(() {
+      errorNama = null;
+      errorHarga = null;
+      errorStok = null;
+    });
 
-  bool isInvalid = false;
-  String namaInput = namaC.text.trim();
+    bool isInvalid = false;
 
-  // 1. Validasi Kosong
-  if (namaInput.isEmpty) {
-    setState(() => errorNama = "Nama topping tidak boleh kosong");
-    isInvalid = true;
-  } 
-  // 2. Validasi Nama Duplikat (Ganti snackbar jadi error text field)
-  // Jika sedang EDIT, masukkan ID toppingnya ke excludeId
-  else if (toppingC.isNamaDuplikat(namaInput, excludeId: null)) { 
-    setState(() => errorNama = "Nama topping sudah ada, gunakan nama lain");
-    isInvalid = true;
+    String namaInput = namaC.text.trim().replaceAll('<', '').replaceAll('>', '');
+
+    if (namaInput.isEmpty) {
+      setState(() => errorNama = "Nama topping tidak boleh kosong");
+      isInvalid = true;
+    } else if (toppingC.isNamaDuplikat(namaInput, excludeId: null)) { 
+      setState(() => errorNama = "Nama topping sudah ada, gunakan nama lain");
+      isInvalid = true;
+    }
+
+    final hargaVal = int.tryParse(hargaC.text);
+    if (hargaVal == null || hargaVal < 500) {
+      setState(() => errorHarga = "Minimal Rp. 500");
+      isInvalid = true;
+    }
+
+    int stokAkhir = 0;
+    if (!isTakTerbatas) {
+      final stokVal = int.tryParse(stokC.text);
+      if (stokVal == null) {
+        setState(() => errorStok = "Wajib diisi angka");
+        isInvalid = true;
+      } else if (stokVal < 0) { 
+        setState(() => errorStok = "Stok tidak boleh minus");
+        isInvalid = true;
+      } else {
+        stokAkhir = stokVal;
+      }
+    }
+
+    if (isInvalid) return;
+
+    await toppingC.simpanTopping(
+      namaInput,
+      kategoriTerpilih,
+      hargaVal!,
+      stokAkhir, 
+      isTakTerbatas, 
+      fotoProduk,
+    );
   }
-
-  final hargaVal = int.tryParse(hargaC.text);
-  if (hargaVal == null || hargaVal < 500) {
-    setState(() => errorHarga = "Minimal Rp. 500");
-    isInvalid = true;
-  }
-
-  final stokVal = int.tryParse(stokC.text);
-  if (stokVal == null) {
-    setState(() => errorStok = "Wajib diisi angka");
-    isInvalid = true;
-  } else if (stokVal < -1) { 
-    // --- BARIS BARU UNTUK MENCEGAH MINUS SELAIN -1 ---
-    setState(() => errorStok = "Gunakan -1 untuk Unlimited");
-    isInvalid = true;
-  }
-
-  if (isInvalid) return;
-  // Jalankan proses simpan jika valid
-  await toppingC.simpanTopping(
-    namaInput,
-    kategoriTerpilih,
-    hargaVal!,
-    stokVal!,
-    fotoProduk,
-  );
-}
 
   DecorationImage? _buildImageDecoration() {
     if (kIsWeb && webImage != null) {

@@ -18,10 +18,13 @@ class PdfService {
 
     // Format Tanggal & Waktu
     final DateTime createdAt = DateTime.parse(transaction['created_at']).toLocal();
-    final String dateFormatted = DateFormat('yyyy-MM-dd').format(createdAt);
+    
+    // 👇 FORMAT TANGGAL DIUBAH MENJADI STANDAR INDONESIA (HARI/BULAN/TAHUN) 👇
+    final String dateFormatted = DateFormat('dd/MM/yyyy').format(createdAt);
+    
     final String timeFormatted = DateFormat('HH:mm:ss').format(createdAt);
     
-    // Potong ID agar tidak terlalu panjang (menyerupai struk asil)
+    // Potong ID agar tidak terlalu panjang (menyerupai struk asli)
     final String shortId = transaction['id'].toString().replaceAll('-', '').substring(0, 16).toUpperCase();
 
     pdf.addPage(
@@ -37,14 +40,13 @@ class PdfService {
                   // 2. GUNAKAN FONT ICON YANG SUDAH DIDEFINISIKAN
                   pw.Icon(
                     const pw.IconData(0xe8d1), 
-                    font: iconFont, // Sekarang tidak akan error lagi
+                    font: iconFont, 
                     size: 40
                   ),
                   pw.SizedBox(height: 5),
                   pw.Text("NYEBLUCK", style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
-                  pw.Text("Jl. Alamat Nyebluck No.19", textAlign: pw.TextAlign.center),
-                  pw.Text("Samarinda", textAlign: pw.TextAlign.center),
-                  pw.Text("No. Telp 0812345678"),
+                  pw.Text("Jl. Jakarta Blok CT No.15, Samarinda", textAlign: pw.TextAlign.center),
+                  pw.Text("No. Telp 082152069178"),
                   pw.Container(
                     padding: const pw.EdgeInsets.symmetric(horizontal: 5, vertical: 2),
                     decoration: pw.BoxDecoration(border: pw.Border.all(width: 1)),
@@ -55,23 +57,23 @@ class PdfService {
                 ]),
               ),
 
-              // --- INFO TRANSAKSI ---
+              // --- INFO STRUK DENGAN LABEL KASIR & PELANGGAN ---
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(dateFormatted),
-                  pw.Text(cashierName),
+                  pw.Text("Kasir : $cashierName"), // Label Kasir
                 ]
               ),
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
                   pw.Text(timeFormatted),
-                  pw.Text(transaction['nama_pembeli'] ?? "Pelanggan"),
+                  pw.Text("${transaction['nama_pembeli'] ?? 'Pelanggan'}"), // Label Pelanggan
                 ]
               ),
               pw.SizedBox(height: 5),
-              pw.Text("Metode: ${transaction['metode'].toString().toUpperCase()} - Lvl: ${transaction['level_pedas']}"),
+              pw.Text("Level Pedas: ${transaction['level_pedas']}"),
               pw.Divider(borderStyle: pw.BorderStyle.dashed),
 
               // --- DAFTAR BARANG ---
@@ -88,7 +90,7 @@ class PdfService {
                       pw.Row(
                         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                         children: [
-                          pw.Text("   ${item['quantity']} x ${item['price']}"),
+                          pw.Text("   ${item['quantity']} x Rp ${item['price']}"),
                           pw.Text("Rp ${item['quantity'] * item['price']}"),
                         ]
                       )
@@ -121,7 +123,7 @@ class PdfService {
               pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text("Bayar (${transaction['metode'].toString().toUpperCase()})"),
+                  pw.Text("Bayar"),
                   pw.Text("Rp ${transaction['bayar'] ?? transaction['total_harga']}"),
                 ]
               ),
@@ -135,16 +137,15 @@ class PdfService {
 
               // --- FOOTER ---
               pw.SizedBox(height: 20),
-              pw.Center(child: pw.Text("Terimakasih Telah Berbelanja")),
+              pw.Center(child: pw.Text("Terimakasih Telah Datang")),
               pw.SizedBox(height: 10),
-              pw.Center(child: pw.Text("Powered by Nyebluck System", style: const pw.TextStyle(fontSize: 8))),
+              pw.Center(child: pw.Text("Powered by Nyebluck", style: const pw.TextStyle(fontSize: 8))),
             ],
           );
         },
       ),
     );
 
-    // Ini akan membuka dialog preview PDF di HP, user bisa pilih simpan ke PDF atau print Bluetooth
     await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
   }
 }

@@ -1,7 +1,7 @@
-import 'dart:async'; // Tambahkan ini untuk Timer
+import 'dart:async'; 
 import 'package:flutter/material.dart';
-import 'package:get/get.dart'; // Tambahkan ini untuk navigasi GetX
-import 'login_page.dart'; // Import halaman login kamu
+import 'package:get/get.dart'; 
+import 'login_page.dart'; 
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -10,18 +10,63 @@ class SplashScreen extends StatefulWidget {
   State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> {
+// 1. Tambahkan SingleTickerProviderStateMixin untuk animasi
+class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+  
+  // Siapkan controller dan animasi
+  late AnimationController _animController;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
+    
+    // 2. Konfigurasi Durasi Animasi Splash Screen (1.5 Detik)
+    _animController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    );
+
+    // Animasi Muncul Perlahan (Fade)
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: Curves.easeIn,
+      ),
+    );
+
+    // Animasi Membesar & Sedikit Memantul (Scale & Bounce)
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animController,
+        curve: Curves.easeOutBack, // Memberikan efek pantulan elegan
+      ),
+    );
+
+    // Mulai animasi
+    _animController.forward();
+
     // Menjalankan fungsi pindah halaman setelah 3 detik
     _navigateToLogin();
   }
 
   void _navigateToLogin() async {
     await Future.delayed(const Duration(seconds: 3));
-    // Menggunakan Get.offAll agar user tidak bisa kembali ke Splash Screen
-    Get.offAll(() => LoginPage());
+    
+    // 3. Tambahkan efek transisi fadeIn agar mulus saat pindah ke LoginPage
+    Get.offAll(
+      () => const LoginPage(),
+      transition: Transition.fadeIn, 
+      duration: const Duration(milliseconds: 800), // Durasi transisi antar halaman
+    );
+  }
+
+  @override
+  void dispose() {
+    // Bersihkan memori animasi saat pindah halaman
+    _animController.dispose();
+    super.dispose();
   }
 
   @override
@@ -32,27 +77,38 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/images/nyebluckw.png',
-              width: MediaQuery.of(context).size.width * 0.6,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) {
-                return const Text(
-                  'NYEBLUCK',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 48,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: -2,
-                  ),
-                );
-              },
+            // Bungkus Logo dengan Animasi Scale & Fade
+            ScaleTransition(
+              scale: _scaleAnimation,
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: Image.asset(
+                  'assets/images/nyebluckw.png',
+                  width: MediaQuery.of(context).size.width * 0.6,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) {
+                    return const Text(
+                      'NYEBLUCK',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 48,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: -2,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
-            // Opsional: Tambahkan loading indicator kecil di bawah logo
-            const CircularProgressIndicator(
-              color: Colors.white,
-              strokeWidth: 2,
+            const SizedBox(height: 30),
+            
+            // Bungkus Loading dengan Animasi Fade saja
+            FadeTransition(
+              opacity: _fadeAnimation,
+              child: const CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 3,
+              ),
             ),
           ],
         ),
