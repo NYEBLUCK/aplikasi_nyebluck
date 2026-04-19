@@ -149,7 +149,7 @@ class PembayaranPage extends StatelessWidget {
                 final produk = toppingCtrl.allTopping.firstWhere((t) => t.id == entry.key);
                 int qty = entry.value;
                 int subtotalItem = produk.harga * qty;
-                return _orderItem(produk.namaTopping, "${qty}x", "Rp $subtotalItem", produk.kategori ?? "Topping");
+                return _orderItem(produk.namaTopping, "${qty}x", "Rp $subtotalItem", produk.kategori);
               }).toList(),
             );
           }),
