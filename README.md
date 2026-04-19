@@ -11,7 +11,7 @@ Permasalahan utama yang dihadapi oleh [nama organisasi/mitra] adalah [isi masala
 ## Solusi yang Ditawarkan
 Solusi yang kami tawarkan adalah aplikasi mobile yang memungkinkan pengguna untuk [jelaskan fungsi utama aplikasi]. Dengan aplikasi ini, proses [aktivitas utama] menjadi lebih mudah, cepat, dan efisien.
 
-## Fitur Aplikasi
+## 🧩 Fitur Aplikasi
 ### Fitur Utama
 - Login
 - Register / CRUD User
@@ -128,7 +128,7 @@ Perintah flutter dan dart tersedia di terminal.
 
 
 
-## Screenshot Aplikasi
+##  📱  Screenshot Aplikasi
 
 
 
