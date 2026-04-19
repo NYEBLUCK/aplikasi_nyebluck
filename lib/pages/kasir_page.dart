@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import '../controllers/topping_controller.dart';
 import '../controllers/kasir_controller.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'login_page.dart';
 import 'pembayaran_page.dart';
 import 'history_page.dart';
 import 'profile_page.dart'; 
@@ -293,18 +292,6 @@ class KasirPage extends StatelessWidget {
                   TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ],
       ),
-    );
-  }
-
-  void _showLogoutDialog(BuildContext context) {
-    Get.defaultDialog(
-      title: "Keluar",
-      middleText: "Yakin ingin keluar?",
-      textCancel: "Batal",
-      textConfirm: "Ya",
-      confirmTextColor: Colors.white,
-      buttonColor: const Color(0xFFC62828),
-      onConfirm: () => Get.offAll(() => const LoginPage()),
     );
   }
 
