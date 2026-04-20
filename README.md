@@ -50,9 +50,9 @@ Setiap peran memiliki hak akses yang berbeda guna menjaga keamanan data serta me
 
 ---
 
-### 1. Autentikasi & Manajemen User
+### 1. Autentikasi & Manajemen Akun
 - Login untuk Admin dan Kasir  
-- Manajemen akun user (CRUD) oleh Admin:
+- Manajemen akun staff/kasir oleh Admin:
   - Tambah akun kasir  
   - Edit data kasir  
   - Nonaktifkan akun kasir  
@@ -65,7 +65,7 @@ Setiap peran memiliki hak akses yang berbeda guna menjaga keamanan data serta me
 
 Admin merupakan pengguna yang memiliki kontrol penuh terhadap sistem kasir **Nyebluck**. 
 
-Admin bertanggung jawab dalam mengelola data menu, mengatur pengguna (kasir), serta memantau seluruh aktivitas transaksi penjualan yang terjadi dalam sistem.
+Admin bertanggung jawab dalam mengelola data menu, mengatur akun staff (kasir), serta memantau seluruh aktivitas transaksi penjualan yang terjadi dalam sistem.
 
 #### Manajemen Topping/Menu (CRUD)
 - Menambahkan topping/menu  
@@ -80,7 +80,7 @@ Admin bertanggung jawab dalam mengelola data menu, mengatur pengguna (kasir), se
 - Menonaktifkan akun kasir
 
 Fitur ini berfungsi untuk mengelola akun pengguna dalam sistem, khususnya kasir. 
-Admin memiliki kewenangan untuk menambahkan, memperbarui, serta menonaktifkan akun, sekaligus menentukan peran (role) pengguna sesuai kebutuhan operasional.
+Admin memiliki kewenangan untuk menambahkan, memperbarui, serta menonaktifkan akun.
 
 #### Laporan Penjualan & Data Transaksi
 - Melihat seluruh data transaksi penjualan  
