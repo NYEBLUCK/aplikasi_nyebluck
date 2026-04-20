@@ -3,13 +3,41 @@
 # Nyebluck
 
 ## Deskripsi Aplikasi
-Nyebluck adalah aplikasi kasir berbasis mobile yang dikembangkan untuk membantu operasional toko seblak Nyebluck dalam mengelola transaksi penjualan, pencatatan stok, dan data keuangan secara digital. Aplikasi ini hadir sebagai solusi dari proses manual yang sering menimbulkan kesalahan pencatatan dan data yang tidak terstruktur, dengan memanfaatkan Flutter dan Supabase sebagai teknologi utama.
+Nyebluck adalah aplikasi kasir berbasis mobile yang dirancang untuk membantu operasional toko seblak Nyebluck dalam mengelola transaksi penjualan, pencatatan stok, serta laporan keuangan secara digital.
+
+Aplikasi ini dikembangkan menggunakan Flutter sebagai framework utama dan Supabase sebagai backend service untuk autentikasi dan database.
+
+Melalui aplikasi ini, kasir dapat melakukan transaksi dengan lebih cepat dan akurat, sementara admin dapat memantau stok, data penjualan, serta laporan keuangan secara terpusat. Dengan sistem digital ini, kesalahan pencatatan manual dapat diminimalkan dan operasional toko menjadi lebih efisien.
 
 ## Latar Belakang
-Permasalahan utama yang dihadapi oleh [nama organisasi/mitra] adalah [isi masalah]. Berdasarkan permasalahan tersebut, kami mengusulkan sebuah aplikasi mobile yang dapat membantu proses [isi tujuan aplikasi].
+Permasalahan utama yang dihadapi oleh Toko Seblak Nyebluck adalah proses pencatatan transaksi dan stok yang masih dilakukan secara manual. Hal ini sering menimbulkan kesalahan perhitungan, kehilangan data, serta kesulitan dalam memantau laporan penjualan harian.
+
+Selain itu, proses pencatatan manual juga memerlukan waktu yang lebih lama dan tidak efisien, terutama saat jumlah pelanggan meningkat.
+
+Berdasarkan permasalahan tersebut, kami mengusulkan sebuah aplikasi mobile yang dapat membantu proses pengelolaan transaksi, stok barang, dan laporan keuangan secara otomatis dan terintegrasi.
 
 ## Solusi yang Ditawarkan
-Solusi yang kami tawarkan adalah aplikasi mobile yang memungkinkan pengguna untuk [jelaskan fungsi utama aplikasi]. Dengan aplikasi ini, proses [aktivitas utama] menjadi lebih mudah, cepat, dan efisien.
+Solusi yang kami tawarkan adalah aplikasi mobile Nyebluck yang memungkinkan pengguna untuk:
+
+- Melakukan transaksi penjualan secara digital
+  
+- Mengelola data menu dan stok
+
+- Mencatat laporan penjualan otomatis
+
+- Menyimpan data secara terpusat dalam database
+
+- Mengurangi kesalahan pencatatan manual
+
+Dengan aplikasi ini, proses penjualan dan pengelolaan data menjadi lebih:
+
+- Cepat
+
+- Akurat
+
+- Efisien
+
+- Terstruktur
 
 ## 🧩 Fitur Aplikasi
 ### Fitur Utama
