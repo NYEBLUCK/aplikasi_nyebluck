@@ -133,6 +133,17 @@ Fitur ini merupakan fungsi utama aplikasi kasir yang digunakan untuk memproses p
 Fitur ini digunakan untuk memantau transaksi yang telah dilakukan serta menyediakan bukti transaksi dalam bentuk nota.
 
 ---
+## ↳ Materi yang Diimplementasikan
+
+Proyek ini mengimplementasikan materi yang dipelajari selama praktikum, yaitu:
+
+- **Widget**
+- **State Management**
+- **Navigation**
+- **Supabase**
+- **Deployment**
+
+---
 
 ## ↳ Struktur Database Aplikasi Nyebluck
 
@@ -246,114 +257,187 @@ Fungsi utama tabel ini:
 
 ---
 
-## Widget yang Digunakan
-Beberapa widget Flutter yang digunakan dalam aplikasi ini:
-- Scaffold
-- AppBar
-- Column
-- Row
-- ListView
-- Card
-- TextField
-- ElevatedButton
-- Form
-- Snackbar
-- BottomNavigationBar
+## ↳ Widget yang Digunakan
 
-## State Management
-State management yang digunakan pada aplikasi ini adalah [setState / Provider / Bloc / Riverpod]. State management ini digunakan untuk mengelola perubahan data pada halaman [contoh].
+Beberapa widget Flutter yang digunakan dalam aplikasi ini antara lain:
 
-## Navigation
-Navigasi dalam aplikasi ini menggunakan [Navigator / Named Route / GoRouter], untuk perpindahan antar halaman seperti login, register, dashboard, dan halaman CRUD.
+- `Scaffold`
+- `AppBar`
+- `Column`
+- `Row`
+- `ListView`
+- `Card`
+- `TextField`
+- `ElevatedButton`
+- `Form`
+- `SnackBar`
+- `BottomNavigationBar`
+- `Dialog`
+- `OutlinedButton`
+- `SingleChildScrollView`
 
-## Integrasi Supabase
-Aplikasi ini menggunakan Supabase untuk:
-- Authentication (Login dan Register)
-- Database (Menyimpan data CRUD)
-- Storage (jika digunakan)
+---
 
-## Package yang Digunakan
+## ↳ State Management
+
+State management yang digunakan pada aplikasi ini adalah **GetX**.
+
+GetX digunakan untuk mengelola perubahan data dan logika aplikasi pada beberapa fitur utama seperti:
+- autentikasi pengguna
+- pengelolaan topping
+- pengelolaan staff
+- laporan penjualan
+- profil pengguna
+- transaksi kasir
+
+---
+
+## ↳ Navigation
+
+Navigasi dalam aplikasi ini menggunakan **GetX Navigation** melalui `GetMaterialApp`, sehingga perpindahan antar halaman seperti splash screen, login, halaman admin, halaman kasir, laporan, profil, dan transaksi dapat dilakukan dengan lebih sederhana dan terstruktur.
+
+---
+
+## ↳ Integrasi Supabase
+
+Aplikasi ini menggunakan **Supabase** untuk:
+
+- **Authentication**  
+  Digunakan untuk login, manajemen akun kasir, dan perubahan password.
+
+- **Database**  
+  Digunakan untuk menyimpan data topping, transaksi, detail transaksi, dan profil pengguna.
+
+- **Storage**  
+  Digunakan untuk mendukung penyimpanan resource tertentu seperti gambar menu/topping apabila diperlukan.
+
+---
+
+## ↳ Package yang Digunakan
+
 | Package | Kegunaan |
 |--------|----------|
-| flutter_dotenv | Menyimpan konfigurasi sensitif dari file .env |
-| supabase_flutter | Integrasi Flutter dengan Supabase |
-| [package_tambahan] | [jelaskan kegunaan] |
+| `flutter_dotenv` | Mengelola konfigurasi sensitif dari file `.env` |
+| `supabase_flutter` | Integrasi Flutter dengan Supabase |
+| `get` | State management dan navigation |
+| `google_fonts` | Kustomisasi font aplikasi |
+| `image_picker` | Memilih gambar dari perangkat |
+| `intl` | Format tanggal, waktu, dan angka |
+| `pdf` | Membuat file PDF |
+| `printing` | Preview dan cetak PDF |
+| `fl_chart` | Menampilkan grafik laporan penjualan |
 
-## Nilai Tambah
-Aplikasi ini menggunakan package tambahan yaitu [nama package] untuk [fungsi], sehingga memberikan nilai tambah pada pengembangan aplikasi.
+---
 
-## Konfigurasi Environment
+## ↳ Nilai Tambah
+
+Aplikasi ini menggunakan beberapa package tambahan di luar materi inti praktikum untuk meningkatkan kualitas aplikasi, antara lain:
+
+- **PDF & Printing** untuk export dan cetak laporan serta nota transaksi dalam format PDF  
+- **fl_chart** untuk menampilkan visualisasi data penjualan dalam bentuk grafik  
+- **google_fonts** untuk meningkatkan tampilan antarmuka agar lebih menarik dan konsisten  
+
+---
+
+## ↳ Konfigurasi Environment
 
 Aplikasi ini menggunakan file `.env` untuk menyimpan konfigurasi sensitif seperti Supabase URL dan API Key.
 
-### Contoh isi file `.env`:
+### Contoh isi file `.env`
+```env
 SUPABASE_URL=your_supabase_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_service_key
+```
+---
 
-## 🚀 Cara Menjalankan Projek Menggunakan Source Code
+## ↳ Cara Menjalankan Proyek
 
-📌 Prasyarat
+### Prasyarat
+Pastikan perangkat sudah memenuhi kebutuhan berikut:
+- Flutter SDK sesuai dengan konfigurasi project  
+- Proyek Supabase aktif  
+- Perintah `flutter` dan `dart` tersedia di terminal  
 
-Flutter SDK yang kompatibel dengan batas sdk di pubspec.yaml.
+### Langkah Langkah
+1. Clone repository:
+```bash
+git clone <link-repository>
+cd <nama-project>
+```
+2. Install dependencies:
+```bash
+flutter pub get
+```
+3. Buat file .env di root project, lalu isi dengan konfigurasi Supabase:
+```bash
+SUPABASE_URL=your_supabase_url
+SUPABASE_ANON_KEY=your_supabase_anon_key
+SUPABASE_SERVICE_KEY=your_service_key
+```
+4. Jalankan aplikasi:
+```bash
+flutter run
+```
 
-Proyek Supabase dengan skema dan kebijakan akses (RLS) yang selaras dengan aplikasi.
+## ↳ Menjalankan di Web 
+Sebagai alternatif, aplikasi dapat dijalankan di web tanpa file `.env` menggunakan `dart-define`:
+```bash
+flutter run -d chrome \
+--dart-define=SUPABASE_URL=your_supabase_url \
+--dart-define=SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
-Perintah flutter dan dart tersedia di terminal.
+## ↳ Build APK Release 
+Untuk membuat file APK release:
+```bash
+flutter build apk --release
+```
+Untuk build yang lebih optimal:
+```bash
+flutter build apk --release \
+--split-per-abi \
+--obfuscate \
+--split-debug-info=build/app/debug-info \
+--tree-shake-icons
+```
+Output APK berada di:
+```
+build/app/outputs/flutter-apk/
+```
+---
 
+## 📱 Screenshot Aplikasi
 
-⚙️ Langkah Langkah
-1. Buka terminal pada root folder proyek (folder yang berisi pubspec.yaml).
+Berikut merupakan tampilan antarmuka dari aplikasi **Nyebluck**:
 
-2. Sambungkan ke Supabase (hanya di komputer pengembang)
+### 🔐 Autentikasi
+| Login |
+|------|
+| <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/277f4f99-3c46-43b9-99cc-6137ed97c207" /> |
 
-   * Duplikat berkas .env.example dan simpan sebagai .env di folder yang sama.
+---
 
-    * Isi URL proyek dan anon key dari dashboard Supabase (Settings → API).
+### 🧑‍💼 Fitur Admin
+| Manajemen Topping | Tambah/Edit Topping | Kelola Staff |
+|------------------|--------------------|--------------|
+|<img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/ac6925d4-50a4-4d2a-8e79-df3809632242" /> | <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/9662c8c9-9f40-4e21-83f7-80038f6ed55f" /> | <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/5808c00e-3623-4170-bdfd-0556380bd994" /> |
 
-     Berkas .env hanya dipakai secara lokal. Jangan ikut mengunggahnya ke repositori publik (pastikan terdaftar di .gitignore).
+| Laporan Penjualan | Grafik |
+|------------------|--------|
+| <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/f6e77b57-92c9-41e3-bc4f-5cb94bc2e4cd" /> | <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/1907219a-c620-4eae-8f58-f1b9497b8dcb" />|
 
+---
 
-3. Pasang dependensi:
+### 🧾 Fitur Kasir
+| Halaman Kasir | Transaksi | Pembayaran |
+|--------------|-----------|------------|
+| ![](assets/screenshots/kasir.png) | ![](assets/screenshots/transaksi.png) | ![](assets/screenshots/pembayaran.png) |
 
-      flutter pub get
+| Nota | Riwayat Transaksi |
+|------|-------------------|
+| ![](assets/screenshots/nota.png) | ![](assets/screenshots/history.png) |
 
-
-4. Jalankan Aplikasi
-
-      flutter run
-
-
-🌐 Menjalankan di Web (Alternatif tanpa .env)
-
- Gunakan --dart-define:
-
-    flutter run -d chrome \
-  --dart-define=SUPABASE_URL
-  --dart-define=SUPABASE_ANON_KEY
-
-
-
- 5 Membangun APK release
-
-
-    flutter build apk --release
-
-
- build yang lebih dioptimalkan (obfuscate, simbol terpisah, tree-shake ikon):
-
-
-
-    flutter build apk --release --split-per-abi --obfuscate --split-debug-info=build/app/debug-info --tree-shake-icons
-
-
- Output umum: build/app/outputs/flutter-apk/. Salin ke folder release/ jika ingin dilampirkan pada repo atau rilis.
-
-
-
-
-
-
-##  📱  Screenshot Aplikasi
 
 
 
