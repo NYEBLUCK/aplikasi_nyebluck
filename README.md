@@ -30,15 +30,32 @@ Solusi yang kami tawarkan adalah aplikasi mobile Nyebluck yang memungkinkan peng
 
 - Mengurangi kesalahan pencatatan manual
 
-Dengan aplikasi ini, proses penjualan dan pengelolaan data menjadi lebih:
+Dengan aplikasi ini, proses penjualan dan pengelolaan data menjadi lebih Cepat, Akurat, Efisien, dan Terstruktur
 
-- Cepat
+---
 
-- Akurat
+ ## ↳ Tampilan Aplikasi
 
-- Efisien
+Berikut merupakan tampilan antarmuka dari aplikasi **Nyebluck**:
 
-- Terstruktur
+### Autentikasi
+| Login |
+|------|
+| <img width="155" height="auto" alt="image" src="https://github.com/user-attachments/assets/277f4f99-3c46-43b9-99cc-6137ed97c207" /> |
+
+---
+
+### Admin
+| Manajemen Topping | Tambah/Edit Topping | Kelola Staff | Laporan Penjualan | Grafik |Profil|
+|------|------------------|--------------------|--------------|------------------|--------|
+|<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/ac6925d4-50a4-4d2a-8e79-df3809632242" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/9662c8c9-9f40-4e21-83f7-80038f6ed55f" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/5808c00e-3623-4170-bdfd-0556380bd994" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f6e77b57-92c9-41e3-bc4f-5cb94bc2e4cd" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/1907219a-c620-4eae-8f58-f1b9497b8dcb" />|<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/51686fb8-cbcc-4f14-a0a0-a9b245f0b247" />| 
+
+---
+
+### Kasir
+|  Halaman Kasir | Transaksi | Pembayaran | Nota | Riwayat Transaksi |Profil |
+|------|--------------|-----------|------------|------|-------------------|
+|  <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/34ce85d1-5137-427c-ace2-6976a902911b" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/0a91fddb-6a12-4f5b-b0e9-b71a94a4fb70" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f5ff4453-7756-4e03-8a71-701767e37797" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/c2a320f5-8af7-4291-95b0-cafa8370e757" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/4439fafc-7125-4889-8d62-74e514002636" /> |<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/58e3790d-c5ca-4ba5-9265-54788c7644dd" /> |
 
 ---
 
@@ -142,6 +159,33 @@ Proyek ini mengimplementasikan materi yang dipelajari selama praktikum, yaitu:
 - **Navigation**
 - **Supabase**
 - **Deployment**
+
+---
+## ↳ Struktur Folder Aplikasi Nyebluck
+
+```text
+/
+├── android/              ← konfigurasi & build Android
+├── ios/                  ← konfigurasi & build iOS
+├── linux/                ← build Linux
+├── macos/                ← build macOS
+├── windows/              ← build Windows
+├── web/                  ← build Web
+├── assets/
+│   └── images/           ← gambar & resource aplikasi
+├── lib/
+│   ├── controllers/      ← logic aplikasi (GetX controller)
+│   ├── models/           ← struktur data aplikasi
+│   ├── pages/            ← tampilan UI (halaman aplikasi)
+│   ├── services/         ← service seperti PDF & API helper
+│   └── main.dart         ← entry point aplikasi
+├── .env                  ← konfigurasi environment (tidak di-publish)
+├── .gitignore
+├── README.md
+├── analysis_options.yaml ← aturan linting
+├── pubspec.yaml          ← konfigurasi dependencies
+└── pubspec.lock
+```
 
 ---
 
@@ -405,58 +449,6 @@ Output APK berada di:
 ```
 build/app/outputs/flutter-apk/
 ```
----
-## Tampilan Aplikasi
-
-Berikut merupakan tampilan antarmuka dari aplikasi **Nyebluck**:
-
-### Autentikasi
-| Login |
-|------|
-| <img width="155" height="auto" alt="image" src="https://github.com/user-attachments/assets/277f4f99-3c46-43b9-99cc-6137ed97c207" /> |
-
----
-
-### Admin
-| Manajemen Topping | Tambah/Edit Topping | Kelola Staff | Laporan Penjualan | Grafik |Profil|
-|------|------------------|--------------------|--------------|------------------|--------|
-|<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/ac6925d4-50a4-4d2a-8e79-df3809632242" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/9662c8c9-9f40-4e21-83f7-80038f6ed55f" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/5808c00e-3623-4170-bdfd-0556380bd994" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f6e77b57-92c9-41e3-bc4f-5cb94bc2e4cd" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/1907219a-c620-4eae-8f58-f1b9497b8dcb" />|<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/51686fb8-cbcc-4f14-a0a0-a9b245f0b247" />| 
-
----
-
-### Kasir
-|  Halaman Kasir | Transaksi | Pembayaran | Nota | Riwayat Transaksi |Profil |
-|------|--------------|-----------|------------|------|-------------------|
-|  <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/34ce85d1-5137-427c-ace2-6976a902911b" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/0a91fddb-6a12-4f5b-b0e9-b71a94a4fb70" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f5ff4453-7756-4e03-8a71-701767e37797" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/c2a320f5-8af7-4291-95b0-cafa8370e757" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/4439fafc-7125-4889-8d62-74e514002636" /> |<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/58e3790d-c5ca-4ba5-9265-54788c7644dd" /> |
-
----
-
-## Struktur Folder
-
-```text
-/
-├── android/              ← konfigurasi & build Android
-├── ios/                  ← konfigurasi & build iOS
-├── linux/                ← build Linux
-├── macos/                ← build macOS
-├── windows/              ← build Windows
-├── web/                  ← build Web
-├── assets/
-│   └── images/           ← gambar & resource aplikasi
-├── lib/
-│   ├── controllers/      ← logic aplikasi (GetX controller)
-│   ├── models/           ← struktur data aplikasi
-│   ├── pages/            ← tampilan UI (halaman aplikasi)
-│   ├── services/         ← service seperti PDF & API helper
-│   └── main.dart         ← entry point aplikasi
-├── .env                  ← konfigurasi environment (tidak di-publish)
-├── .gitignore
-├── README.md
-├── analysis_options.yaml ← aturan linting
-├── pubspec.yaml          ← konfigurasi dependencies
-└── pubspec.lock
-```
-
 ---
 ## Anggota Kelompok 1
 - Dwi Pebriyanto Pradana [2409116012]
