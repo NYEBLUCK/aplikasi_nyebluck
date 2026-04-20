@@ -91,7 +91,7 @@ Tabel ini berfungsi untuk:
 
   Struktur Table Transaction
 
-  | Field          | Tipe Data   | Keterangan                        |
+| Field          | Tipe Data   | Keterangan                        |
 | -------------- | ----------- | --------------------------------- |
 | id             | uuid        | Primary key transaksi             |
 | cashier_id     | uuid        | ID kasir yang melakukan transaksi |
@@ -102,6 +102,7 @@ Tabel ini berfungsi untuk:
 | total_quantity | int4        | Total jumlah item                 |
 | bayar          | int4        | Jumlah uang yang dibayarkan       |
 | kembalian      | int4        | Jumlah uang kembalian             |
+
 
 3. 📦 Tabel transaction_items
 
