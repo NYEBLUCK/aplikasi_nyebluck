@@ -153,43 +153,6 @@ Struktur Tabel profiles
 | created_at   | timestamptz | Waktu akun dibuat                |
 | is_active    | bool        | Status akun aktif                |
 
-## Keamanan Database (RLS)
-
-**1. Tabel profiles**
-
-- Admin memiliki akses penuh (create, read, update, delete) terhadap data pengguna
-- User hanya dapat melihat data miliknya sendiri
-- User hanya dapat mengupdate data miliknya sendiri
-- Admin dapat melihat seluruh data pengguna
-- Admin dapat mengelola (update) data pengguna jika diperlukan
-- Sistem membatasi akses hanya untuk user yang terautentikasi (tidak dapat diakses oleh public tanpa login)
-
-**2. Tabel toppings**
-
-- Admin memiliki akses penuh (create, read, update, delete) terhadap data topping
-- Semua user yang terautentikasi dapat melihat data topping
-- Kasir dapat menggunakan data topping untuk melakukan transaksi
-- Public (tanpa login) tidak dapat mengakses data topping
-- Data topping hanya dapat diubah oleh admin
-
-**3. Tabel transactions**
-
-- Kasir hanya dapat membuat transaksi menggunakan akunnya sendiri
-- Kasir hanya dapat melihat transaksi yang dibuat olehnya sendiri
-= Admin dapat melihat seluruh transaksi
-- Admin dapat menghapus transaksi jika diperlukan
-- Sistem mencatat waktu transaksi secara otomatis
-= Sistem membatasi akses hanya untuk user yang terautentikasi (tidak dapat diakses oleh public tanpa login)
-
-**4. Tabel transaction_items**
-
-- Kasir hanya dapat menambahkan item transaksi miliknya sendiri
-- Admin juga dapat menambahkan item transaksi
-- Kasir hanya dapat melihat item transaksi miliknya sendiri
-- Admin dapat melihat seluruh item transaksi
-- Hanya admin yang dapat mengupdate atau menghapus data item transaksi
-- Data item transaksi hanya dapat ditambahkan saat proses transaksi berlangsung
-
 ## ⚙️ Fitur Program Aplikasi Nyebluck
 
 Aplikasi Nyebluck memiliki beberapa fitur utama yang dibedakan berdasarkan peran pengguna dalam sistem, yaitu Admin dan Kasir.
