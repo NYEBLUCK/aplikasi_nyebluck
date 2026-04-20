@@ -46,8 +46,30 @@ Dengan aplikasi ini, proses penjualan dan pengelolaan data menjadi lebih:
 - CRUD [nama data utama]
 
 ### Fitur Tambahan
-- [Fitur tambahan 1]
-- [Fitur tambahan 2]
+- Fitur Admin
+
+  *  Login dan Logout
+ 
+  *  Kelola Data dan Stok
+    
+  *  Lihat Pengeluaran dan Print
+
+  *  Kelola Akun Kasir
+        
+  *  Kelola Akun Kasir
+
+  
+- Fitur Kasir
+
+   *  Login dan Logout
+ 
+  *  Transaksi
+    
+  *  Lihat Data
+
+  *  Cetak/Simpan Struk
+
+  
 
 ## Widget yang Digunakan
 Beberapa widget Flutter yang digunakan dalam aplikasi ini:
