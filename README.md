@@ -51,7 +51,7 @@ profiles
 
 Setiap tabel saling terhubung untuk mendukung proses transaksi pada sistem kasir.
 
-1. 🗄️ Tabel toppings
+**1. 🗄️ Tabel toppings**
 
 Tabel toppings digunakan untuk menyimpan data menu atau topping yang tersedia pada aplikasi Nyebluck.
 
@@ -76,7 +76,7 @@ Struktur Tabel toppings
 | created_at   | timestamptz | Waktu data dibuat                   |
 | tak_terbatas | bool        | Status stok tidak terbatas          |
 
-2. 🧾 Tabel transactions
+**2. 🧾 Tabel transactions**
    
 Tabel transactions digunakan untuk menyimpan data utama transaksi penjualan pada aplikasi Nyebluck.
 
@@ -104,7 +104,7 @@ Tabel ini berfungsi untuk:
 | kembalian      | int4        | Jumlah uang kembalian             |
 
 
-3. 📦 Tabel transaction_items
+**3. 📦 Tabel transaction_items**
 
 Tabel transaction_items digunakan untuk menyimpan detail item dari setiap transaksi.
 
@@ -127,7 +127,7 @@ Tabel ini berfungsi untuk:
 | created_at     | timestamptz | Waktu data dibuat          |
 
 
-4. 👤 Tabel profiles
+**4. 👤 Tabel profiles**
 
 Tabel profiles digunakan untuk menyimpan data pengguna aplikasi Nyebluck.
 
@@ -155,7 +155,7 @@ Struktur Tabel profiles
 
 ## Keamanan Database (RLS)
 
-1. Tabel profiles
+**1. Tabel profiles**
 
 - Admin memiliki akses penuh (create, read, update, delete) terhadap data pengguna
 - User hanya dapat melihat data miliknya sendiri
@@ -164,7 +164,7 @@ Struktur Tabel profiles
 - Admin dapat mengelola (update) data pengguna jika diperlukan
 - Sistem membatasi akses hanya untuk user yang terautentikasi (tidak dapat diakses oleh public tanpa login)
 
-2. Tabel toppings
+**2. Tabel toppings**
 
 - Admin memiliki akses penuh (create, read, update, delete) terhadap data topping
 - Semua user yang terautentikasi dapat melihat data topping
@@ -172,7 +172,7 @@ Struktur Tabel profiles
 - Public (tanpa login) tidak dapat mengakses data topping
 - Data topping hanya dapat diubah oleh admin
 
-3. Tabel transactions
+**3. Tabel transactions**
 
 - Kasir hanya dapat membuat transaksi menggunakan akunnya sendiri
 - Kasir hanya dapat melihat transaksi yang dibuat olehnya sendiri
@@ -181,7 +181,7 @@ Struktur Tabel profiles
 - Sistem mencatat waktu transaksi secara otomatis
 = Sistem membatasi akses hanya untuk user yang terautentikasi (tidak dapat diakses oleh public tanpa login)
 
-4. Tabel transaction_items
+**4. Tabel transaction_items**
 
 - Kasir hanya dapat menambahkan item transaksi miliknya sendiri
 - Admin juga dapat menambahkan item transaksi
@@ -200,25 +200,25 @@ Setiap peran memiliki hak akses yang berbeda untuk menjaga keamanan data dan mem
 - Register / CRUD User
 - CRUD [nama data utama]
 
-🧑‍💼 1. Fitur untuk Admin
+**🧑‍💼 1. Fitur untuk Admin**
 
 Admin merupakan pengguna yang memiliki kontrol penuh terhadap sistem kasir Nyebluck.
 Admin bertanggung jawab dalam mengelola data menu, pengguna, dan memantau transaksi penjualan.
 
-1. Login
+*1. Login*
 
 Admin dapat masuk ke dalam sistem menggunakan email dan password yang terdaftar.
 
 Penjelasan: Fitur login digunakan untuk memverifikasi identitas admin sebelum mengakses sistem.
 
-2. Kelola Data Pengguna (CRUD)
+*2. Kelola Data Pengguna (CRUD)*
 
 Admin dapat menambahkan, melihat, mengubah, dan menghapus data pengguna dalam sistem.
 
 Penjelasan: Fitur ini digunakan untuk mengatur akun pengguna seperti kasir.
 Admin dapat menentukan role pengguna, misalnya admin atau kasir.
 
-3. Kelola Data Topping / Menu (CRUD)
+*3. Kelola Data Topping / Menu (CRUD)*
 
 Admin dapat mengelola data topping atau menu yang tersedia pada aplikasi.
 
@@ -230,7 +230,7 @@ Fitur ini memungkinkan admin untuk:
 - Menghapus topping
 - Menambahkan gambar topping
   
-4. Melihat Data Transaksi
+*4. Melihat Data Transaksi*
 
 Admin dapat melihat seluruh transaksi yang dilakukan oleh kasir.
 
@@ -244,7 +244,7 @@ Informasi yang dapat dilihat:
 - Jumlah item
 - Kasir yang melakukan transaksi
 
-5. Melihat Laporan Penjualan
+*5. Melihat Laporan Penjualan*
 
 Admin dapat melihat laporan penjualan berdasarkan data transaksi.
 
@@ -256,18 +256,18 @@ Data yang digunakan:
 - Total pendapatan
 - Jumlah item terjual
 
-🧾 2. Fitur untuk Kasir
+**🧾 2. Fitur untuk Kasir**
 
 Kasir merupakan pengguna yang bertugas melakukan transaksi penjualan kepada pelanggan.
 Kasir memiliki akses terbatas hanya pada fitur yang berkaitan dengan proses transaksi.
 
-1. Login
+*1. Login*
 
 Kasir dapat masuk ke dalam sistem menggunakan akun yang telah dibuat oleh admin.
 
 Penjelasan: Fitur login digunakan untuk memastikan hanya kasir yang terdaftar yang dapat menggunakan aplikasi.
 
-2. Melihat Daftar Topping / Menu
+*2. Melihat Daftar Topping / Menu*
 
 Kasir dapat melihat daftar menu atau topping yang tersedia.
 
@@ -280,7 +280,7 @@ Informasi yang ditampilkan:
 - Stok
 - Gambar
 
-3. Membuat Transaksi
+*3. Membuat Transaksi*
 
 Kasir dapat membuat transaksi baru saat pelanggan melakukan pembelian.
 
@@ -294,7 +294,7 @@ Kasir dapat:
 - Menghitung total harga
 - Menyimpan transaksi
 
-5. Melihat Riwayat Transaksidan Cetak 
+*4. Melihat Riwayat Transaksidan Cetak*
 
 Kasir dapat melihat transaksi yang telah dibuat olehnya.
 
