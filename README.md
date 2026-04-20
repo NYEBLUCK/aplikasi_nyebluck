@@ -54,7 +54,7 @@ Dengan aplikasi ini, proses penjualan dan pengelolaan data menjadi lebih:
     
   *  Lihat Pengeluaran dan Print
 
-  *  Kelola Akun Kasir
+  *  Kelola Akun Admin
         
   *  Kelola Akun Kasir
 
