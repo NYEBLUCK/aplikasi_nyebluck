@@ -407,32 +407,32 @@ build/app/outputs/flutter-apk/
 ```
 ---
 
-## 📱 Screenshot Aplikasi
+## Screenshot Aplikasi
 
 Berikut merupakan tampilan antarmuka dari aplikasi **Nyebluck**:
 
-### 🔐 Autentikasi
+### Autentikasi
 | Login |
 |------|
 | <img width="155" height="auto" alt="image" src="https://github.com/user-attachments/assets/277f4f99-3c46-43b9-99cc-6137ed97c207" /> |
 
 ---
 
-### 🧑‍💼 Admin
+### Admin
 | Manajemen Topping | Tambah/Edit Topping | Kelola Staff | Laporan Penjualan | Grafik |
 |------------------|--------------------|--------------|------------------|--------|
 |<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/ac6925d4-50a4-4d2a-8e79-df3809632242" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/9662c8c9-9f40-4e21-83f7-80038f6ed55f" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/5808c00e-3623-4170-bdfd-0556380bd994" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f6e77b57-92c9-41e3-bc4f-5cb94bc2e4cd" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/1907219a-c620-4eae-8f58-f1b9497b8dcb" />|
 
 ---
 
-### 🧾 Kasir
+### Kasir
 | Halaman Kasir | Transaksi | Pembayaran | Nota | Riwayat Transaksi |
 |--------------|-----------|------------|------|-------------------|
 | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/34ce85d1-5137-427c-ace2-6976a902911b" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/0a91fddb-6a12-4f5b-b0e9-b71a94a4fb70" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f5ff4453-7756-4e03-8a71-701767e37797" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/c2a320f5-8af7-4291-95b0-cafa8370e757" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/4439fafc-7125-4889-8d62-74e514002636" /> |
 
 ---
 
-## 📁 Struktur Folder
+## Struktur Folder
 
 ```text
 /
@@ -442,24 +442,26 @@ Berikut merupakan tampilan antarmuka dari aplikasi **Nyebluck**:
 ├── macos/                ← build macOS
 ├── windows/              ← build Windows
 ├── web/                  ← build Web
-
 ├── assets/
 │   └── images/           ← gambar & resource aplikasi
-
 ├── lib/
-│   ├── main.dart         ← entry point aplikasi
-│   ├── config/           ← konfigurasi (tema, Supabase, dll.)
-│   ├── core/             ← utilitas umum (helper, service, dll.)
-│   ├── data/
-│   │   ├── models/       ← model data
-│   │   └── sources/      ← akses API / Supabase
-│   ├── features/         ← fitur utama (auth, dashboard, dll.)
-│   └── widgets/          ← komponen UI reusable
-
+│   ├── controllers/      ← logic aplikasi (GetX controller)
+│   ├── models/           ← struktur data aplikasi
+│   ├── pages/            ← tampilan UI (halaman aplikasi)
+│   ├── services/         ← service seperti PDF & API helper
+│   └── main.dart         ← entry point aplikasi
+├── .env                  ← konfigurasi environment (tidak di-publish)
 ├── .gitignore
-├── .metadata
 ├── README.md
 ├── analysis_options.yaml ← aturan linting
-├── pubspec.yaml          ← konfigurasi project Flutter
+├── pubspec.yaml          ← konfigurasi dependencies
 └── pubspec.lock
 ```
+
+---
+## Anggota Kelompok 1
+- Dwi Pebriyanto Pradana [2409116012]
+- Rahmad Ramadhan [2409116018]
+- Zahra Aulia Rahmah [2409116020]
+- Dilla Maharani [2409116023]
+---
