@@ -190,38 +190,115 @@ Struktur Tabel profiles
 - Hanya admin yang dapat mengupdate atau menghapus data item transaksi
 - Data item transaksi hanya dapat ditambahkan saat proses transaksi berlangsung
 
+## ⚙️ Fitur Program Aplikasi Nyebluck
 
-## 🧩 Fitur Aplikasi
+Aplikasi Nyebluck memiliki beberapa fitur utama yang dibedakan berdasarkan peran pengguna dalam sistem, yaitu Admin dan Kasir.
+Setiap peran memiliki hak akses yang berbeda untuk menjaga keamanan data dan memastikan operasional sistem berjalan dengan baik.
+
 ### Fitur Utama
 - Login
 - Register / CRUD User
 - CRUD [nama data utama]
 
-### Fitur Tambahan
-- Fitur Admin
+🧑‍💼 1. Fitur untuk Admin
 
-  *  Login dan Logout
- 
-  *  Kelola Data dan Stok
-    
-  *  Lihat Pengeluaran dan Print
+Admin merupakan pengguna yang memiliki kontrol penuh terhadap sistem kasir Nyebluck.
+Admin bertanggung jawab dalam mengelola data menu, pengguna, dan memantau transaksi penjualan.
 
-  *  Kelola Akun Admin
-        
-  *  Kelola Akun Kasir
+1. Login
 
+Admin dapat masuk ke dalam sistem menggunakan email dan password yang terdaftar.
+
+Penjelasan: Fitur login digunakan untuk memverifikasi identitas admin sebelum mengakses sistem.
+
+2. Kelola Data Pengguna (CRUD)
+
+Admin dapat menambahkan, melihat, mengubah, dan menghapus data pengguna dalam sistem.
+
+Penjelasan: Fitur ini digunakan untuk mengatur akun pengguna seperti kasir.
+Admin dapat menentukan role pengguna, misalnya admin atau kasir.
+
+3. Kelola Data Topping / Menu (CRUD)
+
+Admin dapat mengelola data topping atau menu yang tersedia pada aplikasi.
+
+Fitur ini memungkinkan admin untuk:
+
+- Menambahkan topping baru
+- Mengubah harga topping
+- Mengubah stok topping
+- Menghapus topping
+- Menambahkan gambar topping
   
-- Fitur Kasir
+4. Melihat Data Transaksi
 
-   *  Login dan Logout
- 
-  *  Transaksi
-    
-  *  Lihat Data
+Admin dapat melihat seluruh transaksi yang dilakukan oleh kasir.
 
-  *  Cetak/Simpan Struk
+Penjelasan: Fitur ini digunakan untuk memantau aktivitas penjualan dan memastikan transaksi berjalan dengan baik.
 
-  
+Informasi yang dapat dilihat:
+
+- Total harga transaksi
+- Nama pembeli
+- Waktu transaksi
+- Jumlah item
+- Kasir yang melakukan transaksi
+
+5. Melihat Laporan Penjualan
+
+Admin dapat melihat laporan penjualan berdasarkan data transaksi.
+
+Penjelasan: Fitur ini digunakan untuk mengetahui jumlah penjualan dalam periode tertentu.
+
+Data yang digunakan:
+
+- Total transaksi
+- Total pendapatan
+- Jumlah item terjual
+
+🧾 2. Fitur untuk Kasir
+
+Kasir merupakan pengguna yang bertugas melakukan transaksi penjualan kepada pelanggan.
+Kasir memiliki akses terbatas hanya pada fitur yang berkaitan dengan proses transaksi.
+
+1. Login
+
+Kasir dapat masuk ke dalam sistem menggunakan akun yang telah dibuat oleh admin.
+
+Penjelasan: Fitur login digunakan untuk memastikan hanya kasir yang terdaftar yang dapat menggunakan aplikasi.
+
+2. Melihat Daftar Topping / Menu
+
+Kasir dapat melihat daftar menu atau topping yang tersedia.
+
+Penjelasan: Fitur ini digunakan untuk memilih menu yang akan dipesan oleh pelanggan.
+
+Informasi yang ditampilkan:
+
+- Nama topping
+- Harga
+- Stok
+- Gambar
+
+3. Membuat Transaksi
+
+Kasir dapat membuat transaksi baru saat pelanggan melakukan pembelian.
+
+Penjelasan: Fitur ini merupakan fungsi utama aplikasi kasir.
+
+Kasir dapat:
+
+- Memilih topping
+- Menentukan jumlah
+- Menentukan level pedas
+- Menghitung total harga
+- Menyimpan transaksi
+
+5. Melihat Riwayat Transaksidan Cetak 
+
+Kasir dapat melihat transaksi yang telah dibuat olehnya.
+
+Penjelasan: Fitur ini digunakan untuk memantau transaksi yang telah dilakukan oleh kasir.
 
 ## Widget yang Digunakan
 Beberapa widget Flutter yang digunakan dalam aplikasi ini:
