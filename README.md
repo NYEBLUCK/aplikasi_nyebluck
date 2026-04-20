@@ -39,6 +39,120 @@ Dengan aplikasi ini, proses penjualan dan pengelolaan data menjadi lebih:
 
 - Terstruktur
 
+## 📊 Struktur Database Aplikasi Nyebluck
+
+Database pada aplikasi Nyebluck digunakan untuk menyimpan data pengguna, menu/topping, serta transaksi penjualan.
+Database ini terdiri dari empat tabel utama, yaitu:
+
+toppings
+transactions
+transaction_items
+profiles
+
+Setiap tabel saling terhubung untuk mendukung proses transaksi pada sistem kasir.
+
+1. 🗄️ Tabel toppings
+
+Tabel toppings digunakan untuk menyimpan data menu atau topping yang tersedia pada aplikasi Nyebluck.
+
+Tabel ini berfungsi untuk:
+
+- Menyimpan data topping atau menu
+- Menyimpan harga topping
+- Menyimpan jumlah stok topping
+- Menyimpan gambar topping
+- Menyimpan status ketersediaan topping
+
+Struktur Tabel toppings
+
+| Field        | Tipe Data   | Keterangan                          |
+| ------------ | ----------- | ----------------------------------- |
+| id           | uuid        | Primary key untuk identitas topping |
+| nama_topping | text        | Nama topping atau menu              |
+| kategori     | text        | Kategori topping                    |
+| harga        | int4        | Harga topping                       |
+| stok         | int4        | Jumlah stok topping                 |
+| image_url    | text        | URL gambar topping                  |
+| created_at   | timestamptz | Waktu data dibuat                   |
+| tak_terbatas | bool        | Status stok tidak terbatas          |
+
+2. 🧾 Tabel transactions
+   
+Tabel transactions digunakan untuk menyimpan data utama transaksi penjualan pada aplikasi Nyebluck.
+
+Tabel ini berfungsi untuk:
+
+- Menyimpan data transaksi penjualan
+- Menyimpan total harga transaksi
+- Menyimpan data kasir
+- Menyimpan jumlah pembayaran
+- Menyimpan kembalian
+- Menyimpan level pedas pesanan
+
+  Struktur Table Transaction
+
+  | Field          | Tipe Data   | Keterangan                        |
+| -------------- | ----------- | --------------------------------- |
+| id             | uuid        | Primary key transaksi             |
+| cashier_id     | uuid        | ID kasir yang melakukan transaksi |
+| total_harga    | int4        | Total harga transaksi             |
+| level_pedas    | int4        | Level pedas pesanan               |
+| created_at     | timestamptz | Waktu transaksi dibuat            |
+| nama_pembeli   | text        | Nama pembeli                      |
+| total_quantity | int4        | Total jumlah item                 |
+| bayar          | int4        | Jumlah uang yang dibayarkan       |
+| kembalian      | int4        | Jumlah uang kembalian             |
+
+3. 📦 Tabel transaction_items
+
+Tabel transaction_items digunakan untuk menyimpan detail item dari setiap transaksi.
+
+Tabel ini berfungsi untuk:
+
+- Menyimpan daftar topping dalam transaksi
+- Menyimpan jumlah topping yang dibeli
+- Menyimpan harga topping
+- Menghubungkan transaksi dengan topping
+
+ Struktur Table transaction_items
+
+| Field          | Tipe Data   | Keterangan                 |
+| -------------- | ----------- | -------------------------- |
+| id             | uuid        | Primary key item transaksi |
+| transaction_id | uuid        | ID transaksi               |
+| topping_name   | text        | Nama topping               |
+| quantity       | int4        | Jumlah topping             |
+| price          | int4        | Harga topping              |
+| created_at     | timestamptz | Waktu data dibuat          |
+
+
+4. 👤 Tabel profiles
+
+Tabel profiles digunakan untuk menyimpan data pengguna aplikasi Nyebluck.
+
+Tabel ini berfungsi untuk:
+
+- Menyimpan data pengguna
+- Menyimpan email pengguna
+- Menyimpan nomor telepon
+- Menyimpan alamat pengguna
+- Menentukan role pengguna
+- Menentukan status pengguna
+
+Struktur Tabel profiles
+
+| Field        | Tipe Data   | Keterangan                       |
+| ------------ | ----------- | -------------------------------- |
+| id           | uuid        | Primary key pengguna             |
+| nama_lengkap | text        | Nama lengkap pengguna            |
+| email        | text        | Email pengguna                   |
+| nomor_telpon | text        | Nomor telepon pengguna           |
+| alamat       | text        | Alamat pengguna                  |
+| role         | text        | Role pengguna (admin atau kasir) |
+| created_at   | timestamptz | Waktu akun dibuat                |
+| is_active    | bool        | Status akun aktif                |
+
+
 ## 🧩 Fitur Aplikasi
 ### Fitur Utama
 - Login
