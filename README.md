@@ -414,32 +414,23 @@ Berikut merupakan tampilan antarmuka dari aplikasi **Nyebluck**:
 ### 🔐 Autentikasi
 | Login |
 |------|
-| <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/277f4f99-3c46-43b9-99cc-6137ed97c207" /> |
+| <img width="155" height="auto" alt="image" src="https://github.com/user-attachments/assets/277f4f99-3c46-43b9-99cc-6137ed97c207" /> |
 
 ---
 
-### 🧑‍💼 Fitur Admin
-| Manajemen Topping | Tambah/Edit Topping | Kelola Staff |
-|------------------|--------------------|--------------|
-|<img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/ac6925d4-50a4-4d2a-8e79-df3809632242" /> | <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/9662c8c9-9f40-4e21-83f7-80038f6ed55f" /> | <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/5808c00e-3623-4170-bdfd-0556380bd994" /> |
-
-| Laporan Penjualan | Grafik |
-|------------------|--------|
-| <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/f6e77b57-92c9-41e3-bc4f-5cb94bc2e4cd" /> | <img width="300" height="auto" alt="image" src="https://github.com/user-attachments/assets/1907219a-c620-4eae-8f58-f1b9497b8dcb" />|
+### 🧑‍💼 Admin
+| Manajemen Topping | Tambah/Edit Topping | Kelola Staff | Laporan Penjualan | Grafik |
+|------------------|--------------------|--------------|------------------|--------|
+|<img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/ac6925d4-50a4-4d2a-8e79-df3809632242" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/9662c8c9-9f40-4e21-83f7-80038f6ed55f" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/5808c00e-3623-4170-bdfd-0556380bd994" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f6e77b57-92c9-41e3-bc4f-5cb94bc2e4cd" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/1907219a-c620-4eae-8f58-f1b9497b8dcb" />|
 
 ---
 
-### 🧾 Fitur Kasir
-| Halaman Kasir | Transaksi | Pembayaran |
-|--------------|-----------|------------|
-| ![](assets/screenshots/kasir.png) | ![](assets/screenshots/transaksi.png) | ![](assets/screenshots/pembayaran.png) |
+### 🧾 Kasir
+| Halaman Kasir | Transaksi | Pembayaran | Nota | Riwayat Transaksi |
+|--------------|-----------|------------|------|-------------------|
+| <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/34ce85d1-5137-427c-ace2-6976a902911b" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/0a91fddb-6a12-4f5b-b0e9-b71a94a4fb70" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/f5ff4453-7756-4e03-8a71-701767e37797" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/c2a320f5-8af7-4291-95b0-cafa8370e757" /> | <img width="170" height="auto" alt="image" src="https://github.com/user-attachments/assets/4439fafc-7125-4889-8d62-74e514002636" /> |
 
-| Nota | Riwayat Transaksi |
-|------|-------------------|
-| ![](assets/screenshots/nota.png) | ![](assets/screenshots/history.png) |
-
-
-
+---
 
 ## 📁 Struktur Folder
 
