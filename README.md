@@ -1,27 +1,28 @@
 <img width="1376" height="680" alt="Gemini_Generated_Image_9gdg9j9gdg9j9gdg" src="https://github.com/user-attachments/assets/08d5b7c1-0a5c-48e2-92b5-7112baaa0c68" />
 
-# Nyebluck
+# Nyebluck ──★ ˙🍲 ̟ !!
 
-## Deskripsi Aplikasi
 Nyebluck adalah aplikasi kasir berbasis mobile yang dirancang untuk membantu operasional toko seblak Nyebluck dalam mengelola transaksi penjualan, pencatatan stok, serta laporan keuangan secara digital.
 
-Aplikasi ini dikembangkan menggunakan Flutter sebagai framework utama dan Supabase sebagai backend service untuk autentikasi dan database.
+Aplikasi ini dikembangkan menggunakan **Flutter** sebagai framework utama dan **Supabase** sebagai backend service untuk autentikasi dan database. Dengan sistem digital ini, kasir dapat melakukan transaksi dengan lebih cepat dan akurat, sementara admin dapat memantau stok, data penjualan, serta laporan keuangan secara terpusat.
 
-Melalui aplikasi ini, kasir dapat melakukan transaksi dengan lebih cepat dan akurat, sementara admin dapat memantau stok, data penjualan, serta laporan keuangan secara terpusat. Dengan sistem digital ini, kesalahan pencatatan manual dapat diminimalkan dan operasional toko menjadi lebih efisien.
+---
 
-## Latar Belakang
+## ↳ Latar Belakang
 Permasalahan utama yang dihadapi oleh Toko Seblak Nyebluck adalah proses pencatatan transaksi dan stok yang masih dilakukan secara manual. Hal ini sering menimbulkan kesalahan perhitungan, kehilangan data, serta kesulitan dalam memantau laporan penjualan harian.
 
 Selain itu, proses pencatatan manual juga memerlukan waktu yang lebih lama dan tidak efisien, terutama saat jumlah pelanggan meningkat.
 
 Berdasarkan permasalahan tersebut, kami mengusulkan sebuah aplikasi mobile yang dapat membantu proses pengelolaan transaksi, stok barang, dan laporan keuangan secara otomatis dan terintegrasi.
 
-## Solusi yang Ditawarkan
+---
+
+## ↳ Solusi yang Ditawarkan
 Solusi yang kami tawarkan adalah aplikasi mobile Nyebluck yang memungkinkan pengguna untuk:
 
 - Melakukan transaksi penjualan secara digital
   
-- Mengelola data menu dan stok
+- Mengelola data topping/menu dan stok
 
 - Mencatat laporan penjualan otomatis
 
@@ -39,34 +40,127 @@ Dengan aplikasi ini, proses penjualan dan pengelolaan data menjadi lebih:
 
 - Terstruktur
 
-## 📊 Struktur Database Aplikasi Nyebluck
+---
+
+## ↳ Fitur Aplikasi
+
+Aplikasi **Nyebluck** memiliki beberapa fitur utama yang dibedakan berdasarkan peran pengguna dalam sistem, yaitu **Admin** dan **Kasir**. 
+
+Setiap peran memiliki hak akses yang berbeda guna menjaga keamanan data serta memastikan proses operasional aplikasi berjalan secara efektif, terstruktur, dan terkendali.
+
+---
+
+### 1. Autentikasi & Manajemen User
+- Login untuk Admin dan Kasir  
+- Manajemen akun user (CRUD) oleh Admin:
+  - Tambah akun kasir  
+  - Edit data kasir  
+  - Nonaktifkan akun kasir  
+- Mengganti password:
+  - Admin dapat mengganti password sendiri dan password kasir
+ 
+---
+
+### 2. Fitur Admin
+
+Admin merupakan pengguna yang memiliki kontrol penuh terhadap sistem kasir **Nyebluck**. 
+
+Admin bertanggung jawab dalam mengelola data menu, mengatur pengguna (kasir), serta memantau seluruh aktivitas transaksi penjualan yang terjadi dalam sistem.
+
+#### Manajemen Topping/Menu (CRUD)
+- Menambahkan topping/menu  
+- Mengedit data topping  
+- Menghapus topping  
+- Mengatur stok (termasuk stok tak terbatas)  
+- Mengelola gambar topping
+
+#### Manajemen Staff (Kasir)
+- Menambahkan staff baru  
+- Mengedit data staff  
+- Menonaktifkan akun kasir
+
+Fitur ini berfungsi untuk mengelola akun pengguna dalam sistem, khususnya kasir. 
+Admin memiliki kewenangan untuk menambahkan, memperbarui, serta menonaktifkan akun, sekaligus menentukan peran (role) pengguna sesuai kebutuhan operasional.
+
+#### Laporan Penjualan & Data Transaksi
+- Melihat seluruh data transaksi penjualan  
+- Menampilkan total pendapatan dan jumlah transaksi  
+- Menampilkan detail transaksi:
+  - Total harga transaksi  
+  - Nama pembeli  
+  - Waktu transaksi  
+  - Jumlah item  
+  - Kasir yang melakukan transaksi  
+- Visualisasi data dalam bentuk grafik  
+- Export / cetak laporan dalam bentuk **PDF**  
+
+Fitur ini digunakan untuk memantau aktivitas penjualan secara menyeluruh serta membantu admin dalam menganalisis performa penjualan pada periode tertentu. 
+Melalui fitur ini, admin dapat memperoleh informasi seperti total transaksi, total pendapatan, dan jumlah item yang terjual secara lebih terstruktur dan mudah dipahami.
+
+---
+
+### 3. Fitur Kasir
+
+Kasir berfokus pada proses transaksi penjualan kepada pelanggan, mulai dari pemilihan menu hingga pencatatan transaksi.
+
+#### Melihat Daftar Topping/Menu
+- Melihat daftar menu atau topping yang tersedia  
+- Menampilkan informasi:
+  - Nama topping  
+  - Harga  
+  - Stok  
+  - Gambar  
+
+Fitur ini digunakan untuk membantu kasir dalam memilih menu yang akan dipesan oleh pelanggan.
+
+#### Transaksi Penjualan
+- Membuat transaksi baru  
+- Memilih topping/menu  
+- Menentukan jumlah item  
+- Menentukan level pedas  
+- Menghitung total harga secara otomatis  
+- Mengelola pembayaran dan kembalian  
+- Menyimpan data transaksi  
+
+Fitur ini merupakan fungsi utama aplikasi kasir yang digunakan untuk memproses pembelian pelanggan secara cepat dan akurat.
+
+#### Nota & Riwayat Transaksi
+- Melihat nota transaksi  
+- Melihat riwayat transaksi harian  
+- Preview nota sebelum dicetak  
+- Export / cetak nota dalam bentuk **PDF**  
+
+Fitur ini digunakan untuk memantau transaksi yang telah dilakukan serta menyediakan bukti transaksi dalam bentuk nota.
+
+---
+
+## ↳ Struktur Database Aplikasi Nyebluck
 
 Database pada aplikasi Nyebluck digunakan untuk menyimpan data pengguna, menu/topping, serta transaksi penjualan.
-Database ini terdiri dari empat tabel utama, yaitu:
-
-toppings
-transactions
-transaction_items
-profiles
+Tabel utama yang digunakan:
+- `toppings`
+- `transactions`
+- `transaction_items`
+- `profiles`
 
 Setiap tabel saling terhubung untuk mendukung proses transaksi pada sistem kasir.
 
-**1. 🗄️ Tabel toppings**
+### 1. Tabel `toppings`
 
-Tabel toppings digunakan untuk menyimpan data menu atau topping yang tersedia pada aplikasi Nyebluck.
+Tabel `toppings` digunakan untuk menyimpan data menu atau topping yang tersedia pada aplikasi Nyebluck. 
+Data yang disimpan meliputi informasi nama menu, kategori, harga, stok, gambar, serta status ketersediaan (termasuk stok tak terbatas).
 
-Tabel ini berfungsi untuk:
-
+Fungsi utama tabel ini:
 - Menyimpan data topping atau menu
 - Menyimpan harga topping
 - Menyimpan jumlah stok topping
 - Menyimpan gambar topping
 - Menyimpan status ketersediaan topping
 
-Struktur Tabel toppings
+#### Struktur Tabel
 
 | Field        | Tipe Data   | Keterangan                          |
-| ------------ | ----------- | ----------------------------------- |
+|--------------|------------|-------------------------------------|
 | id           | uuid        | Primary key untuk identitas topping |
 | nama_topping | text        | Nama topping atau menu              |
 | kategori     | text        | Kategori topping                    |
@@ -76,49 +170,48 @@ Struktur Tabel toppings
 | created_at   | timestamptz | Waktu data dibuat                   |
 | tak_terbatas | bool        | Status stok tidak terbatas          |
 
-**2. 🧾 Tabel transactions**
-   
-Tabel transactions digunakan untuk menyimpan data utama transaksi penjualan pada aplikasi Nyebluck.
+### 2. Tabel `transactions`
 
-Tabel ini berfungsi untuk:
+Tabel `transactions` digunakan untuk menyimpan data utama transaksi penjualan pada aplikasi Nyebluck. 
+Data yang disimpan meliputi informasi kasir, total harga, detail pesanan, hingga proses pembayaran.
 
+Fungsi utama tabel ini:
 - Menyimpan data transaksi penjualan
 - Menyimpan total harga transaksi
-- Menyimpan data kasir
-- Menyimpan jumlah pembayaran
-- Menyimpan kembalian
-- Menyimpan level pedas pesanan
+- Menyimpan data kasir yang melakukan transaksi
+- Menyimpan jumlah pembayaran dan kembalian
+- Menyimpan informasi pesanan seperti level pedas dan jumlah item
 
-  Struktur Table Transaction
+#### Struktur Tabel
 
 | Field          | Tipe Data   | Keterangan                        |
-| -------------- | ----------- | --------------------------------- |
-| id             | uuid        | Primary key transaksi             |
-| cashier_id     | uuid        | ID kasir yang melakukan transaksi |
-| total_harga    | int4        | Total harga transaksi             |
-| level_pedas    | int4        | Level pedas pesanan               |
-| created_at     | timestamptz | Waktu transaksi dibuat            |
-| nama_pembeli   | text        | Nama pembeli                      |
-| total_quantity | int4        | Total jumlah item                 |
-| bayar          | int4        | Jumlah uang yang dibayarkan       |
-| kembalian      | int4        | Jumlah uang kembalian             |
+|----------------|------------|----------------------------------|
+| id             | uuid        | Primary key transaksi            |
+| cashier_id     | uuid        | ID kasir yang melakukan transaksi|
+| total_harga    | int4        | Total harga transaksi            |
+| level_pedas    | int4        | Level pedas pesanan              |
+| created_at     | timestamptz | Waktu transaksi dibuat           |
+| nama_pembeli   | text        | Nama pembeli                     |
+| total_quantity | int4        | Total jumlah item                |
+| bayar          | int4        | Jumlah uang yang dibayarkan      |
+| kembalian      | int4        | Jumlah uang kembalian            |
 
 
-**3. 📦 Tabel transaction_items**
+### 3. Tabel `transaction_items`
 
-Tabel transaction_items digunakan untuk menyimpan detail item dari setiap transaksi.
+Tabel `transaction_items` digunakan untuk menyimpan detail item dari setiap transaksi pada aplikasi Nyebluck. 
+Tabel ini berfungsi sebagai penghubung antara transaksi dengan data topping/menu yang dipilih.
 
-Tabel ini berfungsi untuk:
-
-- Menyimpan daftar topping dalam transaksi
+Fungsi utama tabel ini:
+- Menyimpan daftar topping dalam setiap transaksi
 - Menyimpan jumlah topping yang dibeli
 - Menyimpan harga topping
-- Menghubungkan transaksi dengan topping
+- Menghubungkan data transaksi dengan item yang dipesan
 
- Struktur Table transaction_items
+#### Struktur Tabel
 
 | Field          | Tipe Data   | Keterangan                 |
-| -------------- | ----------- | -------------------------- |
+|----------------|------------|---------------------------|
 | id             | uuid        | Primary key item transaksi |
 | transaction_id | uuid        | ID transaksi               |
 | topping_name   | text        | Nama topping               |
@@ -126,24 +219,22 @@ Tabel ini berfungsi untuk:
 | price          | int4        | Harga topping              |
 | created_at     | timestamptz | Waktu data dibuat          |
 
+### 4. Tabel `profiles`
 
-**4. 👤 Tabel profiles**
+Tabel `profiles` digunakan untuk menyimpan data pengguna pada aplikasi Nyebluck, baik admin maupun kasir. 
+Data yang disimpan meliputi informasi identitas pengguna, kontak, serta peran (role) dalam sistem.
 
-Tabel profiles digunakan untuk menyimpan data pengguna aplikasi Nyebluck.
-
-Tabel ini berfungsi untuk:
-
+Fungsi utama tabel ini:
 - Menyimpan data pengguna
 - Menyimpan email pengguna
-- Menyimpan nomor telepon
-- Menyimpan alamat pengguna
-- Menentukan role pengguna
-- Menentukan status pengguna
+- Menyimpan nomor telepon dan alamat
+- Menentukan role pengguna (admin atau kasir)
+- Menentukan status akun pengguna (aktif/nonaktif)
 
-Struktur Tabel profiles
+#### Struktur Tabel
 
 | Field        | Tipe Data   | Keterangan                       |
-| ------------ | ----------- | -------------------------------- |
+|--------------|------------|----------------------------------|
 | id           | uuid        | Primary key pengguna             |
 | nama_lengkap | text        | Nama lengkap pengguna            |
 | email        | text        | Email pengguna                   |
@@ -153,115 +244,7 @@ Struktur Tabel profiles
 | created_at   | timestamptz | Waktu akun dibuat                |
 | is_active    | bool        | Status akun aktif                |
 
-## ⚙️ Fitur Program Aplikasi Nyebluck
-
-Aplikasi Nyebluck memiliki beberapa fitur utama yang dibedakan berdasarkan peran pengguna dalam sistem, yaitu Admin dan Kasir.
-Setiap peran memiliki hak akses yang berbeda untuk menjaga keamanan data dan memastikan operasional sistem berjalan dengan baik.
-
-### Fitur Utama
-- Login
-- Register / CRUD User
-- CRUD [nama data utama]
-
-**🧑‍💼 1. Fitur untuk Admin**
-
-Admin merupakan pengguna yang memiliki kontrol penuh terhadap sistem kasir Nyebluck.
-Admin bertanggung jawab dalam mengelola data menu, pengguna, dan memantau transaksi penjualan.
-
-*1. Login*
-
-Admin dapat masuk ke dalam sistem menggunakan email dan password yang terdaftar.
-
-Penjelasan: Fitur login digunakan untuk memverifikasi identitas admin sebelum mengakses sistem.
-
-*2. Kelola Data Pengguna (CRUD)*
-
-Admin dapat menambahkan, melihat, mengubah, dan menghapus data pengguna dalam sistem.
-
-Penjelasan: Fitur ini digunakan untuk mengatur akun pengguna seperti kasir.
-Admin dapat menentukan role pengguna, misalnya admin atau kasir.
-
-*3. Kelola Data Topping / Menu (CRUD)*
-
-Admin dapat mengelola data topping atau menu yang tersedia pada aplikasi.
-
-Fitur ini memungkinkan admin untuk:
-
-- Menambahkan topping baru
-- Mengubah harga topping
-- Mengubah stok topping
-- Menghapus topping
-- Menambahkan gambar topping
-  
-*4. Melihat Data Transaksi*
-
-Admin dapat melihat seluruh transaksi yang dilakukan oleh kasir.
-
-Penjelasan: Fitur ini digunakan untuk memantau aktivitas penjualan dan memastikan transaksi berjalan dengan baik.
-
-Informasi yang dapat dilihat:
-
-- Total harga transaksi
-- Nama pembeli
-- Waktu transaksi
-- Jumlah item
-- Kasir yang melakukan transaksi
-
-*5. Melihat Laporan Penjualan*
-
-Admin dapat melihat laporan penjualan berdasarkan data transaksi.
-
-Penjelasan: Fitur ini digunakan untuk mengetahui jumlah penjualan dalam periode tertentu.
-
-Data yang digunakan:
-
-- Total transaksi
-- Total pendapatan
-- Jumlah item terjual
-
-**🧾 2. Fitur untuk Kasir**
-
-Kasir merupakan pengguna yang bertugas melakukan transaksi penjualan kepada pelanggan.
-Kasir memiliki akses terbatas hanya pada fitur yang berkaitan dengan proses transaksi.
-
-*1. Login*
-
-Kasir dapat masuk ke dalam sistem menggunakan akun yang telah dibuat oleh admin.
-
-Penjelasan: Fitur login digunakan untuk memastikan hanya kasir yang terdaftar yang dapat menggunakan aplikasi.
-
-*2. Melihat Daftar Topping / Menu*
-
-Kasir dapat melihat daftar menu atau topping yang tersedia.
-
-Penjelasan: Fitur ini digunakan untuk memilih menu yang akan dipesan oleh pelanggan.
-
-Informasi yang ditampilkan:
-
-- Nama topping
-- Harga
-- Stok
-- Gambar
-
-*3. Membuat Transaksi*
-
-Kasir dapat membuat transaksi baru saat pelanggan melakukan pembelian.
-
-Penjelasan: Fitur ini merupakan fungsi utama aplikasi kasir.
-
-Kasir dapat:
-
-- Memilih topping
-- Menentukan jumlah
-- Menentukan level pedas
-- Menghitung total harga
-- Menyimpan transaksi
-
-*4. Melihat Riwayat Transaksidan Cetak*
-
-Kasir dapat melihat transaksi yang telah dibuat olehnya.
-
-Penjelasan: Fitur ini digunakan untuk memantau transaksi yang telah dilakukan oleh kasir.
+---
 
 ## Widget yang Digunakan
 Beberapa widget Flutter yang digunakan dalam aplikasi ini:
